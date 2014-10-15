@@ -1,0 +1,21 @@
+{
+  "name": "browserify-react-bb",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hserang/browserify-react-bb",
+  "authors": [
+    "Haroun Serang <hserang@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap-sass-official": "~3.2.0"
+  }
+}
