@@ -7,6 +7,7 @@ body {
 
 //top-bar styles
 .navbar-inverse {
+  height: 50px;
 
   .navbar-brand {
     color: $white;
@@ -90,7 +91,7 @@ body {
   background: $white;
   top: 242px;
   left: 27%;
-  box-shadow: #aaaaaa 12px 3px 137px;
+  box-shadow: #aaaaaa 3px 3px 60px;
   padding: 20px;
 }
 
