@@ -32,6 +32,10 @@ var Hello = React.createClass({
     this.props.model.on('change', this.updateGreeting);
   },
 
+  componentWillUnmount: function() {
+    this.props.model.off('change');
+  },
+
   render: function() {
     return (
       <div className="row">
