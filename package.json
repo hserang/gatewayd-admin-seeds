@@ -17,7 +17,7 @@
     "url": "https://github.com/hserang/browserify-react-bb/issues"
   },
   "homepage": "https://github.com/hserang/browserify-react-bb",
-  "devDependencies": {
+  "dependencies": {
     "backbone": "^1.1.2",
     "backbone.nativeajax": "^0.2.0",
     "bower": "^1.3.12",
