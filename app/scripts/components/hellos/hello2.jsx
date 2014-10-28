@@ -25,7 +25,7 @@ var Hello = React.createClass({
   updateGreeting: function() {
     this.setState({
       greeting: this.props.model.get('greeting')
-    })
+    });
   },
 
   componentDidMount: function() {
