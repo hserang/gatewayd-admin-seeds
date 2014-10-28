@@ -5,7 +5,7 @@
   "main": "app/scripts/main.js",
   "scripts": {
     "dev": "./node_modules/.bin/gulp dev",
-    "test": "./node_modules/.bin/mocha -R nyan"
+    "test": "./node_modules/.bin/mocha -R nyan ./app/scripts/**/tests/*.js"
   },
   "repository": {
     "type": "git",
