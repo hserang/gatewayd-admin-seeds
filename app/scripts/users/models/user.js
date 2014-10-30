@@ -5,7 +5,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var Dispatcher = require('../../shared/dispatcher');
 var CryptoJS = require('crypto-js');
-var user = require('config.json');
+var user = require('../config.json');
 Backbone.$ = $;
 
 var User = Backbone.Model.extend({
