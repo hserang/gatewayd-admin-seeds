@@ -1,9 +1,9 @@
 'use strict';
 
 var React = require('react');
-var Dispatcher = require('../../shared/dispatcher');
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
+var UserActions = require('../actions');
 
 var LoginForm = React.createClass({
   handleSubmit: function(e) {
@@ -16,13 +16,7 @@ var LoginForm = React.createClass({
       return false;
     }
 
-    Dispatcher.dispatch({
-      actionType: 'login',
-      data: {
-        name: name,
-        password: password
-      }
-    });
+    UsersActions.login(name, password);
   },
 
   componentDidMount: function() {
