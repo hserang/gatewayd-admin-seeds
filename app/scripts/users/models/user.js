@@ -121,6 +121,8 @@ var WebfingerData = Backbone.Model.extend({
           password: payload.password,
           isLoggedIn: true
         });
+        sessionStorage.setItem('isLoggedIn', true);
+        sessionStorage.setItem('lastLogin', new Date());
         console.log('after', this.get('isLoggedIn'));
       }
     });
