@@ -4,10 +4,11 @@ var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
 var Dispatcher = require('../../shared/dispatcher');
-var CryptoJS = require('crypto-js')
+var CryptoJS = require('crypto-js');
+var user = require('config.json');
 Backbone.$ = $;
 
-var WebfingerData = Backbone.Model.extend({
+var User = Backbone.Model.extend({
   defaults: {
     name: '',
     password: '',
@@ -32,9 +33,8 @@ var WebfingerData = Backbone.Model.extend({
   },
 
   dispatchCallback: function(payload) {
-    var handleAction = {
-      login: this.login
-    };
+    var handleAction = {};
+    handleAction[user.actions.login] = this.login;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -130,4 +130,4 @@ var WebfingerData = Backbone.Model.extend({
 
 });
 
-module.exports = WebfingerData;
+module.exports = User;
