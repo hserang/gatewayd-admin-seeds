@@ -12,15 +12,12 @@ var RouterHeader = React.createClass({
     return (
       <Navbar>
         <div className="navbar-header">
-          <a className="navbar-brand">
-            We have routing!
-          </a>
+          <Link to="/" className="navbar-brand">
+            Gatewayd Basic
+          </Link>
         </div>
         <Nav>
-          <NavItem><Link to="/">Fancy</Link></NavItem>
-          <NavItem><Link to="/hellos2">Informal</Link></NavItem>
-          <NavItem><Link to="/hellos3">Wild</Link></NavItem>
-          <NavItem><Link to="/notFound">Do not click me</Link></NavItem>
+          <NavItem><Link to="/payments">Payments</Link></NavItem>
         </Nav>
       </Navbar>
     );
