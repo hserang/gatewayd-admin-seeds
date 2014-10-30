@@ -4,7 +4,7 @@ var user = require('./config.json');
 var UserActions = {
   login: function(name, password) {
     Dispatcher.dispatch({
-      actionType: user.login,
+      actionType: user.actions.login,
       data: {
         name: name,
         password: password
