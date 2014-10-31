@@ -17,12 +17,22 @@ window.React = React;
 
 var App = require('./app.jsx');
 
-var routes = (
+var routes = {};
+
+routes.loggedIn = (
   <Routes>
     <Route name="app" path="/" handler={App}>
-      <DefaultRoute handler={LoginForm} />
+      <DefaultRoute handler={Payments} />
       <Route name="payments" handler={Payments} />
-      <Route name="notFound" handler={NotFound} />
+      <NotFoundRoute handler={NotFound} />
+    </Route>
+  </Routes>
+);
+
+routes.loggedOut = (
+   <Routes>
+    <Route name="app" path="/" handler={App}>
+      <DefaultRoute handler={LoginForm} />
       <NotFoundRoute handler={NotFound} />
     </Route>
   </Routes>

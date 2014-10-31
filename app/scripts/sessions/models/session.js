@@ -8,18 +8,13 @@ var CryptoJS = require('crypto-js');
 var session = require('../config.json');
 Backbone.$ = $;
 
-var realuserModel = require('../../users/models/user');
-
-var User = Backbone.Model.extend({
-  initialize: function() {
-    this.set('isLoggedIn', false);
-  }
-});
+var UserModel = require('../../users/models/user');
 
 var Session = Backbone.Model.extend({
   defaults: {
     sessionKey: '',
     lastLogin: 0,
+    credentials: 'ABC' // Base64
   },
 
   requiredAttrs: {
@@ -35,9 +30,12 @@ var Session = Backbone.Model.extend({
   url: 'http://localhost:5000/v1/users/login',
 
   initialize: function() {
-    _.bindAll(this, 'dispatchCallback', 'testValid', 'validate', 'login');
+    _.bindAll(this, 'dispatchCallback', 'testValid', 'validate', 'isLoggedIn',
+      'updateSession', 'updateUser', 'createCredentials', 'login');
 
-    this.set('userModel', new User({name: 'admin'}));
+    this.set('userModel', new UserModel({
+      name: 'admin'
+    }));
 
     Dispatcher.register(this.dispatchCallback);
   },
@@ -108,53 +106,75 @@ var Session = Backbone.Model.extend({
     }
   },
 
+  updateSession: function(sessionKey) {
+    this.set({
+      sessionKey: sessionKey,
+      lastLogin: Date.now()
+    });
+  },
+
+  updateUser: function(name) {
+    this.get('userModel').set({
+      name: name,
+      isLoggedIn: true
+    });
+  },
+
+  createCredentials: function(name, sessionKey) {
+    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
+
+    this.set('credentials', 'Basic ' + encodedString);
+  },
+
   login: function(payload) {
     if (!payload.name || !payload.sessionKey) {
       return false;
     }
 
-    var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(payload.name + ':' + payload.sessionKey));
-    var credentials = 'Basic ' + encodedString;
     var _this = this;
 
-    console.log('gets this far', encodedString);
+    this.updateSession(payload.sessionKey);
+    this.updateUser(payload.name);
+    this.createCredentials(payload.name, payload.sessionKey);
 
-    this.fetch({
-      type: 'POST',
+    this.save(null, {
+      wait: true,
       contentType: 'application/json',
       data: JSON.stringify({
-        name: payload.name,
+        name: payload.name + '@example.com',
         password: payload.sessionKey
       }),
       headers: {
-        'Authorization': credentials
+        'Authorization': _this.get('credentials')
       },
-      // success: function() {
-      //   console.log('login SUCCESS', arguments);
-
-      //   _this.set({
-      //     sessionKey: payload.sessionKey,
-      //     lastLogin: Date.now()
-      //   });
-
-      //   _this.get('userModel').set({
-      //     name: payload.name,
-      //     isLoggedIn: true
-      //   });
-
-      //   sessionStorage.setItem('session', _this);
-      // }
+      success: function(model, xhr, response) {
+        console.log('login SUCCESS', arguments); // response = {user: {admin: true}}
+        sessionStorage.setItem('session', _this.toJSON());
+        _this.trigger('loggedIn');
+      },
+      error: function() {
+        console.log('login FAIL', arguments);
+      }
     });
   },
 
-  isLoggedIn: function(user) {
-    return user.get('isLoggedIn');
+  isLoggedIn: function() {
+    return this.get('userModel').get('isLoggedIn');
   },
 
   isExpired: function() {
     return Date.now() - this.get('lastLogin') > 3600000; // 1 hour
+  },
+
+  getLogState: function() {
+    var logState = {
+      true: 'loggedIn',
+      false: 'loggedOut'
+    };
+
+    return logState[this.isLoggedIn()];
   }
 
 });
 
-module.exports = Session;
+module.exports = new Session();
