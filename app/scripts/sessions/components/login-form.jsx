@@ -1,39 +1,47 @@
 'use strict';
 
 var React = require('react');
+
+var Navigation = require('react-router').Navigation;
+
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var UserActions = require('../actions');
+
+var Session = require('../models/session');
+var SessionActions = require('../actions');
 
 var LoginForm = React.createClass({
+  mixins: [Navigation],
+
   handleSubmit: function(e) {
     e.preventDefault();
 
-    var name = this.refs.name.getValue().trim();
-    var password = this.refs.password.getValue().trim();
+    // var name = this.refs.name.getValue().trim();
+    var name = 'admin';
+    var sessionKey = this.refs.sessionKey.getValue().trim();
 
-    if (!name || !password) {
+    if (!name || !sessionKey) {
       return false;
     }
 
-    UsersActions.login(name, password);
+    SessionActions.login(name, sessionKey);
   },
 
   componentDidMount: function() {
-    this.props.model.on('change', function() {
-      // redirect to new view
+    var _this = this;
+    Session.on('loggedIn', function() {
+      _this.transitionTo('payments');
     });
   },
 
   componentWillUnmout: function() {
-    this.props.model.off('change');
+    Session.off('change');
   },
 
   render: function() {
     return (
       <form role="form" className="col-xs-12" onSubmit={this.handleSubmit}>
-        <Input type="text" label="Username" ref="name" />
-        <Input type="password" label="Password" ref="password" />
+        <Input type="password" label="Enter key:" ref="sessionKey" required />
         <Button type="submit" bsStyle="primary">Log In</Button>
       </form>
     );
