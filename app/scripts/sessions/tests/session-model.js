@@ -9,7 +9,8 @@ chai.use(sinonChai);
 var properFixture = require('./fixtures/successes');
 var improperFixture = require('./fixtures/errors');
 
-var Model = require('../models/user');
+var Model = require('../models/session');
+var SubModel = require('../../users/models/user'); // what to do with this?
 
 var setUpSuccessfulModel = function() {
   this.model = new Model();
@@ -42,12 +43,12 @@ describe('valid model', function() {
 describe('defaults', function() {
   beforeEach(setUpSuccessfulModel);
 
-  it('should have a name', function() {
-    this.model.get('name').should.exist;
+  it('should have a session key', function() {
+    this.model.get('sessionKey').should.exist;
   });
 
-  it('should have a login status', function() {
-    this.model.get('isLoggedIn').should.exist;
+  it('should have a last login date/timestamp', function() {
+    this.model.get('lastLogin').should.exist;
   });
 });
 
