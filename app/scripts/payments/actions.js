@@ -1,7 +1,14 @@
-var Dispatcher = require('../../shared/dispatcher');
-var payment = require('./config.json');
+var adminDispatcher = require('../dispatchers/admin-dispatcher');
+var paymentActions = require('./config.json').actions;
 
-var PaymentActions = {
+var actions = {
+  delete: function(id) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.delete,
+      id: id
+    });
+
+  }
 };
 
-module.exports = PaymentActions;
+module.exports = actions;

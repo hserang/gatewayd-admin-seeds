@@ -3,15 +3,18 @@
 var React = require('react');
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
-var Dispatcher = require('../../dispatchers/dispatcher');
 
 var Payment = React.createClass({
-  propTypes: {
+
+  handleClick: function(e) {
+    e.preventDefault();
+    console.log("asdf", this);
+
   },
 
   render: function() {
     return (
-      <div>I am a payment id {this.props.id}</div>
+      <div onClick={this.handleClick}>I am a payment id {this.props.id}<button>delete</button></div>
     );
   }
 });

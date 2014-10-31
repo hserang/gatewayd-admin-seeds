@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var Dispatcher = require('../../shared/dispatcher');
+var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var payments = require('../config.json');
 var Model = require('../models/payment.js');
 
@@ -14,6 +14,13 @@ var Payments = Backbone.Collection.extend({
   model: Model,
 
   initialize: function() {
+
+    //register method with dispatcher
+    adminDispatcher.register(this.dispatcherCallback);
+  },
+
+  dispatcherCallback: function(payload) {
+    console.log("dispatcher cb called", arguments);
   }
 
 });

@@ -3,7 +3,7 @@
 var React = require('react');
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
-var Dispatcher = require('../../dispatchers/dispatcher');
+var PaymentActions = require('../actions.js');
 
 var PaymentItem = require('./payment.jsx');
 
@@ -53,8 +53,9 @@ var collection = new Collection([
 );
 
 var getStateFromStores = function(store) {
-  console.log("store", store);
-  return {};
+  return {
+    payments: store
+  };
 };
 
 var Payments = React.createClass({
@@ -70,10 +71,19 @@ var Payments = React.createClass({
     collection.off("change");
   },
 
+  handleClick: function(e) {
+    console.log("top", e);
+    PaymentActions.delete(e.id);
+  },
+
   render: function() {
-    var paymentItems = collection.map(function(model, index) {
-      return <PaymentItem id={model.get('id')} />;
-    });
+
+    var paymentItems = this.state.payments.map(function(model) {
+      var id = model.get('id');
+
+      return <PaymentItem key={id} id={id}  onClick={this.handleClick.bind(this, "foo")}/>;
+    }, this);
+
     return (
       <div>
         <h1>Payments here</h1>

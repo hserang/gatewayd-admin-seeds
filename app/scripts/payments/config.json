@@ -1,4 +1,5 @@
 {
   "actions": {
+    "delete": "delete"
   }
 }
