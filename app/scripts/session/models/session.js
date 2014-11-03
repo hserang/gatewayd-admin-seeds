@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var Dispatcher = require('../../shared/dispatcher');
+var Dispatcher = require('../../dispatchers/dispatcher');
 var CryptoJS = require('crypto-js');
 var session = require('../config.json');
 Backbone.$ = $;

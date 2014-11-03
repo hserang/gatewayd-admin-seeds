@@ -1,4 +1,4 @@
-var Dispatcher = require('../shared/dispatcher');
+var Dispatcher = require('../dispatchers/dispatcher');
 var session = require('./config.json');
 
 var UserActions = {
