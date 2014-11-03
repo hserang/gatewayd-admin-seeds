@@ -4,53 +4,13 @@ var React = require('react');
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
+var CurrentPath = require('react-router').CurrentPath;
+var url = require('url');
 
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
-var collection = new Collection([
-  {
-    data: null,
-    id: 1,
-    to_address_id: 1,
-    from_address_id: 2,
-    transaction_state: null,
-    transaction_hash: null,
-    to_amount: "1",
-    to_currency: "XRP",
-    to_issuer: "4",
-    from_amount: "2",
-    from_currency: "USD",
-    from_issuer: "5",
-    createdAt: "2014-10-01T23:53:40.213Z",
-    updatedAt: "2014-10-01T23:53:40.213Z",
-    uid: null,
-    client_resource_id: "false",
-    state: "false",
-    external_transaction_id: null
-  },
-  {
-    data: null,
-    id: 2,
-    to_address_id: 2,
-    from_address_id: 2,
-    transaction_state: null,
-    transaction_hash: null,
-    to_amount: "2",
-    to_currency: "XRP",
-    to_issuer: "4",
-    from_amount: "2",
-    from_currency: "USD",
-    from_issuer: "5",
-    createdAt: "2014-10-01T23:53:40.213Z",
-    updatedAt: "2014-10-01T23:53:40.213Z",
-    uid: null,
-    client_resource_id: "false",
-    state: "false",
-    external_transaction_id: null
-  }
-]
-);
+var collection = new Collection();
 
 var getStateFromStores = function(store) {
   return {
@@ -59,6 +19,8 @@ var getStateFromStores = function(store) {
 };
 
 var Payments = React.createClass({
+  mixins: [CurrentPath],
+
   getInitialState: function() {
     return getStateFromStores(collection);
   },
@@ -78,6 +40,8 @@ var Payments = React.createClass({
 
   render: function() {
 
+    collection.updateUrl(this.getCurrentPath());
+
     var paymentItems = this.state.payments.map(function(model) {
       var id = model.get('id');
 
@@ -88,6 +52,8 @@ var Payments = React.createClass({
       <div>
         <h1>Payments here</h1>
         {paymentItems}
+        <p>props {this.props.foo}</p>
+        <p>Path is: {this.getCurrentPath()}</p>
       </div>
     );
   }

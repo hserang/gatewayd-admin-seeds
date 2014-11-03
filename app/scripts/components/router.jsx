@@ -21,7 +21,14 @@ var routes = (
   <Routes>
     <Route name="app" path="/" handler={App}>
       <DefaultRoute handler={LoginForm} />
-      <Route name="payments" handler={Payments} />
+      <Route name="payments" handler={Payments}>
+        <Route name="incoming" path="incoming" handler={Payments} />
+        <Route name="outgoing" path="outgoing" handler={Payments} />
+        <Route name="completed" path="completed" handler={Payments} />
+        <Route name="failed" path="failed" handler={Payments} />
+        <Route name="new" path="new" handler={Payments} />
+      </Route>
+      <Route name="notFound" handler={NotFound} />
       <NotFoundRoute handler={NotFound} />
     </Route>
   </Routes>

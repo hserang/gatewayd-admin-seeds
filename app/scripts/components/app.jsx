@@ -11,11 +11,11 @@ var Footer = require('./footer/footer.jsx');
 require('react-bootstrap');
 
 var restoreSession = function() {
-  var oldSession = sessionStorage.length === 0 ? null : sessionStorage.getItem('session');
+  //var oldSession = sessionStorage.length === 0 ? null : sessionStorage.getItem('session');
 
-  if (oldSession) {
-    session.set(JSON.parse(oldSession));
-  }
+  //if (oldSession) {
+    //session.set(JSON.parse(oldSession));
+  //}
 
   if (session.isLoggedIn()) {
     this.transitionTo('payments');
@@ -29,7 +29,7 @@ var App =
     mixins: [Navigation],
 
     render:function(){
-      // restoreSession.call(this);
+      restoreSession.call(this);
 
       return (
         <div className="container">
