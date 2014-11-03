@@ -10,29 +10,18 @@ var NotFoundRoute = Router.NotFoundRoute;
 var NotFound = require('./not-found/not-found.jsx');
 
 var Payments = require('../payments/components/Payments.jsx');
-var LoginForm = require('../sessions/components/login-form.jsx');
+var LoginForm = require('../session/components/login-form.jsx');
 
 // needed for dev tools to work
 window.React = React;
 
 var App = require('./app.jsx');
 
-var routes = {};
-
-routes.loggedIn = (
+var routes = (
   <Routes>
     <Route name="app" path="/" handler={App}>
-      <DefaultRoute handler={Payments} />
-      <Route name="payments" handler={Payments} />
-      <NotFoundRoute handler={NotFound} />
-    </Route>
-  </Routes>
-);
-
-routes.loggedOut = (
-   <Routes>
-    <Route name="app" path="/" handler={App}>
       <DefaultRoute handler={LoginForm} />
+      <Route name="payments" handler={Payments} />
       <NotFoundRoute handler={NotFound} />
     </Route>
   </Routes>
