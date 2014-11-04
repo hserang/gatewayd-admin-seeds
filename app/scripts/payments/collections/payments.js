@@ -24,6 +24,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   dispatcherCallback: function(payload) {
+    console.log("payload", payload);
     if (_.isUndefined(this[payload.actionType])) {
       return false;
     }
@@ -66,6 +67,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   fetchData: function() {
+    console.log("fetch called");
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
