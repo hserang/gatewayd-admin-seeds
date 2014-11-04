@@ -14,9 +14,11 @@ var PaymentHeader = React.createClass({
         <div className="navbar-header">
         </div>
         <Nav>
-          <NavItem><Link to="/payments">Incoming Payments</Link></NavItem>
-          <NavItem><Link to="/payments">Create Payment</Link></NavItem>
-          <NavItem><Link to="/payments">Payments History</Link></NavItem>
+          <NavItem><Link to="/payments/incoming">Incoming</Link></NavItem>
+          <NavItem><Link to="/payments/outgoing">Outgoing</Link></NavItem>
+          <NavItem><Link to="/payments/completed">Completed</Link></NavItem>
+          <NavItem><Link to="/payments/failed">Failed</Link></NavItem>
+          <NavItem><Link to="/payments/new">Create Payment</Link></NavItem>
         </Nav>
       </Navbar>
     );
