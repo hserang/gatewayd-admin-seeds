@@ -31,7 +31,7 @@ var Session = Backbone.Model.extend({
 
   initialize: function() {
     _.bindAll(this, 'dispatchCallback', 'testValid', 'validate', 'isLoggedIn',
-      'updateSession', 'updateUser', 'createCredentials', 'login');
+      'restore', 'updateSession', 'updateUser', 'createCredentials', 'login');
 
     this.set('userModel', new UserModel({
       name: 'admin'
@@ -149,13 +149,26 @@ var Session = Backbone.Model.extend({
       },
       success: function(model, xhr, response) {
         console.log('login SUCCESS', arguments); // response = {user: {admin: true}}
-        sessionStorage.setItem('session', _this.toJSON());
+        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
         _this.trigger('loggedIn');
       },
       error: function() {
         console.log('login FAIL', arguments);
       }
     });
+  },
+
+  restore: function() {
+    var oldSession = sessionStorage.length === 0 ? null : sessionStorage.getItem('session');
+
+    if (oldSession) {
+      var oldUser, restoredUser;
+
+      this.set(JSON.parse(oldSession));
+      oldUser = this.get('userModel');
+      restoredUser = new UserModel(oldUser);
+      this.set('userModel', restoredUser);
+    }
   },
 
   isLoggedIn: function() {
