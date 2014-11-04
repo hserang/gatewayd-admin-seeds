@@ -9,6 +9,7 @@ var CurrentPath = require('react-router').CurrentPath;
 var url = require('url');
 var moment = require('moment');
 
+var PaymentHeader = require('./payment-header.jsx');
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
@@ -75,6 +76,7 @@ var Payments = React.createClass({
 
     return (
       <div>
+        <PaymentHeader />
         <h1>Payments here</h1>
         <ul>
         {paymentItems}
