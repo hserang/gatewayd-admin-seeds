@@ -9,7 +9,7 @@ var NotFoundRoute = Router.NotFoundRoute;
 
 var NotFound = require('./not-found/not-found.jsx');
 
-var Payments = require('../payments/components/Payments.jsx');
+var Payments = require('../payments/components/payments.jsx');
 var LoginForm = require('../session/components/login-form.jsx');
 
 // needed for dev tools to work
