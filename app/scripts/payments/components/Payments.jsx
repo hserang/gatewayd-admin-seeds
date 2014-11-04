@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require('lodash');
 var React = require('react');
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
@@ -22,11 +23,19 @@ var Payments = React.createClass({
   mixins: [CurrentPath],
 
   getInitialState: function() {
-    return getStateFromStores(collection);
+    //return getStateFromStores(collection);
+    return { payments: []};
   },
 
   componentDidMount: function() {
-    collection.on("change", this.handleCollectionChange);
+    collection.on("sync", this.handleCollectionChange);
+    PaymentActions.updateUrl(this.getCurrentPath());
+  },
+
+  handleCollectionChange: function(collection) {
+    this.setState({
+      payments: collection
+    });
   },
 
   componentWillUnmount: function() {
@@ -34,26 +43,30 @@ var Payments = React.createClass({
   },
 
   handleClick: function(e) {
-    console.log("top", e);
     PaymentActions.delete(e.id);
   },
 
   render: function() {
 
-    collection.updateUrl(this.getCurrentPath());
-
     var paymentItems = this.state.payments.map(function(model) {
+      console.log("map items", model);
       var id = model.get('id');
 
-      return <PaymentItem key={id} id={id}  onClick={this.handleClick.bind(this, "foo")}/>;
+      return (
+          <PaymentItem
+            key={id}
+            timeStamp={moment(model.get("createdAt")).format('MMM D, YYYY HH:mm z')}
+            sourceAddress={model.get("from_issuer")}
+            currency={model.get("from_currency")}
+            amount={model.get("from_amount")}
+            onClick={this.handleClick.bind(this, "foo")}
+          />);
     }, this);
 
     return (
       <div>
         <h1>Payments here</h1>
         {paymentItems}
-        <p>props {this.props.foo}</p>
-        <p>Path is: {this.getCurrentPath()}</p>
       </div>
     );
   }

@@ -110,7 +110,7 @@ var Payment = Backbone.Model.extend({
       this.validationErrors.push('"' + attr + '" of payment is invalid');
     }
 
-    return isDefined && isValid;
+    //return isDefined && isValid;
   },
 
   validate: function() {

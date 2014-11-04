@@ -8,7 +8,6 @@ var Payment = React.createClass({
 
   handleClick: function(e) {
     e.preventDefault();
-    console.log("asdf", this);
 
   },
 

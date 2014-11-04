@@ -5,9 +5,15 @@ var actions = {
   delete: function(id) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.delete,
-      id: id
+      data: id
     });
+  },
 
+  updateUrl: function(path) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.updateUrl,
+      data: path
+    });
   }
 };
 

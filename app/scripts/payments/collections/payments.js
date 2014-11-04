@@ -7,7 +7,6 @@ var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var payments = require('../config.json');
 var Model = require('../models/payment.js');
 var session = require('../../session/models/session');
-console.log("ses", session);
 
 Backbone.$ = $;
 
@@ -18,13 +17,18 @@ var Payments = Backbone.Collection.extend({
   baseUrl: "http://localhost:5000",
 
   initialize: function() {
+    _.bindAll(this, 'dispatcherCallback');
 
     //register method with dispatcher
     adminDispatcher.register(this.dispatcherCallback);
   },
 
   dispatcherCallback: function(payload) {
-    console.log("dispatcher cb called", arguments);
+    if (_.isUndefined(this[payload.actionType])) {
+      return false;
+    }
+
+    this[payload.actionType](payload.data);
   },
 
   urlObject: {
@@ -58,18 +62,19 @@ var Payments = Backbone.Collection.extend({
     this.url = this.baseUrl + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
-    console.log("collection url", this.url);
     this.fetchData();
   },
 
   fetchData: function() {
-    console.log("fetchData", session.get('credentials'));
-
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
       }
     });
+  },
+
+  parse: function(data) {
+    return data.ripple_transactions;
   }
 });
 
