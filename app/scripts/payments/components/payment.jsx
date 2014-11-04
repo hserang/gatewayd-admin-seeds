@@ -13,7 +13,12 @@ var Payment = React.createClass({
 
   render: function() {
     return (
-      <div onClick={this.handleClick}>I am a payment id {this.props.id}<button>delete</button></div>
+      <li onClick={this.handleClick}>
+      {this.props.timeStamp}
+      {this.props.sourceAddress}
+      {this.props.currency}
+      {this.props.amount}
+      <button className="btn">Done</button></li>
     );
   }
 });

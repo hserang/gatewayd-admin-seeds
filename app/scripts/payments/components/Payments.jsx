@@ -7,6 +7,7 @@ var BootstrapButton = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
 var url = require('url');
+var moment = require('moment');
 
 var PaymentItem = require('./payment.jsx');
 
@@ -46,10 +47,19 @@ var Payments = React.createClass({
     PaymentActions.delete(e.id);
   },
 
+
+  //mixin candidate
+  renderISO: function(iso) {
+    var date = Date(iso);
+    date = date.split(' ');
+    date.shift();
+    date.splice(2, 0, ',');
+    return date.join(' ');
+  },
+
   render: function() {
 
     var paymentItems = this.state.payments.map(function(model) {
-      console.log("map items", model);
       var id = model.get('id');
 
       return (
@@ -66,7 +76,9 @@ var Payments = React.createClass({
     return (
       <div>
         <h1>Payments here</h1>
+        <ul>
         {paymentItems}
+        </ul>
       </div>
     );
   }
