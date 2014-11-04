@@ -7,6 +7,8 @@ var Navbar = require('react-bootstrap').Navbar;
 var NavItem = require('react-bootstrap').NavItem;
 var Nav = require('react-bootstrap').Nav;
 
+var session = require('../../session/models/session');
+
 var RouterHeader = React.createClass({
   render: function() {
     return (
@@ -19,6 +21,9 @@ var RouterHeader = React.createClass({
         <Nav>
           <NavItem><Link to="/payments">Payments</Link></NavItem>
         </Nav>
+        <span>
+          Hello, {session.get('userModel').get('name')}
+        </span>
       </Navbar>
     );
   }
