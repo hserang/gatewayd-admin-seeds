@@ -1,14 +1,11 @@
 "use strict";
 
 var React = require('react');
-
 var Navigation = require('react-router').Navigation;
 
 var session = require('../session/models/session');
 var sessionActions = require('../session/actions');
-
-var RouterHeader = require('./header/router-header.jsx');
-var Footer = require('./footer/footer.jsx');
+var RouterHeader = require('./header/top-bar.jsx');
 
 require('react-bootstrap');
 
@@ -22,6 +19,17 @@ var attemptSessionRestoration = function() {
   sessionActions.restore();
 };
 
+var topBarConfig = {
+  brandName: "Gatewayd Basic",
+  wrapperClass: "top-bar container-fluid",
+  links: [
+    {
+      text: "logout",
+      href: "/logout"
+    }
+  ]
+};
+
 var App =
   React.createClass({
     mixins: [Navigation],
@@ -33,10 +41,11 @@ var App =
       }
 
       return (
-        <div className="container">
-          <RouterHeader />
-          {this.props.activeRouteHandler()}
-          <Footer />
+        <div>
+          <RouterHeader setup={topBarConfig} />
+          <div className="container">
+            {this.props.activeRouteHandler()}
+          </div>
         </div>
       )
     }

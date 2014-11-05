@@ -76,6 +76,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   parse: function(data) {
+    console.log(data);
     return data.ripple_transactions;
   }
 });
