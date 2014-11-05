@@ -1,5 +1,6 @@
-var session = require('../../session/models/session');
+var _ = require('lodash');
 var React = require('react');
+var session = require('../../session/models/session');
 var Router = require('react-router');
 var Link = Router.Link;
 var Navbar = require('react-bootstrap').Navbar;
@@ -41,6 +42,36 @@ var TopBar = React.createClass({
     return items;
   },
 
+  loggedIn: function() {
+    return (
+      <div>
+      Hello, {session.get('userModel').get('name')}
+      <Link to="/logout">
+      Logout
+      </Link>
+      </div>
+    );
+  },
+
+  loggedOut: function() {
+    return false;
+  },
+
+  displayLogState: function(loginState) {
+    console.log('?', loginState);
+
+    var options = {
+      'loggedIn': this.loggedIn,
+      'loggedOut': this.loggedOut
+    };
+
+    if (!_.isUndefined(options[loginState])) {
+      return options[loginState]();
+    } else {
+      return false;
+    }
+  },
+
   render: function() {
     var links = this.getLinks(this.props.setup.links);
 
@@ -51,6 +82,7 @@ var TopBar = React.createClass({
             <a className="navbar-brand">{this.props.setup.brandName}</a>
           </div>
           <Nav>{links}</Nav>
+          {this.displayLogState(session.getLogState())}
         </Navbar>
       </div>
     );

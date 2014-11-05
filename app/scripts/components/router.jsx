@@ -31,7 +31,6 @@ var routes = (
         <Route name="failed" path="failed" handler={Payments} />
         <Route name="new" path="new" handler={Payments} />
       </Route>
-      <Route name="logout" handler={Payments} />
       <Route name="notFound" handler={NotFound} />
       <NotFoundRoute handler={NotFound} />
     </Route>
