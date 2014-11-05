@@ -9,7 +9,8 @@ Backbone.$ = $;
 
 var User = Backbone.Model.extend({
   defaults: {
-    name: '',
+    name: 'guest',
+    role: 'guest',
     isLoggedIn: false
   },
 

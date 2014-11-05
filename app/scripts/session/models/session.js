@@ -5,7 +5,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var Dispatcher = require('../../dispatchers/dispatcher');
 var CryptoJS = require('crypto-js');
-var session = require('../config.json');
+var sessionActions = require('../config.json').actions;
 Backbone.$ = $;
 
 var UserModel = require('../../users/models/user');
@@ -29,20 +29,29 @@ var Session = Backbone.Model.extend({
 
   url: 'http://localhost:5000/v1/users/login',
 
-  initialize: function() {
-    _.bindAll(this, 'dispatchCallback', 'testValid', 'validate', 'isLoggedIn',
-      'restore', 'updateSession', 'updateUser', 'createCredentials', 'login');
+  resetUserModel: function() {
+    var defaults = this.get('userModel').defaults;
 
-    this.set('userModel', new UserModel({
-      name: 'admin'
-    }));
+    this.get('userModel').set(defaults);
+
+    return this.get('userModel');
+  },
+
+  initialize: function() {
+    _.bindAll(this, 'resetUserModel', 'dispatchCallback', 'testValid', 'validate',
+      'updateSession', 'updateUser', 'createCredentials', 'login', 'restore',
+      'logout', 'isLoggedIn', 'isExpired', 'getLogState');
+
+    this.set('userModel', new UserModel());
 
     Dispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
     var handleAction = {};
-    handleAction[session.actions.login] = this.login;
+    handleAction[sessionActions.login] = this.login;
+    handleAction[sessionActions.logout] = this.logout;
+    handleAction[sessionActions.restore] = this.restore;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -116,6 +125,7 @@ var Session = Backbone.Model.extend({
   updateUser: function(name) {
     this.get('userModel').set({
       name: name,
+      role: name,
       isLoggedIn: true
     });
   },
@@ -169,6 +179,15 @@ var Session = Backbone.Model.extend({
       restoredUser = new UserModel(oldUser);
       this.set('userModel', restoredUser);
     }
+  },
+
+  logout: function() {
+    console.log('before', this.get('userModel').get('name'));
+    var resetUser = this.resetUserModel();
+
+    this.set(this.defaults);
+    this.set('userModel', resetUser);
+    console.log('after', this.get('userModel').get('name'));
   },
 
   isLoggedIn: function() {
