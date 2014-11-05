@@ -35,9 +35,11 @@ var Payments = React.createClass({
   },
 
   handleCollectionChange: function(collection) {
-    this.setState({
-      payments: collection
-    });
+    if (this.isMounted()) {
+      this.setState({
+        payments: collection
+      });
+    }
   },
 
   componentWillUnmount: function() {
