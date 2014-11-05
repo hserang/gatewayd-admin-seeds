@@ -1,9 +1,9 @@
-var Dispatcher = require('../dispatchers/dispatcher');
+var AdminDispatcher = require('../../dispatchers/admin-dispatcher');
 var session = require('./config.json').actions;
 
 var SessionActions = {
   login: function(name, sessionKey) {
-    Dispatcher.dispatch({
+    AdminDispatcher.dispatch({
       actionType: session.login,
       data: {
         name: name,
@@ -13,13 +13,13 @@ var SessionActions = {
   },
 
   logout: function() {
-    Dispatcher.dispatch({
+    AdminDispatcher.dispatch({
       actionType: session.logout
     });
   },
 
   restore: function() {
-    Dispatcher.dispatch({
+    AdminDispatcher.dispatch({
       actionType: session.restore
     });
   }

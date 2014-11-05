@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var Dispatcher = require('../../dispatchers/dispatcher');
+var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var user = require('../config.json');
 Backbone.$ = $;
 
@@ -27,7 +27,7 @@ var User = Backbone.Model.extend({
   initialize: function() {
     _.bindAll(this, 'testValid', 'validate');
 
-    Dispatcher.register(this.dispatchCallback);
+    AdminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {

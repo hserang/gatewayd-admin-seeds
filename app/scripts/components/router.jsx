@@ -9,9 +9,9 @@ var NotFoundRoute = Router.NotFoundRoute;
 
 var NotFound = require('./not-found/not-found.jsx');
 
-var Payments = require('../payments/components/payments.jsx');
-var LoginForm = require('../session/components/login-form.jsx');
-var Session = require('../session/components/session.jsx');
+var Payments = require('../modules/payments/components/payments.jsx');
+var LoginForm = require('../modules/session/components/login-form.jsx');
+var Session = require('../modules/session/components/session.jsx');
 
 // needed for dev tools to work
 window.React = React;

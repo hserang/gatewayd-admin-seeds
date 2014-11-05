@@ -3,12 +3,12 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var Dispatcher = require('../../dispatchers/dispatcher');
+var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
 var sessionActions = require('../config.json').actions;
-Backbone.$ = $;
+var UserModel = require('../../../modules/users/models/user');
 
-var UserModel = require('../../users/models/user');
+Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
   defaults: {
@@ -38,17 +38,16 @@ var Session = Backbone.Model.extend({
   },
 
   initialize: function() {
-    _.bindAll(this, 'resetUserModel', 'dispatchCallback', 'testValid', 'validate',
-      'updateSession', 'updateUser', 'createCredentials', 'login', 'restore',
-      'logout', 'isLoggedIn', 'isExpired', 'getLogState');
+    _.bindAll(this);
 
     this.set('userModel', new UserModel());
 
-    Dispatcher.register(this.dispatchCallback);
+    AdminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
     var handleAction = {};
+
     handleAction[sessionActions.login] = this.login;
     handleAction[sessionActions.logout] = this.logout;
     handleAction[sessionActions.restore] = this.restore;

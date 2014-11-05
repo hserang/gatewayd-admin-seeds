@@ -14,7 +14,7 @@ var PaymentItem = require('./payment.jsx');
 var Collection = require('../collections/payments.js');
 var collection = new Collection();
 
-var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
+var NavLinks = require('../../../shared/components/nav-links/nav-links.jsx');
 
 var NavLinksConfig = [
   {

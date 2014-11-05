@@ -3,10 +3,10 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var adminDispatcher = require('../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var payments = require('../config.json');
 var Model = require('../models/payment.js');
-var session = require('../../session/models/session');
+var session = require('../../../modules/session/models/session');
 
 Backbone.$ = $;
 

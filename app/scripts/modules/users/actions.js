@@ -1,4 +1,4 @@
-var Dispatcher = require('../../dispatchers/dispatcher');
+var AdminDispatcher = require('../../dispatchers/admin-dispatcher');
 var user = require('./config.json');
 
 var UserActions = {

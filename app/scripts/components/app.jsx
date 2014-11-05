@@ -3,8 +3,8 @@
 var React = require('react');
 var Navigation = require('react-router').Navigation;
 
-var session = require('../session/models/session');
-var sessionActions = require('../session/actions');
+var session = require('../modules/session/models/session');
+var sessionActions = require('../modules/session/actions');
 var RouterHeader = require('./header/top-bar.jsx');
 
 require('react-bootstrap');

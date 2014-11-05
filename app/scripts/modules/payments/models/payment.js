@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var dispatcher = require('../../dispatchers/admin-dispatcher');
+var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var payment = require('../config.json');
 Backbone.$ = $;
 

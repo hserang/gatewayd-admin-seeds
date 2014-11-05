@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var React = require('react');
 var Link = require('react-router').Link;
-var session = require('../../../session/models/session');
+var session = require('../../../modules/session/models/session');
 
 var Greeting = React.createClass({
   loggedIn: function() {
