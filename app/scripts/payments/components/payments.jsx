@@ -9,11 +9,35 @@ var CurrentPath = require('react-router').CurrentPath;
 var url = require('url');
 var moment = require('moment');
 
-var PaymentHeader = require('./payment-header.jsx');
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
 var collection = new Collection();
+
+var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
+
+var NavLinksConfig = [
+  {
+    text: 'Incoming',
+    href: '/payments/incoming'
+  },
+  {
+    text: 'Outgoing',
+    href: '/payments/outgoing'
+  },
+  {
+    text: 'Completed',
+    href: '/payments/completed'
+  },
+  {
+    text: 'Failed',
+    href: '/payments/failed'
+  },
+  {
+    text: 'Create Payment',
+    href: '/payments/new'
+  }
+];
 
 var getStateFromStores = function(store) {
   return {
@@ -80,7 +104,7 @@ var Payments = React.createClass({
 
     return (
       <div>
-        <PaymentHeader />
+        <NavLinks links={NavLinksConfig} />
         <h1>Payments here</h1>
         <ul>
         {paymentItems}
