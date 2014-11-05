@@ -11,34 +11,35 @@ var session = require('../models/session');
 var sessionActions = require('../actions');
 var LoginForm = require('./login-form.jsx');
 
-var toLogin = function() {
-  return <LoginForm />;
-};
-
-var toLogout = function() {
-  sessionActions.logout();
-  this.transitionTo('/login');
-};
-
-var switchState = function(path) {
-  var loginState = {
-    '/login': toLogin,
-    '/logout': toLogout
-  };
-
-  if (!_.isUndefined(loginState[path])) {
-    return loginState[path].call(this);
-  } else {
-    return false;
-  }
-};
-
 var Session = React.createClass({
   mixins: [CurrentPath, Navigation],
+
+  toLogin: function() {
+    return <LoginForm />;
+  },
+
+  toLogout: function() {
+    sessionActions.logout();
+    this.transitionTo('/login');
+  },
+
+  switchState: function(path) {
+    var loginState = {
+      '/login': this.toLogin,
+      '/logout': this.toLogout
+    };
+
+    if (!_.isUndefined(loginState[path])) {
+      return loginState[path]();
+    } else {
+      return false;
+    }
+  },
+
   render: function() {
     return (
       <div>
-        {switchState.call(this, this.getCurrentPath())}
+        {this.switchState(this.getCurrentPath())}
       </div>
     );
   }

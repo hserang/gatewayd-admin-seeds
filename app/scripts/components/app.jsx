@@ -9,16 +9,6 @@ var RouterHeader = require('./header/top-bar.jsx');
 
 require('react-bootstrap');
 
-var redirectToLogin = function() {
-  if (!session.isLoggedIn()) {
-    this.transitionTo('/login');
-  }
-};
-
-var attemptSessionRestoration = function() {
-  sessionActions.restore();
-};
-
 var topBarConfig = {
   brandName: 'Gatewayd Basic',
   wrapperClass: 'top-bar container-fluid',
@@ -42,10 +32,20 @@ var App =
   React.createClass({
     mixins: [Navigation],
 
+    redirectToLogin: function() {
+      if (!session.isLoggedIn()) {
+        this.transitionTo('/login');
+      }
+    },
+
+    attemptSessionRestoration: function() {
+      sessionActions.restore();
+    },
+
     render:function(){
       if (!session.get('lastLogin')) {
-        attemptSessionRestoration();
-        redirectToLogin.call(this);
+        this.attemptSessionRestoration();
+        this.redirectToLogin();
       }
 
       return (
