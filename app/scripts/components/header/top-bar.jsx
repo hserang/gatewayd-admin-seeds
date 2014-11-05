@@ -58,8 +58,6 @@ var TopBar = React.createClass({
   },
 
   displayLogState: function(loginState) {
-    console.log('?', loginState);
-
     var options = {
       'loggedIn': this.loggedIn,
       'loggedOut': this.loggedOut
