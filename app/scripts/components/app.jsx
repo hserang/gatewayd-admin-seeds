@@ -20,12 +20,20 @@ var attemptSessionRestoration = function() {
 };
 
 var topBarConfig = {
-  brandName: "Gatewayd Basic",
-  wrapperClass: "top-bar container-fluid",
+  brandName: 'Gatewayd Basic',
+  wrapperClass: 'top-bar container-fluid',
   links: [
     {
-      text: "logout",
-      href: "/logout"
+      text: 'To Ripple Network',
+      href: '/payments'
+    },
+    {
+      text: 'To External Account',
+      href: '/payments'
+    },
+    {
+      text: 'logout',
+      href: '/logout'
     }
   ]
 };
