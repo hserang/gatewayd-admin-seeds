@@ -1,5 +1,7 @@
 {
   "actions": {
-    "login": "login"
+    "login": "login",
+    "logout": "logout",
+    "restore": "restore"
   }
 }
