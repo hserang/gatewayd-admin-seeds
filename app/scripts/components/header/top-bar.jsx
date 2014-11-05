@@ -1,13 +1,8 @@
-var _ = require('lodash');
 var React = require('react');
-var session = require('../../session/models/session');
-var Router = require('react-router');
-var Link = Router.Link;
 var Navbar = require('react-bootstrap').Navbar;
-var NavItem = require('react-bootstrap').NavItem;
-var Nav = require('react-bootstrap').Nav;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-var MenuItem = require('react-bootstrap').MenuItem;
+var Branding = require('../../shared/components/branding/branding.jsx');
+var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
+var Greeting = require('../../shared/components/greeting/greeting.jsx');
 
 var TopBar = React.createClass({
   getDefaultProps: function() {
@@ -32,55 +27,18 @@ var TopBar = React.createClass({
     return {setup: defaults};
   },
 
-  getLinks: function(links) {
-    var items = links.map(function(link, i) {
-      return(
-        <li><Link key={i++} to={link.href}>{link.text}</Link></li>
-      );
-    });
-
-    return items;
-  },
-
-  loggedIn: function() {
-    return (
-      <div>
-      Hello, {session.get('userModel').get('name')}
-      <Link to="/logout">
-      Logout
-      </Link>
-      </div>
-    );
-  },
-
-  loggedOut: function() {
-    return false;
-  },
-
-  displayLogState: function(loginState) {
-    var options = {
-      'loggedIn': this.loggedIn,
-      'loggedOut': this.loggedOut
-    };
-
-    if (!_.isUndefined(options[loginState])) {
-      return options[loginState]();
-    } else {
-      return false;
-    }
-  },
-
   render: function() {
-    var links = this.getLinks(this.props.setup.links);
-
     return (
       <div className={this.props.setup.wrapperClass}>
         <Navbar>
           <div className="navbar-header">
-            <a className="navbar-brand">{this.props.setup.brandName}</a>
+            <Branding brandName={this.props.setup.brandName} />
           </div>
-          <Nav>{links}</Nav>
-          {this.displayLogState(session.getLogState())}
+          <Greeting />
+          <br />
+          <div>
+            <NavLinks links={this.props.setup.links} />
+          </div>
         </Navbar>
       </div>
     );
