@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('lodash');
 
 var Router = require('react-router');
 var Link = Router.Link;
@@ -9,6 +10,41 @@ var Nav = require('react-bootstrap').Nav;
 
 var session = require('../../session/models/session');
 
+var loggedIn = function() {
+  return (
+    <div>
+      <div>
+        <span>
+          Hello, {session.get('userModel').get('name')}
+        </span>
+      </div>
+      <div>
+        <Link to="/logout">
+          Logout
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+var loggedOut = function() {
+  return false;
+};
+
+var displayLogState = function(loginState) {
+  console.log('?', loginState);
+  var options = {
+    'loggedIn': loggedIn,
+    'loggedOut': loggedOut
+  };
+
+  if (!_.isUndefined(options[loginState])) {
+    return options[loginState]();
+  } else {
+    return false;
+  }
+};
+
 var RouterHeader = React.createClass({
   render: function() {
     return (
@@ -18,12 +54,7 @@ var RouterHeader = React.createClass({
             Gatewayd Basic
           </Link>
         </div>
-        <Nav>
-          <NavItem><Link to="/payments">Payments</Link></NavItem>
-        </Nav>
-        <span>
-          Hello, {session.get('userModel').get('name')}
-        </span>
+        {displayLogState(session.getLogState())}
       </Navbar>
     );
   }

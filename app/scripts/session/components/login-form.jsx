@@ -35,13 +35,13 @@ var LoginForm = React.createClass({
   },
 
   componentWillUnmout: function() {
-    Session.off('change');
+    Session.off('loggedIn');
   },
 
   render: function() {
     return (
       <form role="form" className="col-xs-12" onSubmit={this.handleSubmit}>
-        <Input type="password" label="Enter key:" ref="sessionKey" required />
+        <Input type="password" label="Enter key:" ref="sessionKey" autoFocus={true} required />
         <Button type="submit" bsStyle="primary">Log In</Button>
       </form>
     );

@@ -3,19 +3,23 @@
 var React = require('react');
 
 var Navigation = require('react-router').Navigation;
+
 var session = require('../session/models/session');
+var sessionActions = require('../session/actions');
 
 var RouterHeader = require('./header/router-header.jsx');
 var Footer = require('./footer/footer.jsx');
 
 require('react-bootstrap');
 
-var restoreSession = function() {
-  session.restore();
-
+var redirectToLogin = function() {
   if (!session.isLoggedIn()) {
-    this.transitionTo('/');
+    this.transitionTo('/login');
   }
+};
+
+var attemptSessionRestoration = function() {
+  sessionActions.restore();
 };
 
 var App =
@@ -24,7 +28,8 @@ var App =
 
     render:function(){
       if (!session.get('lastLogin')) {
-        restoreSession.call(this);
+        attemptSessionRestoration();
+        redirectToLogin.call(this);
       }
 
       return (

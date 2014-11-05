@@ -11,6 +11,7 @@ var NotFound = require('./not-found/not-found.jsx');
 
 var Payments = require('../payments/components/payments.jsx');
 var LoginForm = require('../session/components/login-form.jsx');
+var Session = require('../session/components/session.jsx');
 
 // needed for dev tools to work
 window.React = React;
@@ -20,7 +21,9 @@ var App = require('./app.jsx');
 var routes = (
   <Routes>
     <Route name="app" path="/" handler={App}>
-      <DefaultRoute handler={LoginForm} />
+      <DefaultRoute handler={Payments} />
+      <Route name="login" handler={Session} />
+      <Route name="logout" handler={Session} />
       <Route name="payments" handler={Payments}>
         <Route name="incoming" path="incoming" handler={Payments} />
         <Route name="outgoing" path="outgoing" handler={Payments} />
