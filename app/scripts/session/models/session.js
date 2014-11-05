@@ -182,12 +182,12 @@ var Session = Backbone.Model.extend({
   },
 
   logout: function() {
-    console.log('before', this.get('userModel').get('name'));
     var resetUser = this.resetUserModel();
 
     this.set(this.defaults);
     this.set('userModel', resetUser);
-    console.log('after', this.get('userModel').get('name'));
+
+    sessionStorage.clear();
   },
 
   isLoggedIn: function() {
