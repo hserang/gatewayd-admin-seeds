@@ -16,6 +16,11 @@ var PaymentItem = require('./payment.jsx');
 var Collection = require('../collections/payments.js');
 var collection = new Collection();
 
+var Model = require('../models/payment-create.js');
+var model = new Model();
+
+var PaymentCreateForm = require('./payment-create.jsx');
+
 var getStateFromStores = function(store) {
   return {
     payments: store
@@ -36,11 +41,9 @@ var Payments = React.createClass({
   },
 
   handleCollectionChange: function(collection) {
-    if (this.isMounted()) {
-      this.setState({
-        payments: collection
-      });
-    }
+    this.setState({
+      payments: collection
+    });
   },
 
   componentWillUnmount: function() {
@@ -49,6 +52,22 @@ var Payments = React.createClass({
 
   handleClick: function(e) {
     PaymentActions.delete(e.id);
+  },
+
+  showCreateForm: function() {
+    return <PaymentCreateForm model={model} />;
+  },
+
+  switchState: function(path) {
+    var options = {
+      '/payments/new': this.showCreateForm
+    };
+
+    if (!_.isUndefined(options[path])) {
+      return options[path]();
+    } else {
+      return false;
+    }
   },
 
   render: function() {
@@ -72,6 +91,7 @@ var Payments = React.createClass({
 
     return (
       <div>
+        {this.switchState(this.getCurrentPath())}
         <h1>Payments here</h1>
         <ul className="list-group">
         {paymentItems}
