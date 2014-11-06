@@ -49,10 +49,10 @@ var Payments = Backbone.Collection.extend({
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/new": {
-      "path": "/v1/ripple_transactions/:id",
-      "method": "post"
-    }
+    // "/payments/new": {
+    //   "path": "/v1/ripple_transactions/:id",
+    //   "method": "post"
+    // }
   },
 
   updateUrl: function(page) {
