@@ -62,9 +62,7 @@ var Payment = Backbone.Model.extend({
   },
 
   dispatchCallback: function(payload) {
-    var handleAction = {
-      login: this.login
-    };
+    var handleAction = {};
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
