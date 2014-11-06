@@ -4,7 +4,9 @@ var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
+var session = require('../../session/models/session');
 var payment = require('../config.json');
+var paymentActions = require('../config.json').actions;
 Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
@@ -55,16 +57,18 @@ var Payment = Backbone.Model.extend({
     }
   },
 
+  url: "http://localhost:5000/payments/outgoing",
+
   initialize: function() {
-    _.bindAll(this, 'testValid', 'validate');
+    _.bindAll(this);
 
     dispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
-    var handleAction = {
-      login: this.login
-    };
+    var handleAction = {};
+
+    handleAction[paymentActions.sendPayment] = this.sendPayment;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -126,6 +130,30 @@ var Payment = Backbone.Model.extend({
     if (!isValid) {
       return 'There is an error';
     }
+  },
+
+  setPayment: function(payment) {
+    this.set('address', payment.address);
+    this.set('amount', payment.amount);
+    this.set('currency', payment.currency);
+    this.set('destinationTag', payment.destinationTag);
+    this.set('sourceTag', payment.sourceTag);
+    this.set('invoiceId', payment.invoiceId);
+  },
+
+  postPayment: function() {
+    console.log('posting!');
+    this.save({
+      headers: {
+        Authorization: session.get('credentials')
+      }
+    });
+  },
+
+  sendPayment: function(payment) {
+    console.log('let\'s send a payment', payment);
+    this.setPayment(payment);
+    this.postPayment();
   }
 });
 

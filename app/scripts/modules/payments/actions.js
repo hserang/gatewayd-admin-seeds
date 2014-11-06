@@ -14,6 +14,13 @@ var actions = {
       actionType: paymentActions.updateUrl,
       data: path
     });
+  },
+
+  sendPayment: function(payment) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.sendPayment,
+      data: payment
+    });
   }
 };
 

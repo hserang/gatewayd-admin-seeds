@@ -1,6 +1,7 @@
 {
   "actions": {
     "updateUrl": "updateUrl",
-    "delete": "delete"
+    "delete": "delete",
+    "sendPayment": "sendPayment"
   }
 }
