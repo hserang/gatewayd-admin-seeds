@@ -7,9 +7,18 @@ var Branding = React.createClass({
 
   render: function() {
     return (
+      <div className="navbar-header">
+      <button
+        type="button"
+        className="navbar-toggle collapsed"
+        data-toggle="collapse"
+        data-target="#navbar"
+        aria-expanded="false"
+        aria-controls="navbar"></button>
       <a className="navbar-brand">
         {this.props.brandName}
       </a>
+      </div>
     );
   }
 });

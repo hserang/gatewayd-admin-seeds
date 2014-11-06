@@ -1,11 +1,14 @@
 var React = require('react');
-var Navbar = require('react-bootstrap').Navbar;
-var Nav = require('react-bootstrap').Nav;
 var Link = require('react-router').Link;
 
 var NavLinks = React.createClass({
   propTypes: {
     links: React.PropTypes.array
+  },
+
+      //<ul className="nav navbar-nav navbar-right">
+  getDefaultProps: function() {
+    return {className: "nav navbar-nav"};
   },
 
   getLinks: function(links) {
@@ -26,11 +29,9 @@ var NavLinks = React.createClass({
     var links = this.getLinks(this.props.links);
 
     return (
-      <Navbar>
-        <Nav>
-          {links}
-        </Nav>
-      </Navbar>
+      <ul className={this.props.className}>
+        {links}
+      </ul>
     );
   }
 });

@@ -8,20 +8,21 @@ var Payment = React.createClass({
 
   handleClick: function(e) {
     e.preventDefault();
-
+    console.log("clicked on payment item");
   },
 
   render: function() {
     return (
-      <li onClick={this.handleClick}>
-      {this.props.timeStamp}
-      {this.props.sourceAddress}
-      {this.props.currency}
-      {this.props.amount}
+      <li
+          className="list-group-item"
+          onClick={this.handleClick}>
+        Date: {this.props.timeStamp}
+        {this.props.sourceAddress}
+        Currency: {this.props.currency}
+        Amount: {this.props.symbol}{this.props.amount}
       <button className="btn">Done</button></li>
     );
   }
 });
 
 module.exports = Payment;
-

@@ -8,36 +8,13 @@ var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
 var url = require('url');
 var moment = require('moment');
+var numeral = require('numeral');
+var getSymbol = require('currency-symbol-map');
 
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
 var collection = new Collection();
-
-var NavLinks = require('../../../shared/components/nav-links/nav-links.jsx');
-
-var NavLinksConfig = [
-  {
-    text: 'Incoming',
-    href: '/payments/incoming'
-  },
-  {
-    text: 'Outgoing',
-    href: '/payments/outgoing'
-  },
-  {
-    text: 'Completed',
-    href: '/payments/completed'
-  },
-  {
-    text: 'Failed',
-    href: '/payments/failed'
-  },
-  {
-    text: 'Create Payment',
-    href: '/payments/new'
-  }
-];
 
 var getStateFromStores = function(store) {
   return {
@@ -67,46 +44,36 @@ var Payments = React.createClass({
   },
 
   componentWillUnmount: function() {
-    collection.off("change");
+    collection.off("sync");
   },
 
   handleClick: function(e) {
     PaymentActions.delete(e.id);
   },
 
-
-  //mixin candidate
-  renderISO: function(iso) {
-    var date = Date(iso);
-    date = date.split(' ');
-    date.shift();
-    date.splice(2, 0, ',');
-    return date.join(' ');
-  },
-
   render: function() {
 
-    console.log("render called");
 
     var paymentItems = this.state.payments.map(function(model) {
       var id = model.get('id');
+      var currency=model.get("from_currency");
 
       return (
           <PaymentItem
             key={id}
             timeStamp={moment(model.get("createdAt")).format('MMM D, YYYY HH:mm z')}
             sourceAddress={model.get("from_issuer")}
-            currency={model.get("from_currency")}
-            amount={model.get("from_amount")}
+            currency={currency}
+            symbol={getSymbol(currency)}
+            amount={numeral(model.get("from_amount")).format('0,0.00')}
             onClick={this.handleClick.bind(this, "foo")}
           />);
     }, this);
 
     return (
       <div>
-        <NavLinks links={NavLinksConfig} />
         <h1>Payments here</h1>
-        <ul>
+        <ul className="list-group">
         {paymentItems}
         </ul>
       </div>

@@ -1,5 +1,4 @@
 var React = require('react');
-var Navbar = require('react-bootstrap').Navbar;
 var Branding = require('../../shared/components/branding/branding.jsx');
 var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
 var Greeting = require('../../shared/components/greeting/greeting.jsx');
@@ -30,16 +29,11 @@ var TopBar = React.createClass({
   render: function() {
     return (
       <div className={this.props.setup.wrapperClass}>
-        <Navbar>
-          <div className="navbar-header">
-            <Branding brandName={this.props.setup.brandName} />
-          </div>
-          <Greeting />
-          <br />
-          <div>
-            <NavLinks links={this.props.setup.links} />
-          </div>
-        </Navbar>
+        <Branding brandName={this.props.setup.brandName} />
+        <Greeting />
+        <NavLinks
+          links={this.props.setup.links}
+          className="nav navbar-nav navbar-right"/>
       </div>
     );
   }

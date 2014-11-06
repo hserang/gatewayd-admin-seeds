@@ -6,26 +6,15 @@ var Navigation = require('react-router').Navigation;
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
 var RouterHeader = require('./header/top-bar.jsx');
+var Greeting = require('../shared/components/greeting/greeting.jsx');
+var Sidebar = require('./sidebar.jsx');
 
 require('react-bootstrap');
 
 var topBarConfig = {
   brandName: 'Gatewayd Basic',
-  wrapperClass: 'top-bar container-fluid',
-  links: [
-    {
-      text: 'To Ripple Network',
-      href: '/payments'
-    },
-    {
-      text: 'To External Account',
-      href: '/payments'
-    },
-    {
-      text: 'logout',
-      href: '/logout'
-    }
-  ]
+  wrapperClass: 'navbar-inverse top-bar container-fluid',
+  links: [ ]
 };
 
 var App =
@@ -51,8 +40,13 @@ var App =
       return (
         <div>
           <RouterHeader setup={topBarConfig} />
-          <div className="container">
-            {this.props.activeRouteHandler()}
+          <div className="container-fluid">
+            <div className="row">
+              <Sidebar className="col-sm-3 col-md-2 sidebar"/>
+              <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {this.props.activeRouteHandler()}
+              </div>
+            </div>
           </div>
         </div>
       )

@@ -4,19 +4,29 @@ var Link = require('react-router').Link;
 var session = require('../../../modules/session/models/session');
 
 var Greeting = React.createClass({
+
+  getDefaultProps: function() {
+    //Sample config. TODO: pass it into props
+    var defaults = {
+          className: "greeting-wrapper"
+        };
+
+    return  defaults;
+  },
+
   loggedIn: function() {
     return (
-      <div>
-      Hello, {session.get('userModel').get('name')}
-      <Link to="/logout">
-      Logout
-      </Link>
+      <div className="greeting">
+        <span className="welcome">
+          Welcome {session.get('userModel').get('name')}
+        </span>
+        <Link to="/logout" className="link">Logout</Link>
       </div>
     );
   },
 
   loggedOut: function() {
-    return <br />;
+    return <span></span>;
   },
 
   displayLogState: function(loginState) {
@@ -28,13 +38,13 @@ var Greeting = React.createClass({
     if (!_.isUndefined(options[loginState])) {
       return options[loginState]();
     } else {
-      return <br />;
+      return <span></span>;
     }
   },
 
   render: function() {
     return (
-      <div>
+      <div className={this.props.className}>
         {this.displayLogState(session.getLogState())}
       </div>
     );
