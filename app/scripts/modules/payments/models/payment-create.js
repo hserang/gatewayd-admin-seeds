@@ -15,8 +15,9 @@ var Payment = Backbone.Model.extend({
     amount: 0,
     currency: '',
     destinationTag: 0,
-    sourceTag: 0,
-    invoiceId: 0
+    sourceTag: 0, // not implemented yet
+    invoiceId: 0, // not implemented yet
+    memo: '' // not implemented yet
   },
 
   requiredAttrs: {
@@ -33,7 +34,7 @@ var Payment = Backbone.Model.extend({
     }
   },
 
-  url: "http://localhost:5000/payments/outgoing",
+  url: "http://localhost:5000/v1/payments/outgoing",
 
   initialize: function() {
     _.bindAll(this);
@@ -90,7 +91,7 @@ var Payment = Backbone.Model.extend({
       this.validationErrors.push('"' + attr + '" of created payment is invalid');
     }
 
-    //return isDefined && isValid;
+    return isDefined && isValid;
   },
 
   validate: function() {
@@ -118,17 +119,21 @@ var Payment = Backbone.Model.extend({
   },
 
   postPayment: function() {
-    console.log('posting!', this.toJSON());
-    debugger;
-    this.save({
+    var _this = this;
+
+    this.save(null, {
+      contentType: 'application/json',
       headers: {
         Authorization: session.get('credentials')
+      },
+      success: function(model, response, xhr) {
+        console.log('The post is a success!', response);
+        _this.trigger('addNewSentPayment', response.payment);
       }
     });
   },
 
   sendPayment: function(payment) {
-    console.log('let\'s send a payment', payment);
     this.setPayment(payment);
     this.postPayment();
   }
