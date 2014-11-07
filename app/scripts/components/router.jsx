@@ -21,7 +21,7 @@ var App = require('./app.jsx');
 var routes = (
   <Routes>
     <Route name="app" path="/" handler={App}>
-      <DefaultRoute handler={Payments} />
+      <DefaultRoute handler={Payments} path="payments/outgoing" />
       <Route name="login" handler={Session} />
       <Route name="logout" handler={Session} />
       <Route name="payments" handler={Payments}>
