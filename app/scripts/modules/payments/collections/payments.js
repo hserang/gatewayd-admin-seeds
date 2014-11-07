@@ -17,7 +17,7 @@ var Payments = Backbone.Collection.extend({
   baseUrl: "http://localhost:5000",
 
   initialize: function() {
-    _.bindAll(this, 'dispatcherCallback');
+    _.bindAll(this);
 
     //register method with dispatcher
     adminDispatcher.register(this.dispatcherCallback);
@@ -46,6 +46,14 @@ var Payments = Backbone.Collection.extend({
       "method": "get"
     },
     "/payments/failed": {
+      "path":"/v1/ripple_transactions",
+      "method": "get"
+    },
+    "/payments/outgoing": {
+      "path":"/v1/ripple_transactions",
+      "method": "get"
+    },
+    "/payments/new": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
@@ -78,6 +86,12 @@ var Payments = Backbone.Collection.extend({
   parse: function(data) {
     console.log(data);
     return data.ripple_transactions;
+  },
+
+  addNewSentPayment: function(payment) {
+    console.log('# of models before', this.length);
+    this.add(payment);
+    console.log('# of models after', this.length);
   }
 });
 
