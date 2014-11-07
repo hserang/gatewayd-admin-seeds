@@ -21,6 +21,13 @@ var actions = {
       actionType: paymentActions.sendPayment,
       data: payment
     });
+  },
+
+  addNewSentPayment: function(payment) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.addNewSentPayment,
+      data: payment
+    });
   }
 };
 
