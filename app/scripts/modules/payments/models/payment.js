@@ -9,6 +9,11 @@ Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
   defaults: {
+    // id: 0,
+    // createdAt: 0,
+    // updatedAt: 0,
+    // uid: 0,
+    // client_resource_id: 0,
     to_address_id: 0,
     from_address_id: 0,
     to_amount: 0.0,
