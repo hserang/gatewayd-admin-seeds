@@ -2,8 +2,7 @@
 
 var _ = require('lodash');
 var React = require('react');
-var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
-var BootstrapButton = require('react-bootstrap').Button;
+var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
 var url = require('url');
@@ -32,17 +31,29 @@ var Payments = React.createClass({
 
   getInitialState: function() {
     //return getStateFromStores(collection);
-    return { payments: []};
+    return {
+      payments: [],
+      showForm: false,
+      toggledSymbol: '+'
+    };
   },
 
   componentDidMount: function() {
     collection.on("sync", this.handleCollectionChange);
+    collection.on('newSentPaymentAdded', this.resetFormState);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   handleCollectionChange: function(collection) {
     this.setState({
       payments: collection
+    });
+  },
+
+  resetFormState: function() {
+    this.setState({
+      showForm: false,
+      toggledSymbol: '+'
     });
   },
 
@@ -54,13 +65,24 @@ var Payments = React.createClass({
     PaymentActions.delete(e.id);
   },
 
-  showCreateForm: function() {
-    return <PaymentCreateForm model={model} />;
+  toggleForm: function() {
+    var showFormSymbols = {
+      false: '-',
+      true: '+'
+    };
+
+    this.setState({
+      showForm: !this.state.showForm
+    });
+
+    this.setState({
+      toggledSymbol: showFormSymbols[this.state.showForm]
+    });
   },
 
   switchState: function(path) {
     var options = {
-      '/payments/new': this.showCreateForm
+      '/payments/outgoing': this.showCreateForm
     };
 
     if (!_.isUndefined(options[path])) {
@@ -92,8 +114,11 @@ var Payments = React.createClass({
 
     return (
       <div>
-        {this.switchState(this.getCurrentPath())}
-        <h1>Payments here</h1>
+        {this.state.showForm ? <PaymentCreateForm model={model} /> : null}
+        <div>
+          <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
+          <h1>Payments here</h1>
+        </div>
         <ul className="list-group">
         {paymentItems}
         </ul>

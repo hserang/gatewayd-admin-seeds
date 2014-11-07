@@ -31,16 +31,19 @@ var PaymentHistory = React.createClass({
     paymentActions.sendPayment(payment);
   },
 
+  dispatchAddNewSentPayment: function(payment) {
+    paymentActions.addNewSentPayment(payment);
+  },
+
   componentDidMount: function() {
     var _this = this;
 
-    this.props.model.on('sync', function() {
-      _this.transitionTo('/payments/outgoing');
-    });
+    this.props.model.on('addNewSentPayment', this.dispatchAddNewSentPayment);
+  },
 
-    this.props.model.on('addNewSentPayment', function(payment) {
-      paymentActions.addNewSentPayment(payment);
-    });
+  componentWillUnmount: function() {
+    this.props.model.off('sync');
+    this.props.model.off('addNewSentPayment');
   },
 
   render: function() {

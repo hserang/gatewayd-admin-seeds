@@ -92,6 +92,7 @@ var Payments = Backbone.Collection.extend({
     console.log('# of models before', this.length);
     this.add(payment);
     console.log('# of models after', this.length);
+    this.trigger('newSentPaymentAdded');
   }
 });
 
