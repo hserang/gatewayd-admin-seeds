@@ -42,7 +42,6 @@ var PaymentHistory = React.createClass({
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('sync');
     this.props.model.off('addNewSentPayment');
   },
 
