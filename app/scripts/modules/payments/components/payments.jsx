@@ -84,7 +84,8 @@ var Payments = React.createClass({
             sourceAddress={model.get("from_issuer")}
             currency={currency}
             symbol={getSymbol(currency)}
-            amount={numeral(model.get("from_amount")).format('0,0.00')}
+            // amount={numeral(model.get("from_amount")).format('0,0.00')}
+            amount={model.get("from_amount")}
             onClick={this.handleClick.bind(this, "foo")}
           />);
     }, this);
