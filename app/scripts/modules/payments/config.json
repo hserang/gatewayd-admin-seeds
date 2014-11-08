@@ -2,7 +2,7 @@
   "actions": {
     "updateUrl": "updateUrl",
     "delete": "delete",
-    "sendPayment": "sendPayment",
-    "addNewSentPayment": "addNewSentPayment"
+    "sendPaymentAttempt": "sendPaymentAttempt",
+    "sendPaymentComplete": "sendPaymentComplete"
   }
 }

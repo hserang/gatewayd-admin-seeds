@@ -45,7 +45,7 @@ var Payment = Backbone.Model.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[paymentActions.sendPayment] = this.sendPayment;
+    handleAction[paymentActions.sendPaymentAttempt] = this.sendPaymentAttempt;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -118,6 +118,47 @@ var Payment = Backbone.Model.extend({
     this.set('invoiceId', payment.invoiceId);
   },
 
+  pollPaymentStatus: function(payment) {
+    var _this = this;
+    var isPending = true;
+
+    var setHeader = function(xhr) {
+      xhr.setRequestHeader('Authorization', session.get('credentials'));
+    };
+
+    var handleError = function(data) {
+      isPending = false;
+      clearInterval(intervalToken);
+      _this.trigger('sendPaymentError', data.ripple_transaction.data.error || 'error');
+      _this.trigger('sendPaymentComplete', data.ripple_transaction);
+    };
+
+    var handleSuccess = function(data) {
+      if (data.ripple_transaction.state === 'succeeded') {
+        isPending = false;
+        clearInterval(intervalToken);
+        _this.trigger('sendPaymentSuccess');
+        _this.trigger('sendPaymentComplete', data.ripple_transaction);
+      } else if (data.ripple_transaction.state === 'failed') {
+        handleError(data);
+      }
+    };
+
+    var requestPaymentStatus = function() {
+      _this.trigger('pollingPaymentState');
+      $.ajax({
+        url: 'http://localhost:5000/v1/ripple_transactions/' + payment.id,
+        type: 'GET',
+        dataType: 'json',
+        success: handleSuccess,
+        error: handleError,
+        beforeSend: setHeader
+      });
+    };
+
+    var intervalToken = setInterval(requestPaymentStatus, 4000);
+  },
+
   postPayment: function() {
     var _this = this;
 
@@ -127,13 +168,15 @@ var Payment = Backbone.Model.extend({
         Authorization: session.get('credentials')
       },
       success: function(model, response, xhr) {
-        console.log('The post is a success!', response);
-        _this.trigger('addNewSentPayment', response.payment);
+        _this.pollPaymentStatus(response.payment);
+      },
+      error: function(model, response, xhr) {
+        _this.trigger('sendPaymentError', response.responseJSON.error.message);
       }
     });
   },
 
-  sendPayment: function(payment) {
+  sendPaymentAttempt: function(payment) {
     this.setPayment(payment);
     this.postPayment();
   }

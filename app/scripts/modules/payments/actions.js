@@ -16,16 +16,16 @@ var actions = {
     });
   },
 
-  sendPayment: function(payment) {
+  sendPaymentAttempt: function(payment) {
     adminDispatcher.handleEvent({
-      actionType: paymentActions.sendPayment,
+      actionType: paymentActions.sendPaymentAttempt,
       data: payment
     });
   },
 
-  addNewSentPayment: function(payment) {
+  sendPaymentComplete: function(payment) {
     adminDispatcher.handleEvent({
-      actionType: paymentActions.addNewSentPayment,
+      actionType: paymentActions.sendPaymentComplete,
       data: payment
     });
   }

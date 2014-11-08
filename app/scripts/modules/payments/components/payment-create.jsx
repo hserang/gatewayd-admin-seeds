@@ -4,9 +4,10 @@ var React = require('react');
 var Navigation = require('react-router').Navigation;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
+var ProgressBar = require('react-bootstrap').ProgressBar;
 var paymentActions = require('../actions');
 
-var PaymentHistory = React.createClass({
+var PaymentCreate = React.createClass({
   mixins: [Navigation],
 
   formatInput: function(rawInputRef, type) {
@@ -28,21 +29,63 @@ var PaymentHistory = React.createClass({
       memo: this.formatInput(this.refs.memo, 'string') || null // not implemented yet
     };
 
-    paymentActions.sendPayment(payment);
+    paymentActions.sendPaymentAttempt(payment);
+    this.setState({
+      progressLabel: '%(percent)s%',
+      progressPercentage: 0,
+      showProgressBar: true
+    });
   },
 
-  dispatchAddNewSentPayment: function(payment) {
-    paymentActions.addNewSentPayment(payment);
+  handleSuccess: function(payment) {
+    this.setState({
+      progressPercentage: 100,
+      progressStyle: 'success'
+    });
+  },
+
+  handleError: function(errorMessage) {
+    this.setState({
+      progressLabel: 'Error: ' + errorMessage,
+      progressPercentage: 100,
+      progressStyle: 'danger'
+    });
+  },
+
+  dispatchSendPaymentComplete: function(payment) {
+    paymentActions.sendPaymentComplete(payment);
+  },
+
+  handlePolling: function() {
+    this.setState({
+      progressPercentage: this.state.progressPercentage + 25,
+      progressStyle: 'primary'
+    });
+  },
+
+  getInitialState: function() {
+    return {
+      showProgressBar: false,
+      progressLabel: '%(percent)s%',
+      progressPercentage: 0,
+      progressStyle: 'primary'
+    };
   },
 
   componentDidMount: function() {
     var _this = this;
 
-    this.props.model.on('addNewSentPayment', this.dispatchAddNewSentPayment);
+    this.props.model.on('sendPaymentSuccess', this.handleSuccess);
+    this.props.model.on('sendPaymentError', this.handleError);
+    this.props.model.on('sendPaymentComplete', this.dispatchSendPaymentComplete);
+    this.props.model.on('pollingPaymentState', this.handlePolling);
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('addNewSentPayment');
+    this.props.model.off('sendPaymentSuccess');
+    this.props.model.off('sendPaymentError');
+    this.props.model.off('sendPaymentComplete');
+    this.props.model.off('pollingPaymentState');
   },
 
   render: function() {
@@ -58,10 +101,16 @@ var PaymentHistory = React.createClass({
           <Input type="text" ref="currency" label="Currency:" required />
           <Input type="textarea" ref="memo" label="Memo:" />
           <Button bsStyle="primary" type="submit">Submit Payment</Button>
+          <br />
+          <br />
+          {this.state.showProgressBar ?
+            <ProgressBar
+              now={this.state.progressPercentage} label={this.state.progressLabel} bsStyle={this.state.progressStyle}
+            /> : null}
         </form>
       </div>
     );
   }
 });
 
-module.exports = PaymentHistory;
+module.exports = PaymentCreate;

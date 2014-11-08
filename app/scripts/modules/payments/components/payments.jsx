@@ -39,9 +39,16 @@ var Payments = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('sync', this.handleCollectionChange);
-    collection.on('newSentPaymentAdded', this.resetFormState);
+    var _this = this;
+
+    collection.on('sync', _this.handleCollectionChange);
+    collection.on('paymentComplete', _this.resetFormState);
     PaymentActions.updateUrl(this.getCurrentPath());
+  },
+
+  componentWillUnmount: function() {
+    collection.off('sync');
+    collection.off('paymentComplete');
   },
 
   handleCollectionChange: function(collection) {
@@ -50,17 +57,6 @@ var Payments = React.createClass({
     });
   },
 
-  resetFormState: function() {
-    this.setState({
-      showForm: false,
-      toggledSymbol: '+'
-    });
-  },
-
-  componentWillUnmount: function() {
-    collection.off('sync');
-    collection.off('newSentPaymentAdded');
-  },
 
   handleClick: function(e) {
     PaymentActions.delete(e.id);
@@ -81,6 +77,23 @@ var Payments = React.createClass({
     });
   },
 
+  resetFormStateHelper: function() {
+    this.setState({
+      showForm: false,
+      toggledSymbol: '+'
+    });
+  },
+
+  resetFormState: function(paymentWasSuccessful) {
+    var _this = this;
+
+    if (paymentWasSuccessful) {
+      setTimeout(_this.resetFormStateHelper, 2000);
+    } else {
+      _this.forceUpdate();
+    }
+  },
+
   switchState: function(path) {
     var options = {
       '/payments/outgoing': this.showCreateForm
@@ -94,8 +107,6 @@ var Payments = React.createClass({
   },
 
   render: function() {
-
-
     var paymentItems = this.state.payments.map(function(model) {
       var id = model.get('id');
       var currency=model.get("from_currency");
