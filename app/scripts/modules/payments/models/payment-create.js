@@ -17,7 +17,7 @@ var Payment = Backbone.Model.extend({
     currency: '',
     destinationTag: 0,
     sourceTag: 0, // not implemented yet
-    invoiceId: 0, // not implemented yet
+    invoiceId: '', // not implemented yet
     memo: '' // not implemented yet
   },
 
