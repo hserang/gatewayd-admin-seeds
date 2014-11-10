@@ -25,7 +25,6 @@ var routes = (
       <Route name="login" handler={Session} />
       <Route name="logout" handler={Session} />
       <Route name="payments" path="payments/:filter" handler={Payments}/>
-      <Route name="new" path="payments/new" handler={Payments}/>
       <Route name="notFound" handler={NotFound} />
       <NotFoundRoute handler={NotFound} />
     </Route>
