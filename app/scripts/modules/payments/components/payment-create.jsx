@@ -2,6 +2,8 @@
 
 var React = require('react');
 var Navigation = require('react-router').Navigation;
+var Row = require('react-bootstrap').Row;
+var Col = require('react-bootstrap').Col;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var ProgressBar = require('react-bootstrap').ProgressBar;
@@ -57,7 +59,6 @@ var PaymentCreate = React.createClass({
   handleSuccess: function(payment) {
     this.setState({
       submitButtonLabel: 'Payment Successfully Sent',
-      progressBarLabel: 'Complete',
       progressBarPercentage: 100,
       progressBarStyle: 'success'
     });
@@ -136,14 +137,35 @@ var PaymentCreate = React.createClass({
       <div>
         <h2>Send Payment</h2>
         <form onSubmit={this.handleSubmit}>
-          <Input type="text" ref="address" label="Destination Address:" disabled={this.state.disableForm} required />
-          <Input type="text" ref="destinationTag" label="Destination Tag:" disabled={this.state.disableForm} />
-          <Input type="text" ref="sourceTag" label="Source Tag:" disabled={this.state.disableForm} />
-          <Input type="text" ref="invoiceId" label="Invoice Id:" disabled={this.state.disableForm} />
-          <Input type="text" ref="amount" label="Amount:" disabled={this.state.disableForm} required />
-          <Input type="text" ref="currency" label="Currency:" disabled={this.state.disableForm} required />
-          <Input type="textarea" ref="memo" label="Memo:" disabled={this.state.disableForm} />
-          <Button bsStyle="primary" type="submit" disabled={this.state.disableForm}>{this.state.submitButtonLabel}</Button>
+          <Input type="text" ref="address" label="Destination Address: (required)"
+            disabled={this.state.disableForm} autoFocus={true} hasFeedback required />
+          <Row>
+            <Col xs={6}>
+              <Input type="number" ref="destinationTag" label="Destination Tag:"
+                disabled={this.state.disableForm} />
+            </Col>
+            <Col xs={6}>
+              <Input type="number" ref="sourceTag" label="Source Tag:"
+                disabled={this.state.disableForm} />
+            </Col>
+          </Row>
+          <Input type="text" ref="invoiceId" label="Invoice Id:"
+            disabled={this.state.disableForm} />
+          <Row>
+            <Col xs={6}>
+              <Input type="number" step="any" ref="amount" label="Amount: (required)"
+                disabled={this.state.disableForm} required />
+            </Col>
+            <Col xs={6}>
+              <Input type="text" ref="currency" label="Currency: (required)"
+                disabled={this.state.disableForm} required />
+            </Col>
+          </Row>
+          <Input type="textarea" ref="memo" label="Memo:"
+            disabled={this.state.disableForm} />
+          <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
+            disabled={this.state.disableForm}>{this.state.submitButtonLabel}
+          </Button>
           <br />
           <br />
           {this.state.showProgressBar ? progressBar : null}
