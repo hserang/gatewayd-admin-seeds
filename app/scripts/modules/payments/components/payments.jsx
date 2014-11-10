@@ -88,7 +88,7 @@ var Payments = React.createClass({
     var _this = this;
 
     if (paymentWasSuccessful) {
-      setTimeout(_this.resetFormStateHelper, 2000);
+      setTimeout(_this.resetFormStateHelper, 5000);
     } else {
       _this.forceUpdate();
     }
