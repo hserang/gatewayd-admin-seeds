@@ -10,6 +10,15 @@ var paymentActions = require('../actions');
 var PaymentCreate = React.createClass({
   mixins: [Navigation],
 
+  advanceProgressBar: function(amount) {
+    if (this.state.progressBarPercentage + amount < 100) {
+      this.setState({
+        progressBarPercentage: this.state.progressBarPercentage + amount,
+        progressBarStyle: 'primary'
+      });
+    }
+  },
+
   formatInput: function(rawInputRef, type) {
     var formattedInput = rawInputRef.getValue().trim();
 
@@ -19,6 +28,7 @@ var PaymentCreate = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
 
+    var _this = this;
     var payment = {
       address: this.formatInput(this.refs.address, 'string'),
       amount: this.formatInput(this.refs.amount, 'number'),
@@ -30,29 +40,41 @@ var PaymentCreate = React.createClass({
     };
 
     paymentActions.sendPaymentAttempt(payment);
+
     this.setState({
-      progressLabel: '%(percent)s%',
-      progressPercentage: 0,
+      disableForm: true,
+      submitButtonLabel: 'Sending Payment...',
+      progressBarLabel: '',
+      progressBarPercentage: 0,
       showProgressBar: true
     });
+
+    this.intervalToken = setInterval(function() {
+      _this.advanceProgressBar(1);
+    }, 400);
   },
 
   handleSuccess: function(payment) {
     this.setState({
-      progressPercentage: 100,
-      progressStyle: 'success'
+      submitButtonLabel: 'Payment Successfully Sent',
+      progressBarLabel: 'Complete',
+      progressBarPercentage: 100,
+      progressBarStyle: 'success'
     });
   },
 
   handleError: function(errorMessage) {
     this.setState({
-      progressLabel: 'Error: ' + errorMessage,
-      progressPercentage: 100,
-      progressStyle: 'danger'
+      disableForm: false,
+      submitButtonLabel: 'Re-Submit Payment?',
+      progressBarLabel: 'Error: ' + errorMessage,
+      progressBarPercentage: 100,
+      progressBarStyle: 'danger'
     });
   },
 
   dispatchSendPaymentComplete: function(payment) {
+    clearInterval(this.intervalToken);
     this.setState({
       showGraphLink: true,
       graphUrl: this.state.graphUrl + payment.transaction_hash
@@ -62,18 +84,17 @@ var PaymentCreate = React.createClass({
   },
 
   handlePolling: function() {
-    this.setState({
-      progressPercentage: this.state.progressPercentage + 25,
-      progressStyle: 'primary'
-    });
+    this.advanceProgressBar(25);
   },
 
   getInitialState: function() {
     return {
+      disableForm: false,
+      submitButtonLabel: 'Submit Payment',
       showProgressBar: false,
-      progressLabel: '%(percent)s%',
-      progressPercentage: 0,
-      progressStyle: 'primary',
+      progressBarLabel: '',
+      progressBarPercentage: 0,
+      progressBarStyle: 'primary',
       showGraphLink: false,
       graphUrl: 'http://www.ripple.com/graph/'
     };
@@ -103,9 +124,9 @@ var PaymentCreate = React.createClass({
     );
     var progressBar = (
       <div>
-        <ProgressBar now={this.state.progressPercentage}
-          label={this.state.progressLabel}
-          bsStyle={this.state.progressStyle}
+        <ProgressBar now={this.state.progressBarPercentage}
+          label={this.state.progressBarLabel}
+          bsStyle={this.state.progressBarStyle}
         />
         {this.state.showGraphLink ? graphLink : null}
       </div>
@@ -115,14 +136,14 @@ var PaymentCreate = React.createClass({
       <div>
         <h2>Send Payment</h2>
         <form onSubmit={this.handleSubmit}>
-          <Input type="text" ref="address" label="Destination Address:" required />
-          <Input type="text" ref="destinationTag" label="Destination Tag:" />
-          <Input type="text" ref="sourceTag" label="Source Tag:" />
-          <Input type="text" ref="invoiceId" label="Invoice Id:" />
-          <Input type="text" ref="amount" label="Amount:" required />
-          <Input type="text" ref="currency" label="Currency:" required />
-          <Input type="textarea" ref="memo" label="Memo:" />
-          <Button bsStyle="primary" type="submit">Submit Payment</Button>
+          <Input type="text" ref="address" label="Destination Address:" disabled={this.state.disableForm} required />
+          <Input type="text" ref="destinationTag" label="Destination Tag:" disabled={this.state.disableForm} />
+          <Input type="text" ref="sourceTag" label="Source Tag:" disabled={this.state.disableForm} />
+          <Input type="text" ref="invoiceId" label="Invoice Id:" disabled={this.state.disableForm} />
+          <Input type="text" ref="amount" label="Amount:" disabled={this.state.disableForm} required />
+          <Input type="text" ref="currency" label="Currency:" disabled={this.state.disableForm} required />
+          <Input type="textarea" ref="memo" label="Memo:" disabled={this.state.disableForm} />
+          <Button bsStyle="primary" type="submit" disabled={this.state.disableForm}>{this.state.submitButtonLabel}</Button>
           <br />
           <br />
           {this.state.showProgressBar ? progressBar : null}
