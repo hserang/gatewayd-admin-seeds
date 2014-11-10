@@ -32,7 +32,6 @@ var App =
     },
 
     render:function(){
-      console.log("app render");
       if (!session.get('lastLogin')) {
         this.attemptSessionRestoration();
         this.redirectToLogin();

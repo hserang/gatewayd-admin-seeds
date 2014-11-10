@@ -54,9 +54,6 @@ var Payments = React.createClass({
   },
 
 
-  componentWillReceiveProps: function() {
-  },
-
   handleClick: function(e) {
     PaymentActions.delete(e.id);
   },
@@ -93,20 +90,8 @@ var Payments = React.createClass({
     }
   },
 
-  switchState: function(path) {
-    var options = {
-      '/payments/outgoing': this.showCreateForm
-    };
-
-    if (!_.isUndefined(options[path])) {
-      return options[path]();
-    } else {
-      return false;
-    }
-  },
-
   render: function() {
-    var paymentItems = this.state.payments.map(function(model) {
+    var paymentItems = this.state.payments.filterByDirection(this.props.params.filter).map(function(model) {
       var id = model.get('id');
       var currency=model.get("from_currency");
 

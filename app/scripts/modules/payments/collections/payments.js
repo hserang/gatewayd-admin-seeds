@@ -19,8 +19,6 @@ var Payments = Backbone.Collection.extend({
   initialize: function() {
     _.bindAll(this);
 
-    console.log("initialize called");
-
     //register method with dispatcher
     adminDispatcher.register(this.dispatcherCallback);
   },
@@ -57,7 +55,7 @@ var Payments = Backbone.Collection.extend({
     "/payments/new": {
       "path":"/v1/ripple_transactions",
       "method": "get"
-    },
+    }
     // "/payments/new": {
     //   "path": "/v1/ripple_transactions/:id",
     //   "method": "post"
@@ -81,6 +79,21 @@ var Payments = Backbone.Collection.extend({
         Authorization: session.get('credentials')
       }
     });
+  },
+
+  directionMap: {
+    incoming: "from-ripple",
+    outgoing: "to-ripple"
+  },
+
+  filterByDirection: function(direction) {
+    var _this = this;
+
+    var filtered = this.filter(function(model) {
+      return model.get("direction") === _this.directionMap[direction];
+    });
+
+    return new Payments(filtered);
   },
 
   //create fixture. delete when db ready
