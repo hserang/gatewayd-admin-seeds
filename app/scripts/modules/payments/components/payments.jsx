@@ -20,29 +20,25 @@ var model = new Model();
 
 var PaymentCreateForm = require('./payment-create.jsx');
 
-var getStateFromStores = function(store) {
-  return {
-    payments: store
-  };
-};
-
 var Payments = React.createClass({
   mixins: [CurrentPath],
 
-  getInitialState: function() {
-    //return getStateFromStores(collection);
+  getStateFromStore: function(props) {
+    props = props || this.props;
     return {
-      payments: [],
+      payments: collection,
       showForm: false,
       toggledSymbol: '+'
     };
   },
 
-  componentDidMount: function() {
-    var _this = this;
+  getInitialState: function() {
+    return this.getStateFromStore();
+  },
 
-    collection.on('sync', _this.handleCollectionChange);
-    collection.on('paymentComplete', _this.resetFormState);
+  componentDidMount: function() {
+    collection.on('sync', this.handleCollectionChange);
+    collection.on('paymentComplete', this.resetFormState);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
@@ -57,6 +53,9 @@ var Payments = React.createClass({
     });
   },
 
+
+  componentWillReceiveProps: function() {
+  },
 
   handleClick: function(e) {
     PaymentActions.delete(e.id);

@@ -13,7 +13,7 @@ require('react-bootstrap');
 
 var topBarConfig = {
   brandName: 'Gatewayd Basic',
-  wrapperClass: 'navbar-inverse top-bar container-fluid',
+  wrapperClass: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
   links: [ ]
 };
 
@@ -32,6 +32,7 @@ var App =
     },
 
     render:function(){
+      console.log("app render");
       if (!session.get('lastLogin')) {
         this.attemptSessionRestoration();
         this.redirectToLogin();

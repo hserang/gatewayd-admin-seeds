@@ -24,13 +24,8 @@ var routes = (
       <DefaultRoute handler={Payments} path="payments/outgoing" />
       <Route name="login" handler={Session} />
       <Route name="logout" handler={Session} />
-      <Route name="payments" handler={Payments}>
-        <Route name="incoming" path="incoming" handler={Payments} />
-        <Route name="outgoing" path="outgoing" handler={Payments} />
-        <Route name="completed" path="completed" handler={Payments} />
-        <Route name="failed" path="failed" handler={Payments} />
-        <Route name="new" path="new" handler={Payments} />
-      </Route>
+      <Route name="payments" path="payments/:filter" handler={Payments}/>
+      <Route name="new" path="payments/new" handler={Payments}/>
       <Route name="notFound" handler={NotFound} />
       <NotFoundRoute handler={NotFound} />
     </Route>

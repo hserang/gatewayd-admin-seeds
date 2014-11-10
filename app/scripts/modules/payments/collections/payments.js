@@ -19,12 +19,13 @@ var Payments = Backbone.Collection.extend({
   initialize: function() {
     _.bindAll(this);
 
+    console.log("initialize called");
+
     //register method with dispatcher
     adminDispatcher.register(this.dispatcherCallback);
   },
 
   dispatcherCallback: function(payload) {
-    console.log("payload", payload);
     if (_.isUndefined(this[payload.actionType])) {
       return false;
     }
@@ -75,7 +76,6 @@ var Payments = Backbone.Collection.extend({
   },
 
   fetchData: function() {
-    console.log("fetch called");
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
@@ -84,20 +84,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   parse: function(data) {
-    console.log('data', data);
-    return data.ripple_transactions.sort(function(a, b) {
-      return b.id - a.id;
-    });
-  },
-
-  sendPaymentComplete: function(payment) {
-    var wasSuccessful = {
-      succeeded: true,
-      failed: false
-    };
-
-    this.unshift(payment);
-    this.trigger('paymentComplete', wasSuccessful[payment.state]);
+    return data.ripple_transactions;
   }
 });
 
