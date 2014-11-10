@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
+var RippleName = require('ripple-name');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var session = require('../../session/models/session');
 var payment = require('../config.json');
@@ -177,8 +178,22 @@ var Payment = Backbone.Model.extend({
   },
 
   sendPaymentAttempt: function(payment) {
-    this.setPayment(payment);
-    this.postPayment();
+    var _this = this;
+
+    RippleName.lookup(payment.address)
+    .then(function(data) {
+      if (data.exists) {
+        payment.address = data.address;
+
+        _this.setPayment(payment);
+        _this.postPayment();
+      } else {
+        _this.trigger('sendPaymentError', 'ripple name does not exist');
+      }
+    })
+    .error(function() {
+      _this.trigger('sendPaymentError', 'ripple name/address lookup failed');
+    });
   }
 });
 
