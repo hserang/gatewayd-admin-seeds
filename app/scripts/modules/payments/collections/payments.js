@@ -83,7 +83,21 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
+  //create fixture. delete when db ready
+  getFakeType: function(data) {
+    var output;
+
+    output = _.map(data.ripple_transactions, function(model) {
+      return _.extend({direction: Math.round(Math.random()) ? "to-ripple" : "from-ripple"}, model);
+    });
+
+    return {ripple_transactions: output};
+  },
+
   parse: function(data) {
+    // add fixture. Remove when db is ready
+    data = this.getFakeType(data);
+
     return data.ripple_transactions;
   }
 });
