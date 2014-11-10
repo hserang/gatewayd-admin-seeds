@@ -22,7 +22,7 @@ var PaymentCreate = React.createClass({
     var payment = {
       address: this.formatInput(this.refs.address, 'string'),
       amount: this.formatInput(this.refs.amount, 'number'),
-      currency: this.formatInput(this.refs.currency, 'string'),
+      currency: this.formatInput(this.refs.currency, 'string').toUpperCase(),
       destinationTag: this.formatInput(this.refs.destinationTag, 'number') || null,
       sourceTag: this.formatInput(this.refs.sourceTag, 'number') || null, // not implemented yet
       invoiceId: this.formatInput(this.refs.invoiceId, 'string') || null, // not implemented yet
