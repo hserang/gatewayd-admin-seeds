@@ -53,6 +53,11 @@ var PaymentCreate = React.createClass({
   },
 
   dispatchSendPaymentComplete: function(payment) {
+    this.setState({
+      showGraphLink: true,
+      graphUrl: this.state.graphUrl + payment.transaction_hash
+    });
+
     paymentActions.sendPaymentComplete(payment);
   },
 
@@ -68,7 +73,9 @@ var PaymentCreate = React.createClass({
       showProgressBar: false,
       progressLabel: '%(percent)s%',
       progressPercentage: 0,
-      progressStyle: 'primary'
+      progressStyle: 'primary',
+      showGraphLink: false,
+      graphUrl: 'http://www.ripple.com/graph/'
     };
   },
 
@@ -89,6 +96,21 @@ var PaymentCreate = React.createClass({
   },
 
   render: function() {
+    var graphLink = (
+      <a href={this.state.graphUrl}>
+        See this transaction in action: Ripple Graph
+      </a>
+    );
+    var progressBar = (
+      <div>
+        <ProgressBar now={this.state.progressPercentage}
+          label={this.state.progressLabel}
+          bsStyle={this.state.progressStyle}
+        />
+        {this.state.showGraphLink ? graphLink : null}
+      </div>
+    );
+
     return (
       <div>
         <h2>Send Payment</h2>
@@ -103,10 +125,7 @@ var PaymentCreate = React.createClass({
           <Button bsStyle="primary" type="submit">Submit Payment</Button>
           <br />
           <br />
-          {this.state.showProgressBar ?
-            <ProgressBar
-              now={this.state.progressPercentage} label={this.state.progressLabel} bsStyle={this.state.progressStyle}
-            /> : null}
+          {this.state.showProgressBar ? progressBar : null}
         </form>
       </div>
     );
