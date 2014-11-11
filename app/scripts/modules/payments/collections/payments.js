@@ -91,14 +91,9 @@ var Payments = Backbone.Collection.extend({
   },
 
   filterByDirection: function(direction) {
-    var _this = this;
-
-    var filtered = this.filter(function(model) {
-      return model.get("direction") === _this.directionMap[direction];
+    return this.where({
+      direction: this.directionMap[direction]
     });
-
-    console.log('making a new payments collection');
-    return new Payments(filtered);
   },
 
   //create fixture. delete when db ready
@@ -120,9 +115,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   sendPaymentComplete: function(payment) {
-    console.log('before', this.length);
     this.add(payment);
-    console.log('after', this.length);
   }
 });
 
