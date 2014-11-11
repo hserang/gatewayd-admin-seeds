@@ -30,7 +30,7 @@ var LoginForm = React.createClass({
   componentDidMount: function() {
     var _this = this;
     Session.on('loggedIn', function() {
-      _this.transitionTo('payments');
+      _this.transitionTo('payments/outgoing');
     });
   },
 
