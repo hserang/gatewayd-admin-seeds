@@ -3,6 +3,7 @@
 var React = require('react');
 var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
+var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var ProgressBar = require('react-bootstrap').ProgressBar;
@@ -134,8 +135,21 @@ var PaymentCreate = React.createClass({
       <div>
         <h2>Send Payment</h2>
         <form onSubmit={this.handleSubmit}>
-          <Input type="text" ref="address" label="Destination Address: (required)"
+          <Label bsStyle="info">Required</Label>
+          <Input type="text" ref="address" label="Destination Address:"
             disabled={this.state.disableForm} autoFocus={true} hasFeedback required />
+          <Row>
+            <Col xs={6}>
+              <Label bsStyle="info">Required</Label>
+              <Input type="tel" ref="amount" label="Amount:"
+                disabled={this.state.disableForm} required />
+            </Col>
+            <Col xs={6}>
+              <Label bsStyle="info">Required</Label>
+              <Input type="text" ref="currency" label="Currency:"
+                disabled={this.state.disableForm} required />
+            </Col>
+          </Row>
           <Row>
             <Col xs={6}>
               <Input type="tel" ref="destinationTag" label="Destination Tag:"
@@ -148,16 +162,6 @@ var PaymentCreate = React.createClass({
           </Row>
           <Input type="text" ref="invoiceId" label="Invoice Id:"
             disabled={this.state.disableForm} />
-          <Row>
-            <Col xs={6}>
-              <Input type="tel" ref="amount" label="Amount: (required)"
-                disabled={this.state.disableForm} required />
-            </Col>
-            <Col xs={6}>
-              <Input type="text" ref="currency" label="Currency: (required)"
-                disabled={this.state.disableForm} required />
-            </Col>
-          </Row>
           <Input type="textarea" ref="memo" label="Memo:"
             disabled={this.state.disableForm} />
           <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
