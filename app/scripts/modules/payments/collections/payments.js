@@ -16,6 +16,10 @@ var Payments = Backbone.Collection.extend({
 
   baseUrl: "http://localhost:5000",
 
+  comparator: function(a, b) {
+    return b.id - a.id;
+  },
+
   initialize: function() {
     _.bindAll(this);
 
