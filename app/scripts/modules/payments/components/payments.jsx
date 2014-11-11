@@ -43,13 +43,13 @@ var Payments = React.createClass({
 
   componentDidMount: function() {
     collection.on('sync', this.handleCollectionChange);
-    collection.on('paymentComplete', this.resetFormState);
+    collection.on('add', this.resetFormState);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   componentWillUnmount: function() {
     collection.off('sync');
-    collection.off('paymentComplete');
+    collection.off('add');
   },
 
   handleCollectionChange: function(collection) {
@@ -82,13 +82,11 @@ var Payments = React.createClass({
     });
   },
 
-  resetFormState: function(paymentWasSuccessful) {
+  resetFormState: function(updatedPaymentsCollection) {
     var _this = this;
 
-    if (paymentWasSuccessful) {
+    if (updatedPaymentsCollection.get('state') === 'succeeded') {
       setTimeout(_this.resetFormStateHelper, 5000);
-    } else {
-      _this.forceUpdate();
     }
   },
 
