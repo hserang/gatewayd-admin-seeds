@@ -30,16 +30,14 @@ var PaymentCreate = React.createClass({
 
     var _this = this;
     var payment = {
-      address: this.formatInput(this.refs.address, 'string'),
-      amount: this.formatInput(this.refs.amount, 'number'),
-      currency: this.formatInput(this.refs.currency, 'string').toUpperCase(),
+      address: this.formatInput(this.refs.address, 'string') || null,
+      amount: this.formatInput(this.refs.amount, 'number') || null,
+      currency: this.formatInput(this.refs.currency, 'string').toUpperCase() || null,
       destinationTag: this.formatInput(this.refs.destinationTag, 'number') || null,
       sourceTag: this.formatInput(this.refs.sourceTag, 'number') || null, // not implemented yet
       invoiceId: this.formatInput(this.refs.invoiceId, 'string') || null, // not implemented yet
       memo: this.formatInput(this.refs.memo, 'string') || null // not implemented yet
     };
-
-    paymentActions.sendPaymentAttempt(payment);
 
     this.setState({
       disableForm: true,
@@ -52,9 +50,12 @@ var PaymentCreate = React.createClass({
     this.intervalToken = setInterval(function() {
       _this.advanceProgressBar(1);
     }, 400);
+
+    paymentActions.sendPaymentAttempt(payment);
   },
 
   handleSuccess: function(payment) {
+    clearInterval(this.intervalToken);
     this.setState({
       submitButtonLabel: 'Payment Successfully Sent',
       progressBarPercentage: 100,
@@ -63,6 +64,7 @@ var PaymentCreate = React.createClass({
   },
 
   handleError: function(errorMessage) {
+    clearInterval(this.intervalToken);
     this.setState({
       disableForm: false,
       submitButtonLabel: 'Re-Submit Payment?',
@@ -73,13 +75,12 @@ var PaymentCreate = React.createClass({
   },
 
   dispatchSendPaymentComplete: function(payment) {
-    clearInterval(this.intervalToken);
     this.setState({
       showGraphLink: true,
       graphUrl: this.state.graphUrl + payment.transaction_hash
     });
 
-    paymentActions.sendPaymentComplete(payment); // how to send this up to parent in payments.jsx instead of through the dispatcher to payments.js?
+    paymentActions.sendPaymentComplete(payment);
   },
 
   handlePolling: function() {
@@ -137,17 +138,17 @@ var PaymentCreate = React.createClass({
         <form onSubmit={this.handleSubmit}>
           <Label bsStyle="info">Required</Label>
           <Input type="text" ref="address" label="Destination Address:"
-            disabled={this.state.disableForm} autoFocus={true} hasFeedback required />
+            disabled={this.state.disableForm} autoFocus={true} hasFeedback />
           <Row>
             <Col xs={6}>
               <Label bsStyle="info">Required</Label>
               <Input type="tel" ref="amount" label="Amount:"
-                disabled={this.state.disableForm} required />
+                disabled={this.state.disableForm} />
             </Col>
             <Col xs={6}>
               <Label bsStyle="info">Required</Label>
               <Input type="text" ref="currency" label="Currency:"
-                disabled={this.state.disableForm} required />
+                disabled={this.state.disableForm} />
             </Col>
           </Row>
           <Row>

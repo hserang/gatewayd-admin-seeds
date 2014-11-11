@@ -87,9 +87,9 @@ var Payment = Backbone.Model.extend({
 
     // custom error messaging
     if (!isDefined) {
-      this.validationErrors.push('"' + attr + '" of created payment is undefined');
+      this.validationErrors.push('"' + attr + '" is undefined');
     } else if (!isValid) {
-      this.validationErrors.push('"' + attr + '" of created payment is invalid');
+      this.validationErrors.push('"' + attr + '" is invalid');
     }
 
     return isDefined && isValid;
@@ -98,6 +98,8 @@ var Payment = Backbone.Model.extend({
   validate: function() {
     var isValid = true,
         _this = this;
+
+    this.validationErrors = [];
 
     _.each(this.requiredAttrs, function(requirements, requiredAttr) {
       if (!_this.testValid(requiredAttr, requirements)) {
@@ -180,12 +182,20 @@ var Payment = Backbone.Model.extend({
   sendPaymentAttempt: function(payment) {
     var _this = this;
 
+    this.clear({silent: true});
+    this.setPayment(payment);
+    this.validate();
+
+    if (this.validationErrors.length) {
+      this.trigger('sendPaymentError', this.validationErrors.join(', '));
+      return false;
+    }
+
     RippleName.lookup(payment.address)
     .then(function(data) {
       if (data.exists) {
-        payment.address = data.address;
+        _this.set('address', data.address);
 
-        _this.setPayment(payment);
         _this.postPayment();
       } else {
         _this.trigger('sendPaymentError', 'ripple name does not exist');
