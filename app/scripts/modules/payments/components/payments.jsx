@@ -23,12 +23,17 @@ var PaymentCreateForm = require('./payment-create.jsx');
 var Payments = React.createClass({
   mixins: [CurrentPath],
 
+  formSymbolMap: {
+    true: '-',
+    false: '+'
+  },
+
   getStateFromStore: function(props) {
     props = props || this.props;
     return {
       payments: collection,
       showForm: false,
-      toggledSymbol: '+'
+      toggledSymbol: this.formSymbolMap[false]
     };
   },
 
@@ -59,24 +64,21 @@ var Payments = React.createClass({
   },
 
   toggleForm: function() {
-    var showFormSymbols = {
-      false: '-',
-      true: '+'
-    };
+    var newShowFormState = !this.state.showForm;
 
     this.setState({
-      showForm: !this.state.showForm
+      showForm: newShowFormState
     });
 
     this.setState({
-      toggledSymbol: showFormSymbols[this.state.showForm]
+      toggledSymbol: this.formSymbolMap[newShowFormState]
     });
   },
 
   resetFormStateHelper: function() {
     this.setState({
       showForm: false,
-      toggledSymbol: '+'
+      toggledSymbol: this.formSymbolMap[false]
     });
   },
 
