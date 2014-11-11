@@ -97,6 +97,7 @@ var Payments = Backbone.Collection.extend({
       return model.get("direction") === _this.directionMap[direction];
     });
 
+    console.log('making a new payments collection');
     return new Payments(filtered);
   },
 
@@ -116,6 +117,12 @@ var Payments = Backbone.Collection.extend({
     data = this.getFakeType(data);
 
     return data.ripple_transactions;
+  },
+
+  sendPaymentComplete: function(payment) {
+    console.log('before', this.length);
+    this.add(payment);
+    console.log('after', this.length);
   }
 });
 
