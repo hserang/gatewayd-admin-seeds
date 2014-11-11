@@ -44,13 +44,11 @@ var Payments = React.createClass({
 
   componentDidMount: function() {
     collection.on('sync', this.handleCollectionChange);
-    collection.on('add', this.resetFormState);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   componentWillUnmount: function() {
     collection.off('sync');
-    collection.off('add');
   },
 
   handleCollectionChange: function(collection) {
@@ -76,19 +74,11 @@ var Payments = React.createClass({
     });
   },
 
-  resetFormStateHelper: function() {
+  closeForm: function() {
     this.setState({
       showForm: false,
       toggledSymbol: this.formSymbolMap[false]
     });
-  },
-
-  resetFormState: function(updatedPaymentsCollection) {
-    var _this = this;
-
-    if (updatedPaymentsCollection.get('state') === 'succeeded') {
-      setTimeout(_this.resetFormStateHelper, 5000);
-    }
   },
 
   render: function() {
@@ -114,7 +104,7 @@ var Payments = React.createClass({
     return (
       <div>
         <div className="row">
-          {this.state.showForm ? <PaymentCreateForm model={model} /> : null}
+          {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
           <div className="col-sm-4 col-xs-4">
             <h1>Payments</h1>
           </div>

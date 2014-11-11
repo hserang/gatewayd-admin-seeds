@@ -87,6 +87,10 @@ var PaymentCreate = React.createClass({
     this.advanceProgressBar(25);
   },
 
+  handleClose: function() {
+    this.props.onSubmitSuccess();
+  },
+
   getInitialState: function() {
     return {
       disableForm: false,
