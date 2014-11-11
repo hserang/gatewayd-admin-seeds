@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react');
-var Navigation = require('react-router').Navigation;
 var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
 var Input = require('react-bootstrap').Input;
@@ -10,8 +9,6 @@ var ProgressBar = require('react-bootstrap').ProgressBar;
 var paymentActions = require('../actions');
 
 var PaymentCreate = React.createClass({
-  mixins: [Navigation],
-
   advanceProgressBar: function(amount) {
     if (this.state.progressBarPercentage + amount < 100) {
       this.setState({
