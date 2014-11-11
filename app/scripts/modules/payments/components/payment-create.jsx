@@ -78,7 +78,7 @@ var PaymentCreate = React.createClass({
       graphUrl: this.state.graphUrl + payment.transaction_hash
     });
 
-    paymentActions.sendPaymentComplete(payment);
+    paymentActions.sendPaymentComplete(payment); // how to send this up to parent in payments.jsx instead of through the dispatcher to payments.js?
   },
 
   handlePolling: function() {
@@ -163,6 +163,7 @@ var PaymentCreate = React.createClass({
           <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
             disabled={this.state.disableForm}>{this.state.submitButtonLabel}
           </Button>
+          <br />
           <br />
           <br />
           {this.state.showProgressBar ? progressBar : null}
