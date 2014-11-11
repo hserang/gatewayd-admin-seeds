@@ -68,7 +68,7 @@ var PaymentCreate = React.createClass({
       submitButtonLabel: 'Re-Submit Payment?',
       progressBarLabel: 'Error: ' + errorMessage,
       progressBarPercentage: 100,
-      progressBarStyle: 'danger'
+      progressBarStyle: 'warning'
     });
   },
 
