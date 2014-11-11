@@ -161,7 +161,7 @@ var PaymentCreate = React.createClass({
           <Input type="textarea" ref="memo" label="Memo:"
             disabled={this.state.disableForm} />
           <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
-            disabled={this.state.disableForm}>{this.state.submitButtonLabel}
+            disabled={this.state.disableForm} block>{this.state.submitButtonLabel}
           </Button>
           <br />
           <br />
