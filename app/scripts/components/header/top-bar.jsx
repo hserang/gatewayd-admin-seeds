@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var React = require('react');
 var Branding = require('../../shared/components/branding/branding.jsx');
 var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
@@ -27,13 +28,19 @@ var TopBar = React.createClass({
   },
 
   render: function() {
+    console.log("props", this.props.setup.links);
+    var nav;
+    if (!_.isEmpty(this.props.links)) {
+      nav = (<NavLinks
+          links={this.props.setup.links}
+          className="nav navbar-nav navbar-right"/>)
+    }
+
     return (
       <div className={this.props.setup.wrapperClass}>
         <Branding brandName={this.props.setup.brandName} />
         <Greeting />
-        <NavLinks
-          links={this.props.setup.links}
-          className="nav navbar-nav navbar-right"/>
+        {nav}
       </div>
     );
   }
