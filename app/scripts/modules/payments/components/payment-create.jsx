@@ -138,11 +138,11 @@ var PaymentCreate = React.createClass({
             disabled={this.state.disableForm} autoFocus={true} hasFeedback required />
           <Row>
             <Col xs={6}>
-              <Input type="number" ref="destinationTag" label="Destination Tag:"
+              <Input type="tel" ref="destinationTag" label="Destination Tag:"
                 disabled={this.state.disableForm} />
             </Col>
             <Col xs={6}>
-              <Input type="number" ref="sourceTag" label="Source Tag:"
+              <Input type="tel" ref="sourceTag" label="Source Tag:"
                 disabled={this.state.disableForm} />
             </Col>
           </Row>
@@ -150,7 +150,7 @@ var PaymentCreate = React.createClass({
             disabled={this.state.disableForm} />
           <Row>
             <Col xs={6}>
-              <Input type="number" step="any" ref="amount" label="Amount: (required)"
+              <Input type="tel" ref="amount" label="Amount: (required)"
                 disabled={this.state.disableForm} required />
             </Col>
             <Col xs={6}>
