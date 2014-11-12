@@ -41,7 +41,7 @@ var App =
           <RouterHeader setup={topBarConfig} />
           <div className="container">
             <div className="row">
-              <div className="col-sm-12  col-md-10 main">
+              <div className="col-sm-12  col-md-12 main">
                 {this.props.activeRouteHandler()}
               </div>
             </div>
