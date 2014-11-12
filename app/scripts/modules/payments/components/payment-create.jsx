@@ -10,6 +10,61 @@ var ProgressBar = require('react-bootstrap').ProgressBar;
 var paymentActions = require('../actions');
 
 var PaymentCreate = React.createClass({
+  validationMap: {
+    untested: 'error', // change to primary when react-bootstrap updates or use custom styling
+    valid: 'success',
+    invalid: 'warning'
+  },
+
+  validateAddress: function() {
+    console.log('validating address');
+    this.setState({
+      addressIsValid: 'valid'
+    });
+  },
+
+  validateAmount: function() {
+    console.log('validating amount');
+    this.setState({
+      amountIsValid: 'valid'
+    });
+  },
+
+  validateCurrency: function() {
+    console.log('validating currency');
+    this.setState({
+      currencyIsValid: 'valid'
+    });
+  },
+
+  validateDestinationTag: function() {
+    console.log('validating destination tag');
+    this.setState({
+      destinationTagIsValid: 'valid'
+    });
+  },
+
+  validateSourceTag: function() {
+    console.log('validating source tag');
+    this.setState({
+      sourceTagIsValid: 'valid'
+    });
+  },
+
+  validateInvoiceId: function() {
+    console.log('validating invoice id');
+    this.setState({
+      invoiceIdIsValid: 'valid'
+    });
+  },
+
+  validateMemo: function() {
+    console.log('validating memo');
+    this.setState({
+      memoIsValid: 'valid'
+    });
+  },
+
   advanceProgressBar: function(amount) {
     if (this.state.progressBarPercentage + amount < 100) {
       this.setState({
@@ -93,6 +148,13 @@ var PaymentCreate = React.createClass({
 
   getInitialState: function() {
     return {
+      addressIsValid: 'untested',
+      amountIsValid: 'untested',
+      currencyIsValid: 'untested',
+      destinationTagIsValid: 'untested',
+      sourceTagIsValid: 'untested',
+      invoiceIdIsValid: 'untested',
+      memoIsValid: 'untested',
       disableForm: false,
       submitButtonLabel: 'Submit Payment',
       showProgressBar: false,
@@ -104,20 +166,23 @@ var PaymentCreate = React.createClass({
     };
   },
 
+
   componentDidMount: function() {
     var _this = this;
 
-    this.props.model.on('sendPaymentSuccess', this.handleSuccess);
-    this.props.model.on('sendPaymentError', this.handleError);
-    this.props.model.on('sendPaymentComplete', this.dispatchSendPaymentComplete);
-    this.props.model.on('pollingPaymentState', this.handlePolling);
+    this.props.model.on('sync', this.handleSync);
+    // this.props.model.on('sendPaymentSuccess', this.handleSuccess);
+    this.props.model.on('invalid error', this.handleError);
+    // this.props.model.on('sendPaymentComplete', this.dispatchSendPaymentComplete);
+    // this.props.model.on('pollingPaymentState', this.handlePolling);
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('sendPaymentSuccess');
-    this.props.model.off('sendPaymentError');
-    this.props.model.off('sendPaymentComplete');
-    this.props.model.off('pollingPaymentState');
+    this.props.model.off('sync');
+    // this.props.model.off('sendPaymentSuccess');
+    this.props.model.off('invalid');
+    // this.props.model.off('sendPaymentComplete');
+    // this.props.model.off('pollingPaymentState');
   },
 
   render: function() {
@@ -142,33 +207,40 @@ var PaymentCreate = React.createClass({
         <form onSubmit={this.handleSubmit}>
           <Label bsStyle="info">Required</Label>
           <Input type="text" ref="address" label="Destination Address:"
-            disabled={this.state.disableForm} autoFocus={true} hasFeedback />
+            bsStyle={this.validationMap[this.state.addressIsValid]}
+            disabled={this.state.disableForm} autoFocus={true} onBlur={this.validateAddress} />
           <Row>
             <Col xs={6}>
               <Label bsStyle="info">Required</Label>
               <Input type="tel" ref="amount" label="Amount:"
-                disabled={this.state.disableForm} />
+                bsStyle={this.validationMap[this.state.amountIsValid]}
+                disabled={this.state.disableForm} onBlur={this.validateAmount} />
             </Col>
             <Col xs={6}>
               <Label bsStyle="info">Required</Label>
               <Input type="text" ref="currency" label="Currency:"
-                disabled={this.state.disableForm} />
+                bsStyle={this.validationMap[this.state.currencyIsValid]}
+                disabled={this.state.disableForm} onBlur={this.validateCurrency} />
             </Col>
           </Row>
           <Row>
             <Col xs={6}>
               <Input type="tel" ref="destinationTag" label="Destination Tag:"
-                disabled={this.state.disableForm} />
+                bsStyle={this.validationMap[this.state.destinationTagIsValid]}
+                disabled={this.state.disableForm} onBlur={this.validateDestinationTag} />
             </Col>
             <Col xs={6}>
               <Input type="tel" ref="sourceTag" label="Source Tag:"
-                disabled={this.state.disableForm} />
+                bsStyle={this.validationMap[this.state.sourceTagIsValid]}
+                disabled={this.state.disableForm} onBlur={this.validateSourceTag} />
             </Col>
           </Row>
           <Input type="text" ref="invoiceId" label="Invoice Id:"
-            disabled={this.state.disableForm} />
+            bsStyle={this.validationMap[this.state.invoiceIdIsValid]}
+            disabled={this.state.disableForm} onBlur={this.validateInvoiceId} />
           <Input type="textarea" ref="memo" label="Memo:"
-            disabled={this.state.disableForm} />
+            bsStyle={this.validationMap[this.state.memoIsValid]}
+            disabled={this.state.disableForm} onBlur={this.validateMemo} />
           <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
             disabled={this.state.disableForm} block>{this.state.submitButtonLabel}
           </Button>
