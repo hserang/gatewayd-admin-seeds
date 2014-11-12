@@ -19,7 +19,7 @@ var PaymentCreate = React.createClass({
   validateAddress: function(e) {
     console.log('what is the dom node?', this.refs.address.getDOMNode());
     console.log('validating address', this.refs.address.getDOMNode().value);
-    this.props.model.validateAddress();
+    // this.props.model.validateAddress();
     this.setState({
       addressIsValid: 'valid'
     });
@@ -27,7 +27,7 @@ var PaymentCreate = React.createClass({
 
   validateAmount: function() {
     console.log('validating amount');
-    this.props.model.validateAmount();
+    // this.props.model.validateAmount();
     this.setState({
       amountIsValid: 'valid'
     });
@@ -35,7 +35,7 @@ var PaymentCreate = React.createClass({
 
   validateCurrency: function() {
     console.log('validating currency');
-    this.props.model.validateCurrency();
+    // this.props.model.validateCurrency();
     this.setState({
       currencyIsValid: 'valid'
     });
@@ -43,7 +43,7 @@ var PaymentCreate = React.createClass({
 
   validateDestinationTag: function() {
     console.log('validating destination tag');
-    this.props.model.validateDestinationTag();
+    // this.props.model.validateDestinationTag();
     this.setState({
       destinationTagIsValid: 'valid'
     });
@@ -51,7 +51,7 @@ var PaymentCreate = React.createClass({
 
   validateSourceTag: function() {
     console.log('validating source tag');
-    this.props.model.validateSourceTag();
+    // this.props.model.validateSourceTag();
     this.setState({
       sourceTagIsValid: 'valid'
     });
@@ -59,7 +59,7 @@ var PaymentCreate = React.createClass({
 
   validateInvoiceId: function() {
     console.log('validating invoice id');
-    this.props.model.validateInvoiceId();
+    // this.props.model.validateInvoiceId();
     this.setState({
       invoiceIdIsValid: 'valid'
     });
@@ -67,7 +67,7 @@ var PaymentCreate = React.createClass({
 
   validateMemo: function() {
     console.log('validating memo');
-    this.props.model.validateMemo();
+    // this.props.model.validateMemo();
     this.setState({
       memoIsValid: 'valid'
     });

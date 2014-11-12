@@ -24,14 +24,17 @@ var Payment = Backbone.Model.extend({
   requiredAttrs: {
     address: {
       type: 'string',
-      minLength: 1 // some min for ripple address, but none for ripple name
+      minLength: 1, // some min for ripple address, but none for ripple name
+      isRequired: true
     },
     amount: {
-      type: 'number' // decimal
+      type: 'number', // decimal,
+      isRequired: true
     },
     currency: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
+      isRequired: true
     }
   },
 
@@ -136,7 +139,7 @@ var Payment = Backbone.Model.extend({
 
     this.validationErrors = [];
 
-    if (arguments.length) {
+    if (arguments.length && typeof arguments[0] === 'string') {
       var attributeToTest = arguments[0];
 
       // for testing single attributes, passed in as a string
@@ -242,61 +245,61 @@ var Payment = Backbone.Model.extend({
     });
   },
 
-  validateAddress: function(address) {
-    this.set({
-      address: address
-    });
+  // validateAddress: function(address) {
+  //   this.set({
+  //     address: address
+  //   });
 
-    this.validate('address');
-  },
+  //   this.validate('address');
+  // },
 
-  validateAmount: function(amount) {
-    this.set({
-      amount: amount
-    });
+  // validateAmount: function(amount) {
+  //   this.set({
+  //     amount: amount
+  //   });
 
-    this.validate('amount');
-  },
+  //   this.validate('amount');
+  // },
 
-  validateCurrency: function(currency) {
-    this.set({
-      currency: currency
-    });
+  // validateCurrency: function(currency) {
+  //   this.set({
+  //     currency: currency
+  //   });
 
-    this.validate('currency');
-  },
+  //   this.validate('currency');
+  // },
 
-  validateDestinationTag: function(destinationTag) {
-    this.set({
-      destinationTag: destinationTag
-    });
+  // validateDestinationTag: function(destinationTag) {
+  //   this.set({
+  //     destinationTag: destinationTag
+  //   });
 
-    this.validate('destinationTag');
-  },
+  //   this.validate('destinationTag');
+  // },
 
-  validateSourceTag: function(sourceTag) {
-    this.set({
-      sourceTag: sourceTag
-    });
+  // validateSourceTag: function(sourceTag) {
+  //   this.set({
+  //     sourceTag: sourceTag
+  //   });
 
-    this.validate('sourceTag');
-  },
+  //   this.validate('sourceTag');
+  // },
 
-  validateInvoiceId: function(invoiceId) {
-    this.set({
-      invoiceId: invoiceId
-    });
+  // validateInvoiceId: function(invoiceId) {
+  //   this.set({
+  //     invoiceId: invoiceId
+  //   });
 
-    this.validate('invoiceId');
-  },
+  //   this.validate('invoiceId');
+  // },
 
-  validateMemo: function(memo) {
-    this.set({
-      memo: memo
-    });
+  // validateMemo: function(memo) {
+  //   this.set({
+  //     memo: memo
+  //   });
 
-    this.validate('memo');
-  }
+  //   this.validate('memo');
+  // }
 });
 
 module.exports = Payment;
