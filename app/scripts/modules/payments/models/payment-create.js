@@ -111,13 +111,18 @@ var Payment = Backbone.Model.extend({
 
   testValid: function(attr, requirements) {
     var attribute = this.get(attr);
+
+    if (attribute === null && !requirements.isRequired) {
+      return true;
+    }
+
     var testValid = {
       object: this.handleObject,
       string: this.handleString,
     };
-    var isDefined = !_.isUndefined(attribute) || !requirements.isRequired;
+    var isDefined = !_.isUndefined(attribute);
     var type = requirements.type === 'array' ? 'object' : requirements.type;
-    var isValid = typeof attribute === type;
+    var isValid = typeof attribute === 'number' ? !isNaN(attribute) : typeof attribute === type;
 
     if (isValid && !_.isUndefined(testValid[typeof attribute])) {
       isValid = testValid[typeof attribute](attribute, requirements.minLength);
@@ -245,61 +250,78 @@ var Payment = Backbone.Model.extend({
     });
   },
 
-  // validateAddress: function(address) {
-  //   this.set({
-  //     address: address
-  //   });
+  handleFieldValidation: function(validationResult, fieldRef) {
+    if (!_.isUndefined(validationResult)) {
+      this.trigger('validationComplete', false, fieldRef, validationResult);
+    } else {
+      this.trigger('validationComplete', true, fieldRef, '');
+    }
+  },
 
-  //   this.validate('address');
-  // },
+  validateAddress: function(address) {
+    var _this = this;
 
-  // validateAmount: function(amount) {
-  //   this.set({
-  //     amount: amount
-  //   });
+    RippleName.lookup(address)
+    .then(function(data) {
+      if (data.exists) {
+        _this.set('address', data.address);
+        _this.handleFieldValidation(_this.validate('address'), 'address');
+      } else {
+        _this.trigger('validationComplete', false, 'address', 'ripple name does not exist');
+      }
+    })
+    .error(function() {
+      _this.trigger('validationComplete', false, 'address', 'ripple name lookup failed');
+    });
+  },
 
-  //   this.validate('amount');
-  // },
+  validateAmount: function(amount) {
+    this.set({
+      amount: amount
+    });
 
-  // validateCurrency: function(currency) {
-  //   this.set({
-  //     currency: currency
-  //   });
+    this.handleFieldValidation(this.validate('amount'), 'amount');
+  },
 
-  //   this.validate('currency');
-  // },
+  validateCurrency: function(currency) {
+    this.set({
+      currency: currency
+    });
 
-  // validateDestinationTag: function(destinationTag) {
-  //   this.set({
-  //     destinationTag: destinationTag
-  //   });
+    this.handleFieldValidation(this.validate('currency'), 'currency');
+  },
 
-  //   this.validate('destinationTag');
-  // },
+  validateDestinationTag: function(destinationTag) {
+    this.set({
+      destinationTag: destinationTag
+    });
 
-  // validateSourceTag: function(sourceTag) {
-  //   this.set({
-  //     sourceTag: sourceTag
-  //   });
+    this.handleFieldValidation(this.validate('destinationTag'), 'destinationTag');
+  },
 
-  //   this.validate('sourceTag');
-  // },
+  validateSourceTag: function(sourceTag) {
+    this.set({
+      sourceTag: sourceTag
+    });
 
-  // validateInvoiceId: function(invoiceId) {
-  //   this.set({
-  //     invoiceId: invoiceId
-  //   });
+    this.handleFieldValidation(this.validate('sourceTag'), 'sourceTag');
+  },
 
-  //   this.validate('invoiceId');
-  // },
+  validateInvoiceId: function(invoiceId) {
+    this.set({
+      invoiceId: invoiceId
+    });
 
-  // validateMemo: function(memo) {
-  //   this.set({
-  //     memo: memo
-  //   });
+    this.handleFieldValidation(this.validate('invoiceId'), 'invoiceId');
+  },
 
-  //   this.validate('memo');
-  // }
+  validateMemo: function(memo) {
+    this.set({
+      memo: memo
+    });
+
+    this.handleFieldValidation(this.validate('memo'), 'memo');
+  }
 });
 
 module.exports = Payment;
