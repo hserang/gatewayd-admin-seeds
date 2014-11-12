@@ -31,7 +31,7 @@ var Payment = Backbone.Model.extend({
     },
     currency: {
       type: 'string',
-      minLength: 3
+      minLength: 1
     }
   },
 
@@ -108,17 +108,8 @@ var Payment = Backbone.Model.extend({
     });
 
     if (!isValid) {
-      return 'There is an error';
+      return this.validationErrors.join(', ');
     }
-  },
-
-  setPayment: function(payment) {
-    this.set('address', payment.address);
-    this.set('amount', payment.amount);
-    this.set('currency', payment.currency);
-    this.set('destinationTag', payment.destinationTag);
-    this.set('sourceTag', payment.sourceTag);
-    this.set('invoiceId', payment.invoiceId);
   },
 
   pollPaymentStatus: function(payment) {
@@ -159,7 +150,7 @@ var Payment = Backbone.Model.extend({
       });
     };
 
-    var intervalToken = setInterval(requestPaymentStatus, 4000);
+    var intervalToken = setInterval(requestPaymentStatus, 5000);
   },
 
   postPayment: function() {
@@ -183,7 +174,7 @@ var Payment = Backbone.Model.extend({
     var _this = this;
 
     this.clear({silent: true});
-    this.setPayment(payment);
+    this.set(payment);
     this.validate();
 
     if (this.validationErrors.length) {
