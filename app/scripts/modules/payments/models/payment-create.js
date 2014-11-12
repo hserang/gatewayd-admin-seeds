@@ -259,6 +259,10 @@ var Payment = Backbone.Model.extend({
   },
 
   validateAddress: function(address) {
+    if (address === null) {
+      return false;
+    }
+
     var _this = this;
 
     RippleName.lookup(address)
@@ -275,52 +279,17 @@ var Payment = Backbone.Model.extend({
     });
   },
 
-  validateAmount: function(amount) {
-    this.set({
-      amount: amount
-    });
+  validateField: function(fieldName, fieldValue) {
+    if (fieldValue === null) {
+      return false;
+    }
 
-    this.handleFieldValidation(this.validate('amount'), 'amount');
-  },
+    var updatedField = {};
+    updatedField[fieldName] = fieldValue;
 
-  validateCurrency: function(currency) {
-    this.set({
-      currency: currency
-    });
+    this.set(updatedField);
 
-    this.handleFieldValidation(this.validate('currency'), 'currency');
-  },
-
-  validateDestinationTag: function(destinationTag) {
-    this.set({
-      destinationTag: destinationTag
-    });
-
-    this.handleFieldValidation(this.validate('destinationTag'), 'destinationTag');
-  },
-
-  validateSourceTag: function(sourceTag) {
-    this.set({
-      sourceTag: sourceTag
-    });
-
-    this.handleFieldValidation(this.validate('sourceTag'), 'sourceTag');
-  },
-
-  validateInvoiceId: function(invoiceId) {
-    this.set({
-      invoiceId: invoiceId
-    });
-
-    this.handleFieldValidation(this.validate('invoiceId'), 'invoiceId');
-  },
-
-  validateMemo: function(memo) {
-    this.set({
-      memo: memo
-    });
-
-    this.handleFieldValidation(this.validate('memo'), 'memo');
+    this.handleFieldValidation(this.validate(fieldName), fieldName);
   }
 });
 
