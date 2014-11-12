@@ -7,7 +7,6 @@ var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
 var RouterHeader = require('./header/top-bar.jsx');
 var Greeting = require('../shared/components/greeting/greeting.jsx');
-var Sidebar = require('./sidebar.jsx');
 
 require('react-bootstrap');
 
@@ -40,10 +39,9 @@ var App =
       return (
         <div>
           <RouterHeader setup={topBarConfig} />
-          <div className="container-fluid">
+          <div className="container">
             <div className="row">
-              <Sidebar className="col-sm-3 col-md-2 sidebar hidden-xs"/>
-              <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+              <div className="col-sm-12  col-md-10 main">
                 {this.props.activeRouteHandler()}
               </div>
             </div>

@@ -9,6 +9,7 @@ var url = require('url');
 var moment = require('moment');
 var numeral = require('numeral');
 var getSymbol = require('currency-symbol-map');
+var NavSecondary = require('../../../components/nav-secondary.jsx');
 
 var PaymentItem = require('./payment.jsx');
 
@@ -91,7 +92,8 @@ var Payments = React.createClass({
   },
 
   render: function() {
-    var paymentItems = this.state.payments.filterByDirection(this.props.params.filter).map(function(model) {
+    var paymentItems = this.state.payments
+        .filterByDirection(this.props.params.filter).map(function(model) {
       var id = model.get('id');
       var currency=model.get("from_currency");
 
@@ -108,16 +110,22 @@ var Payments = React.createClass({
           />);
     }, this);
 
+    //todo abstract the ul and its children to a component
     return (
       <div>
-        {this.state.showForm ? <PaymentCreateForm model={model} /> : null}
-        <div>
+        <div className="row">
+          {this.state.showForm ? <PaymentCreateForm model={model} /> : null}
+          <div className="col-sm-4 col-xs-4">
+            <h1>Payments</h1>
+          </div>
+          <NavSecondary wrapperClassName="col-sm-5 col-xs-4"/>
           <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
-          <h1>Payments here</h1>
         </div>
-        <ul className="list-group">
-        {paymentItems}
-        </ul>
+        <div className="row">
+          <ul className="list-group">
+          {paymentItems}
+          </ul>
+        </div>
       </div>
     );
   }

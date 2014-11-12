@@ -28,8 +28,6 @@ var NavLinks = React.createClass({
   render: function() {
     var links = this.getLinks(this.props.links);
 
-    console.log("links foo", links);
-
     return (
       <ul className={this.props.className}>
         {links}

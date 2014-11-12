@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react');
+var ActiveState = require('react-router').ActiveState;
 var Navigation = require('react-router').Navigation;
 
 var session = require('../modules/session/models/session');
@@ -8,31 +9,34 @@ var sessionActions = require('../modules/session/actions');
 
 var NavLinks = require('../shared/components/nav-links/nav-links.jsx');
 
-var Sidebar = React.createClass({
+var NavSecondary = React.createClass({
+
+  mixins: [ActiveState],
 
   getDefaultProps: function() {
     return {
       links: [{
-        text: "Incoming Payments",
+        text: "Received",
         href: "/payments/incoming"
       },
       {
-        text: "Outgoing Payments",
+        text: "Sent",
         href: "/payments/outgoing"
       }],
-      className: "sidebar"
+      wrapperClassName:"foo",
+      className: "nav-secondary"
     };
   },
 
   render: function() {
     return (
-      <div className={this.props.className}>
+      <div className={this.props.wrapperClassName}>
         <NavLinks
           links={this.props.links}
-          className="nav nav-sidebar"/>
+          className={this.props.className}/>
       </div>
     );
   }
 });
 
-module.exports = Sidebar;;
+module.exports = NavSecondary;

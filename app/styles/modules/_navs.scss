@@ -243,3 +243,33 @@
   // Remove the top rounded corners here since there is a hard edge above the menu
   @include border-top-radius(0);
 }
+
+.nav-secondary {
+  margin: 0;
+  padding: 30px 0 0;
+  overflow: auto;
+
+  li {
+    margin: 0 5px;
+    float: left;
+    list-style:none;
+  }
+
+  a {
+    padding: 3px 10px;
+    display: inline-block;
+    color: $btn-default-color;
+    border: 1px solid $btn-default-border;
+    background-color: $btn-default-bg;
+
+    &:hover {
+      color: $link-hover-color;
+      text-decoration: none;
+    }
+
+    &.active {
+      color: $navbar-default-link-active-color;
+      background: $navbar-default-link-active-bg;
+    }
+  }
+}
