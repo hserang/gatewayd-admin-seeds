@@ -35,6 +35,41 @@ var Payment = Backbone.Model.extend({
     }
   },
 
+  validationRules: {
+    address: {
+      type: 'string',
+      minLength: 1, // some min for ripple address, but none for ripple name
+      isRequired: true
+    },
+    amount: {
+      type: 'number', // decimal,
+      isRequired: true
+    },
+    currency: {
+      type: 'string',
+      minLength: 1,
+      isRequired: true
+    },
+    destinationTag: {
+      type: 'number',
+      isRequired: false
+    },
+    sourceTag: {
+      type: 'number',
+      isRequired: false
+    },
+    invoiceId: {
+      type: 'string',
+      minLength: 1,
+      isRequired: false
+    },
+    memo: {
+      type: 'string',
+      minLength: 1,
+      isRequired: false
+    }
+  },
+
   url: "http://localhost:5000/v1/payments/outgoing",
 
   initialize: function() {
@@ -77,7 +112,7 @@ var Payment = Backbone.Model.extend({
       object: this.handleObject,
       string: this.handleString,
     };
-    var isDefined = !_.isUndefined(attribute);
+    var isDefined = !_.isUndefined(attribute) || !requirements.isRequired;
     var type = requirements.type === 'array' ? 'object' : requirements.type;
     var isValid = typeof attribute === type;
 
@@ -101,11 +136,21 @@ var Payment = Backbone.Model.extend({
 
     this.validationErrors = [];
 
-    _.each(this.requiredAttrs, function(requirements, requiredAttr) {
-      if (!_this.testValid(requiredAttr, requirements)) {
+    if (arguments.length) {
+      var attributeToTest = arguments[0];
+
+      // for testing single attributes, passed in as a string
+      if (!_this.testValid(attributeToTest, this.validationRules[attributeToTest])) {
         isValid = false;
       }
-    });
+    } else {
+      _.each(this.requiredAttrs, function(requirements, requiredAttr) {
+        // for testing all required attributes (this.requiredAttrs)
+        if (!_this.testValid(requiredAttr, requirements)) {
+          isValid = false;
+        }
+      });
+    }
 
     if (!isValid) {
       return this.validationErrors.join(', ');
@@ -195,6 +240,62 @@ var Payment = Backbone.Model.extend({
     .error(function() {
       _this.trigger('sendPaymentError', 'ripple name/address lookup failed');
     });
+  },
+
+  validateAddress: function(address) {
+    this.set({
+      address: address
+    });
+
+    this.validate('address');
+  },
+
+  validateAmount: function(amount) {
+    this.set({
+      amount: amount
+    });
+
+    this.validate('amount');
+  },
+
+  validateCurrency: function(currency) {
+    this.set({
+      currency: currency
+    });
+
+    this.validate('currency');
+  },
+
+  validateDestinationTag: function(destinationTag) {
+    this.set({
+      destinationTag: destinationTag
+    });
+
+    this.validate('destinationTag');
+  },
+
+  validateSourceTag: function(sourceTag) {
+    this.set({
+      sourceTag: sourceTag
+    });
+
+    this.validate('sourceTag');
+  },
+
+  validateInvoiceId: function(invoiceId) {
+    this.set({
+      invoiceId: invoiceId
+    });
+
+    this.validate('invoiceId');
+  },
+
+  validateMemo: function(memo) {
+    this.set({
+      memo: memo
+    });
+
+    this.validate('memo');
   }
 });
 
