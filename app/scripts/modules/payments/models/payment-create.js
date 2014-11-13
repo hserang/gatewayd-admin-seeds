@@ -6,7 +6,6 @@ var Backbone = require('backbone');
 var RippleName = require('ripple-name');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var session = require('../../session/models/session');
-var payment = require('../config.json');
 var paymentActions = require('../config.json').actions;
 Backbone.$ = $;
 

@@ -7,6 +7,8 @@ var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var ProgressBar = require('react-bootstrap').ProgressBar;
+var LoadingBar = require('../../../shared/components/loading-bar/components/loading-bar.jsx');
+var loadingBarActions = require('../../../shared/components/loading-bar/actions');
 var paymentActions = require('../actions');
 
 var PaymentCreate = React.createClass({
@@ -71,15 +73,6 @@ var PaymentCreate = React.createClass({
     this.props.model.validateField('memo', this.formatInput(this.refs.memo, 'string'));
   },
 
-  advanceProgressBar: function(amount) {
-    if (this.state.progressBarPercentage + amount < 100) {
-      this.setState({
-        progressBarPercentage: this.state.progressBarPercentage + amount,
-        progressBarStyle: 'primary'
-      });
-    }
-  },
-
   formatInput: function(rawInputRef, type) {
     var formattedInput = rawInputRef.getValue().trim();
 
@@ -112,15 +105,11 @@ var PaymentCreate = React.createClass({
       showProgressBar: true
     });
 
-    this.intervalToken = setInterval(function() {
-      _this.advanceProgressBar(1);
-    }, 400);
-
+    loadingBarActions.start();
     paymentActions.sendPaymentAttempt(payment);
   },
 
   handleSuccess: function(payment) {
-    clearInterval(this.intervalToken);
     this.setState({
       submitButtonLabel: 'Payment Successfully Sent',
       progressBarPercentage: 100,
@@ -129,7 +118,6 @@ var PaymentCreate = React.createClass({
   },
 
   handleError: function(errorMessage) {
-    clearInterval(this.intervalToken);
     this.setState({
       disableForm: false,
       submitButtonLabel: 'Re-Submit Payment?',
@@ -222,10 +210,7 @@ var PaymentCreate = React.createClass({
     );
     var progressBar = (
       <div>
-        <ProgressBar now={this.state.progressBarPercentage}
-          label={this.state.progressBarLabel}
-          bsStyle={this.state.progressBarStyle}
-        />
+        <LoadingBar />
         {this.state.showGraphLink ? graphLink : null}
       </div>
     );

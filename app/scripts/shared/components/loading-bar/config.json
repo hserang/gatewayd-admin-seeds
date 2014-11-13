@@ -1,0 +1,11 @@
+{
+  "actions": {
+    "start": "start",
+    "startWithRate": "startWithRate",
+    "stop": "stop",
+    "advanceBy": "advanceBy",
+    "complete": "complete",
+    "setStyle": "setStyle",
+    "setLabel": "setLabel"
+  }
+}
