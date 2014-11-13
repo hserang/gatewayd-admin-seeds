@@ -18,11 +18,25 @@ var PaymentCreate = React.createClass({
   },
 
   validateAddress: function(e) {
+    var addressFieldValue = this.formatInput(this.refs.address, 'string');
+
     this.setState({
       address: {}
     });
 
-    this.props.model.validateAddress(this.formatInput(this.refs.address, 'string'));
+    this.setState({
+      disableAddressField: true,
+      disableSubmitButton: true
+    });
+
+    this.props.model.validateAddress(addressFieldValue);
+
+    if (addressFieldValue === null) {
+      this.setState({
+        disableAddressField: false,
+        disableSubmitButton: false
+      });
+    }
   },
 
   validateAmount: function() {
@@ -161,6 +175,11 @@ var PaymentCreate = React.createClass({
 
       this.setState(invalidField);
     }
+
+    this.setState({
+      disableAddressField: false,
+      disableSubmitButton: false
+    });
   },
 
   getInitialState: function() {
@@ -223,7 +242,8 @@ var PaymentCreate = React.createClass({
           <Input type="text" ref="address"
             label={<div><Label bsStyle="info">Required</Label> Destination Address: </div>}
             bsStyle={this.validationMap[this.state.address.isValid]}
-            disabled={this.state.disableForm} autoFocus={true} onBlur={this.validateAddress} />
+            disabled={this.state.disableForm || this.state.disableAddressField}
+            autoFocus={true} onBlur={this.validateAddress} />
           <Label bsStyle="warning">{this.state.address.errorMessage}</Label>
           <Row>
             <Col xs={6}>
@@ -269,7 +289,9 @@ var PaymentCreate = React.createClass({
             disabled={this.state.disableForm} onBlur={this.validateMemo} />
           <Label bsStyle="warning">{this.state.memo.errorMessage}</Label>
           <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
-            disabled={this.state.disableForm} block>{this.state.submitButtonLabel}
+            disabled={this.state.disableForm || this.state.disableSubmitButton}
+            block>
+            {this.state.submitButtonLabel}
           </Button>
           <br />
           <br />
