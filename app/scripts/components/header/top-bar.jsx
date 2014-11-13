@@ -28,7 +28,6 @@ var TopBar = React.createClass({
   },
 
   render: function() {
-    console.log("props", this.props.setup.links);
     var nav;
     if (!_.isEmpty(this.props.links)) {
       nav = (<NavLinks
