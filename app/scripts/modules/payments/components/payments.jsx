@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var React = require('react');
+var DocumentTitle = require('react-document-title');
 var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
@@ -81,6 +82,17 @@ var Payments = React.createClass({
     });
   },
 
+  createTitle: function(filter) {
+    filter = filter || 'incoming';
+
+    var titleMap = {
+      incoming: 'Received Payments',
+      outgoing: 'Sent Payments'
+    };
+
+    return titleMap[filter];
+  },
+
   render: function() {
     var paymentItems = this.state.payments
         .filterByDirection(this.props.params.filter).map(function(model) {
@@ -102,6 +114,7 @@ var Payments = React.createClass({
 
     //todo abstract the ul and its children to a component
     return (
+      <DocumentTitle title={this.createTitle(this.props.params.filter)}>
       <div>
         <div className="row">
           {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
@@ -117,6 +130,7 @@ var Payments = React.createClass({
           </ul>
         </div>
       </div>
+      </DocumentTitle>
     );
   }
 });

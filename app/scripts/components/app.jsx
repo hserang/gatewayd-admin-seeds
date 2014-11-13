@@ -2,6 +2,7 @@
 
 var React = require('react');
 var Navigation = require('react-router').Navigation;
+var DocumentTitle = require('react-document-title');
 
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
@@ -42,7 +43,9 @@ var App =
           <div className="container">
             <div className="row">
               <div className="col-sm-12  col-md-12 main">
+              <DocumentTitle title='Gatewayd Basic Admin'>
                 {this.props.activeRouteHandler()}
+              </DocumentTitle>
               </div>
             </div>
           </div>
