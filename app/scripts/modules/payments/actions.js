@@ -2,9 +2,9 @@ var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var paymentActions = require('./config.json').actions;
 
 var actions = {
-  delete: function(id) {
+  flagAsDone: function(id) {
     adminDispatcher.handleEvent({
-      actionType: paymentActions.delete,
+      actionType: paymentActions.flagAsDone,
       data: id
     });
   },

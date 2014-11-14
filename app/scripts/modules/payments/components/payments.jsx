@@ -32,6 +32,7 @@ var Payments = React.createClass({
 
   getStateFromStore: function(props) {
     props = props || this.props;
+
     return {
       payments: collection,
       showForm: false,
@@ -52,15 +53,14 @@ var Payments = React.createClass({
     collection.off('sync');
   },
 
-  handleCollectionChange: function(collection) {
+  handleCollectionChange: function() {
     this.setState({
-      payments: collection
+      payments: this.state.payments
     });
   },
 
-
-  handleClick: function(e) {
-    PaymentActions.delete(e.id);
+  handleClick: function(id) {
+    PaymentActions.flagAsDone(id);
   },
 
   toggleForm: function() {
@@ -96,19 +96,21 @@ var Payments = React.createClass({
   render: function() {
     var paymentItems = this.state.payments
         .filterByDirection(this.props.params.filter).map(function(model) {
-      var id = model.get('id');
-      var currency=model.get("from_currency");
+      var id = model.get('id'),
+          currency = model.get("from_currency");
 
       return (
           <PaymentItem
             key={id}
+            id={id}
             timeStamp={moment(model.get("createdAt")).format('MMM D, YYYY HH:mm z')}
             sourceAddress={model.get("from_issuer")}
             currency={currency}
+            state={model.get('state')}
+            clickHandler={this.handleClick}
             symbol={getSymbol(currency)}
             // amount={numeral(model.get("from_amount")).format('0,0.00')}
             amount={model.get("from_amount")}
-            onClick={this.handleClick.bind(this, "foo")}
           />);
     }, this);
 

@@ -1,7 +1,7 @@
 {
   "actions": {
     "updateUrl": "updateUrl",
-    "delete": "delete",
+    "flagAsDone": "flagAsDone",
     "sendPaymentAttempt": "sendPaymentAttempt",
     "sendPaymentComplete": "sendPaymentComplete"
   }

@@ -59,11 +59,11 @@ var Payments = Backbone.Collection.extend({
     "/payments/new": {
       "path":"/v1/ripple_transactions",
       "method": "get"
+    },
+    "flagAsDone": {
+      "path":"/v1/ripple_transactions/",
+      "method": "save"
     }
-    // "/payments/new": {
-    //   "path": "/v1/ripple_transactions/:id",
-    //   "method": "post"
-    // }
   },
 
   updateUrl: function(page) {
@@ -75,6 +75,17 @@ var Payments = Backbone.Collection.extend({
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchData();
+  },
+
+  flagAsDone: function(id) {
+    var model = this.get(id);
+
+    model.set('url', (this.baseUrl + this.urlObject.flagAsDone.path + id));
+    model.save('state', 'completed', {
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', session.get('credentials'));
+      }
+    });
   },
 
   fetchData: function() {
