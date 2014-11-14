@@ -17,25 +17,44 @@ var PaymentCreate = React.createClass({
     invalid: 'warning'
   },
 
-  validateAddress: function(e) {
+  showFieldValidationResult: function(isValid, fieldName, errorMessage) {
+    if (isValid) {
+      var validField = {};
+
+      validField[fieldName] = {isValid: 'valid'};
+
+      this.setState(validField);
+    } else {
+      var invalidField = {};
+
+      invalidField[fieldName] = {
+        isValid: 'invalid',
+        errorMessage: errorMessage
+      };
+
+      this.setState(invalidField);
+    }
+
+    this.setState({
+      disableAddressField: false,
+      disableSubmitButton: false
+    });
+  },
+
+  validateAddress: function() {
     var addressFieldValue = this.formatInput(this.refs.address, 'string');
 
     this.setState({
       address: {}
     });
 
-    this.setState({
-      disableAddressField: true,
-      disableSubmitButton: true
-    });
-
-    this.props.model.validateAddress(addressFieldValue);
-
-    if (addressFieldValue === null) {
+    if (addressFieldValue !== null) {
       this.setState({
-        disableAddressField: false,
-        disableSubmitButton: false
+        disableAddressField: true,
+        disableSubmitButton: true
       });
+
+      this.props.model.validateAddress(addressFieldValue);
     }
   },
 
@@ -120,6 +139,8 @@ var PaymentCreate = React.createClass({
     });
 
     loadingBarActions.start();
+
+    console.log('attempting to send payment', payment);
     paymentActions.sendPaymentAttempt(payment);
   },
 
@@ -141,45 +162,31 @@ var PaymentCreate = React.createClass({
     });
   },
 
-  dispatchSendPaymentComplete: function(payment) {
-    this.setState({
-      showGraphLink: true,
-      graphUrl: this.state.graphUrl + payment.transaction_hash
-    });
+  dispatchSendPaymentComplete: function(model, data) {
+    console.log('we have liftoff', arguments);
 
-    paymentActions.sendPaymentComplete(payment);
+    // this.setState({
+    //   showGraphLink: true,
+    //   graphUrl: this.state.graphUrl + payment.transaction_hash
+    // });
+
+    paymentActions.sendPaymentComplete(data.payment);
   },
 
   handlePolling: function() {
     this.advanceProgressBar(25);
   },
 
-  handleClose: function() {
-    this.props.onSubmitSuccess();
+  handleInvalid: function() {
+    console.log('bad validation', arguments);
+
+    // split error messages by ',' === errorMessages = [message1, ..., message n]
+    // split each message by ' ' and save element 0 === fieldNames = ['address', etc.]
+    // for each fieldName, showFieldValidationResult(false, fieldNameIndex, errorMessageIndex)
   },
 
-  handleFieldValidation: function(isValid, fieldName, errorMessage) {
-    if (isValid) {
-      var validField = {};
-
-      validField[fieldName] = {isValid: 'valid'};
-
-      this.setState(validField);
-    } else {
-      var invalidField = {};
-
-      invalidField[fieldName] = {
-        isValid: 'invalid',
-        errorMessage: errorMessage
-      };
-
-      this.setState(invalidField);
-    }
-
-    this.setState({
-      disableAddressField: false,
-      disableSubmitButton: false
-    });
+  handleClose: function() {
+    this.props.onSubmitSuccess();
   },
 
   getInitialState: function() {
@@ -204,19 +211,21 @@ var PaymentCreate = React.createClass({
 
 
   componentDidMount: function() {
-    this.props.model.on('validationComplete', this.handleFieldValidation);
-    this.props.model.on('sync', this.handleSync);
-    // this.props.model.on('sendPaymentSuccess', this.handleSuccess);
+    this.props.model.on('validationComplete', this.showFieldValidationResult);
+    this.props.model.on('invalid', this.handleInvalid);
+    this.props.model.on('sync', this.dispatchSendPaymentComplete);
     this.props.model.on('error', this.handleError);
+    // this.props.model.on('sendPaymentSuccess', this.handleSuccess);
     // this.props.model.on('sendPaymentComplete', this.dispatchSendPaymentComplete);
     // this.props.model.on('pollingPaymentState', this.handlePolling);
   },
 
   componentWillUnmount: function() {
     this.props.model.off('validationComplete');
+    this.props.model.off('invalid');
     this.props.model.off('sync');
-    // this.props.model.off('sendPaymentSuccess');
     this.props.model.off('error');
+    // this.props.model.off('sendPaymentSuccess');
     // this.props.model.off('sendPaymentComplete');
     // this.props.model.off('pollingPaymentState');
   },

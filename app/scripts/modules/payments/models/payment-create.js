@@ -92,26 +92,24 @@ var Payment = Backbone.Model.extend({
 
   validationErrors: [],
 
-  handleObject: function(attr, minLength) {
-    if (attr === null) {
+  handleObject: function(value, minLength) {
+    if (value === null) {
       return false;
     }
 
-    if (Array.isArray(attr)) {
-      return attr.length >= minLength;
+    if (Array.isArray(value)) {
+      return value.length >= minLength;
     }
 
-    return Object.keys(attr).length >= minLength;
+    return Object.keys(value).length >= minLength;
   },
 
-  handleString: function(attr, minLength) {
-    return !!attr && attr.length >= minLength;
+  handleString: function(value, minLength) {
+    return !!value && value.length >= minLength;
   },
 
-  testValid: function(attr, requirements) {
-    var attribute = this.get(attr);
-
-    if (attribute === null && !requirements.isRequired) {
+  testValid: function(value, attr, rules) {
+    if (value === null && !rules[attr].isRequired) {
       return true;
     }
 
@@ -119,90 +117,43 @@ var Payment = Backbone.Model.extend({
       object: this.handleObject,
       string: this.handleString,
     };
-    var isDefined = !_.isUndefined(attribute);
-    var type = requirements.type === 'array' ? 'object' : requirements.type;
-    var isValid = typeof attribute === 'number' ? !isNaN(attribute) : typeof attribute === type;
+    var isDefined = !_.isUndefined(value);
+    var type = rules[attr].type === 'array' ? 'object' : rules[attr].type;
+    var isValid = typeof value === 'number' ? !isNaN(value) : typeof value === type;
 
-    if (isValid && !_.isUndefined(testValid[typeof attribute])) {
-      isValid = testValid[typeof attribute](attribute, requirements.minLength);
+    if (isValid && !_.isUndefined(testValid[typeof value])) {
+      isValid = testValid[typeof value](value, rules[attr].minLength);
     }
 
     // custom error messaging
     if (!isDefined) {
-      this.validationErrors.push('"' + attr + '" is undefined');
+      this.validationErrors.push(attr + ' is undefined');
     } else if (!isValid) {
-      this.validationErrors.push('"' + attr + '" is invalid');
+      this.validationErrors.push(attr + ' is invalid');
     }
 
     return isDefined && isValid;
   },
 
-  validate: function() {
+  validate: function(attributes) {
     var isValid = true,
         _this = this;
 
     this.validationErrors = [];
 
-    if (arguments.length && typeof arguments[0] === 'string') {
-      var attributeToTest = arguments[0];
+    _.each(attributes, function(value, attr) {
+      if (_.isUndefined(_this.validationRules[attr])) {
+        return true;
+      }
 
-      // for testing single attributes, passed in as a string
-      if (!_this.testValid(attributeToTest, this.validationRules[attributeToTest])) {
+      if (!_this.testValid(value, attr, _this.validationRules)) {
         isValid = false;
       }
-    } else {
-      _.each(this.requiredAttrs, function(requirements, requiredAttr) {
-        // for testing all required attributes (this.requiredAttrs)
-        if (!_this.testValid(requiredAttr, requirements)) {
-          isValid = false;
-        }
-      });
-    }
+    });
 
     if (!isValid) {
       return this.validationErrors.join(', ');
     }
-  },
-
-  pollPaymentStatus: function(payment) {
-    var _this = this;
-    var isPending = true;
-
-    var setHeader = function(xhr) {
-      xhr.setRequestHeader('Authorization', session.get('credentials'));
-    };
-
-    var handleError = function(data) {
-      isPending = false;
-      clearInterval(intervalToken);
-      _this.trigger('sendPaymentError', data.ripple_transaction.data.error || 'error');
-      _this.trigger('sendPaymentComplete', data.ripple_transaction);
-    };
-
-    var handleSuccess = function(data) {
-      if (data.ripple_transaction.state === 'succeeded') {
-        isPending = false;
-        clearInterval(intervalToken);
-        _this.trigger('sendPaymentSuccess');
-        _this.trigger('sendPaymentComplete', data.ripple_transaction);
-      } else if (data.ripple_transaction.state === 'failed') {
-        handleError(data);
-      }
-    };
-
-    var requestPaymentStatus = function() {
-      _this.trigger('pollingPaymentState');
-      $.ajax({
-        url: 'http://localhost:5000/v1/ripple_transactions/' + payment.id,
-        type: 'GET',
-        dataType: 'json',
-        success: handleSuccess,
-        error: handleError,
-        beforeSend: setHeader
-      });
-    };
-
-    var intervalToken = setInterval(requestPaymentStatus, 5000);
   },
 
   postPayment: function() {
@@ -212,12 +163,6 @@ var Payment = Backbone.Model.extend({
       contentType: 'application/json',
       headers: {
         Authorization: session.get('credentials')
-      },
-      success: function(model, response, xhr) {
-        _this.pollPaymentStatus(response.payment);
-      },
-      error: function(model, response, xhr) {
-        _this.trigger('sendPaymentError', response.responseJSON.error.message);
       }
     });
   },
@@ -226,13 +171,7 @@ var Payment = Backbone.Model.extend({
     var _this = this;
 
     this.clear({silent: true});
-    this.set(payment);
-    this.validate();
-
-    if (this.validationErrors.length) {
-      this.trigger('sendPaymentError', this.validationErrors.join(', '));
-      return false;
-    }
+    this.set(payment, {validate: true});
 
     RippleName.lookup(payment.address)
     .then(function(data) {
@@ -241,11 +180,13 @@ var Payment = Backbone.Model.extend({
 
         _this.postPayment();
       } else {
-        _this.trigger('sendPaymentError', 'ripple name does not exist');
+        console.log('ripple/name address is NOT ok');
+        _this.set({address: ''}, {validate: true});
       }
     })
     .error(function() {
-      _this.trigger('sendPaymentError', 'ripple name/address lookup failed');
+      console.log('ripple name lookup is broke');
+      _this.set({address: ''}, {validate: true});
     });
   },
 
@@ -263,12 +204,15 @@ var Payment = Backbone.Model.extend({
     }
 
     var _this = this;
-
     RippleName.lookup(address)
     .then(function(data) {
       if (data.exists) {
-        _this.set('address', data.address);
-        _this.handleFieldValidation(_this.validate('address'), 'address');
+        var addressAttr = {
+          address: data.address
+        };
+
+        _this.set(addressAttr);
+        _this.handleFieldValidation(_this.validate(addressAttr), 'address');
       } else {
         _this.trigger('validationComplete', false, 'address', 'ripple name does not exist');
       }
@@ -288,7 +232,7 @@ var Payment = Backbone.Model.extend({
 
     this.set(updatedField);
 
-    this.handleFieldValidation(this.validate(fieldName), fieldName);
+    this.handleFieldValidation(this.validate(updatedField), fieldName);
   }
 });
 

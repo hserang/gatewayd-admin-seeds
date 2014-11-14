@@ -125,8 +125,13 @@ var Payments = Backbone.Collection.extend({
     return data.ripple_transactions;
   },
 
-  sendPaymentComplete: function(payment) {
-    this.add(payment);
+  sendPaymentComplete: function(paymentData) {
+    var paymentModel = new this.model(paymentData);
+    // set up listener for sync - check status: succeeded/failed
+
+    this.add(paymentModel);
+
+    paymentModel.pollStatus();
   }
 });
 

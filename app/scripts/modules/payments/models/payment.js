@@ -2,9 +2,14 @@
 
 var _ = require('lodash');
 var $ = require('jquery');
+var heartbeats = require('heartbeats');
 var Backbone = require('backbone');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var payment = require('../config.json');
+var session = require('../../../modules/session/models/session');
+
+var pollingHeart = new heartbeats.Heart(5000);
+
 Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
@@ -60,8 +65,10 @@ var Payment = Backbone.Model.extend({
     }
   },
 
+  url: 'http://localhost:5000/v1/ripple_transactions',
+
   initialize: function() {
-    _.bindAll(this, 'testValid', 'validate');
+    _.bindAll(this);
 
     dispatcher.register(this.dispatchCallback);
   },
@@ -129,6 +136,41 @@ var Payment = Backbone.Model.extend({
     if (!isValid) {
       //return 'There is an error';
     }
+  },
+
+  parse: function(data, options) {
+    if (options.collection) {
+      return data;
+    }
+    return data.ripple_transaction;
+  },
+
+  retry: function() {
+    //
+  },
+
+  handleSuccess: function(model) {
+    if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
+      console.log('polling', model.get('state'));
+      pollingHeart.clearEvents();
+    }
+  },
+
+  pollStatusHelper: function() {
+    console.log('polling payment');
+    this.fetch({
+      url: this.url + '/' + this.get('id'),
+      dataType: 'json',
+      contentType: 'application/json',
+      headers: {
+        Authorization: session.get('credentials')
+      },
+      success: this.handleSuccess
+    });
+  },
+
+  pollStatus: function() {
+    pollingHeart.onBeat(1, this.pollStatusHelper);
   }
 });
 
