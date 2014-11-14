@@ -80,7 +80,7 @@ var Payments = Backbone.Collection.extend({
   flagAsDone: function(id) {
     var model = this.get(id);
 
-    model.set('url', (this.baseUrl + this.urlObject.flagAsDone.path + id));
+    model.url = this.baseUrl + this.urlObject.flagAsDone.path + id;
     model.save('state', 'completed', {
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));
