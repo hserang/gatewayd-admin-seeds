@@ -32,8 +32,6 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  // url: 'http://localhost:5000/v1/users/login',
-
   resetUserModel: function() {
     var defaults = this.get('userModel').defaults;
 
@@ -165,7 +163,6 @@ var Session = Backbone.Model.extend({
       },
       success: function(model, xhr, response) {
         sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-        _this.trigger('loggedIn');
       }
     });
   },

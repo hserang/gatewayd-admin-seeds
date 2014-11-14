@@ -6,6 +6,7 @@ var Navigation = require('react-router').Navigation;
 
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
+var Label = require('react-bootstrap').Label;
 
 var Session = require('../models/session');
 var SessionActions = require('../actions');
@@ -22,6 +23,10 @@ var LoginForm = React.createClass({
     var sessionKey = this.refs.sessionKey.getValue().trim();
 
     if (!name || !sessionKey || !gatewaydUrl) {
+      this.setState({
+        showErrorMessage: true
+      });
+
       return false;
     }
 
@@ -31,18 +36,38 @@ var LoginForm = React.createClass({
       sessionKey: sessionKey
     };
 
+    this.setState({
+      showErrorMessage: false
+    });
+
     SessionActions.login(loginDetails);
+  },
+
+  handleError: function() {
+    this.setState({
+      showErrorMessage: true
+    });
+  },
+
+  getInitialState: function() {
+    return {
+      showErrorMessage: false
+    };
   },
 
   componentDidMount: function() {
     var _this = this;
-    Session.on('loggedIn', function() {
+
+    Session.on('sync', function() {
       _this.transitionTo('/payments/outgoing');
     });
+
+    Session.on('error', this.handleError);
   },
 
   componentWillUnmout: function() {
-    Session.off('loggedIn');
+    Session.off('sync');
+    Session.off('error');
   },
 
   render: function() {

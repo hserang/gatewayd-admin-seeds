@@ -198,9 +198,9 @@ var PaymentCreate = React.createClass({
 
   componentWillUnmount: function() {
     this.props.model.off('validationComplete');
-    this.props.model.off('invalid');
     this.props.model.off('sync');
     this.props.model.off('error');
+    this.props.model.off('invalid');
     // this.props.model.off('sendPaymentSuccess');
     // this.props.model.off('sendPaymentComplete');
     // this.props.model.off('pollingPaymentState');
