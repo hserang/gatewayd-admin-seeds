@@ -171,6 +171,7 @@ var Payment = Backbone.Model.extend({
 
   pollStatus: function() {
     pollingHeart.onBeat(1, this.pollStatusHelper);
+    pollingHeart.onBeat(10, pollingHeart.clearEvents);
   }
 });
 
