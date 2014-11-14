@@ -79,7 +79,7 @@ var Payments = Backbone.Collection.extend({
     this.url += this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
-    this.fetchData();
+    this.fetchRippleTransactions();
   },
 
   flagAsDone: function(id) {
@@ -93,7 +93,7 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
-  fetchData: function() {
+  fetchRippleTransactions: function() {
     this.fetch({
       headers: {
         Authorization: session.get('credentials')

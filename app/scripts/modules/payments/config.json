@@ -3,6 +3,7 @@
     "updateUrl": "updateUrl",
     "flagAsDone": "flagAsDone",
     "sendPaymentAttempt": "sendPaymentAttempt",
-    "sendPaymentComplete": "sendPaymentComplete"
+    "sendPaymentComplete": "sendPaymentComplete",
+    "fetchRippleTransactions": "fetchRippleTransactions"
   }
 }

@@ -30,6 +30,12 @@ var actions = {
       actionType: paymentActions.sendPaymentComplete,
       data: payment
     });
+  },
+
+  fetchRippleTransactions: function() {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.fetchRippleTransactions
+    });
   }
 };
 
