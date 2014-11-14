@@ -57,3 +57,22 @@ body {
 .border-bottom {
   border-bottom: 1px dotted #eee;
 }
+
+//todo: move this
+.header-links {
+  margin-left: 10px;
+  font-size: 60%;
+  font-weight: 300;
+
+  > a {
+    margin-left: 20px;
+
+    &:hover {
+    }
+
+    &.active {
+      text-decoration: underline;
+    }
+  }
+
+}

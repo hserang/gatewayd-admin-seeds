@@ -122,10 +122,23 @@ var Payments = React.createClass({
         <div className="row">
           {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
           <div className="col-sm-4 col-xs-4">
-            <h1>Payments</h1>
+            <h1>Payments:
+              <span className='header-links'>
+                <Link to='/payments/outgoing'>
+                  Sent
+                </Link>
+                <Link to='/payments/incoming'>
+                  Received
+                </Link>
+              </span>
+            </h1>
           </div>
-          <NavSecondary wrapperClassName="col-sm-5 col-xs-4"/>
           <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
+        </div>
+        <div className='row'>
+          <div className="col-xs-12">
+            Filter By: incoming outgoing failed completed
+          </div>
         </div>
         <div className="row">
           <ul className="list-group">
