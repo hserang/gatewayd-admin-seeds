@@ -15,9 +15,9 @@ var Payment = Backbone.Model.extend({
     amount: 0,
     currency: '',
     destinationTag: 0,
-    sourceTag: 0, // not implemented yet
-    invoiceId: '', // not implemented yet
-    memo: '' // not implemented yet
+    sourceTag: 0,
+    invoiceId: '',
+    memo: ''
   },
 
   requiredAttrs: {
@@ -136,24 +136,35 @@ var Payment = Backbone.Model.extend({
   },
 
   validate: function(attributes) {
-    var isValid = true,
-        _this = this;
+    var _this = this;
 
     this.validationErrors = [];
 
-    _.each(attributes, function(value, attr) {
+    var isValid = _.reduce(attributes, function(accumulator, value, attr) {
       if (_.isUndefined(_this.validationRules[attr])) {
-        return true;
+        return accumulator && true;
       }
 
-      if (!_this.testValid(value, attr, _this.validationRules)) {
-        isValid = false;
+      if (_this.testValid(value, attr, _this.validationRules)) {
+        return accumulator && true;
+      } else {
+        return false;
       }
-    });
+    }, true);
+
+    if (!Object.keys(attributes).length) {
+      isValid = false;
+    }
 
     if (!isValid) {
       return this.validationErrors.join(', ');
     }
+  },
+
+  isValid: function() {
+    this.validate(this.attributes);
+
+    return !this.validationError;
   },
 
   postPayment: function() {
@@ -173,21 +184,10 @@ var Payment = Backbone.Model.extend({
     this.clear({silent: true});
     this.set(payment, {validate: true});
 
-    RippleName.lookup(payment.address)
-    .then(function(data) {
-      if (data.exists) {
-        _this.set('address', data.address);
+    if (this.isValid()) {
+      this.postPayment();
 
-        _this.postPayment();
-      } else {
-        console.log('ripple/name address is NOT ok');
-        _this.set({address: ''}, {validate: true});
-      }
-    })
-    .error(function() {
-      console.log('ripple name lookup is broke');
-      _this.set({address: ''}, {validate: true});
-    });
+    }
   },
 
   handleFieldValidation: function(validationResult, fieldRef) {
@@ -199,10 +199,6 @@ var Payment = Backbone.Model.extend({
   },
 
   validateAddress: function(address) {
-    if (address === null) {
-      return false;
-    }
-
     var _this = this;
     RippleName.lookup(address)
     .then(function(data) {
@@ -214,7 +210,7 @@ var Payment = Backbone.Model.extend({
         _this.set(addressAttr);
         _this.handleFieldValidation(_this.validate(addressAttr), 'address');
       } else {
-        _this.trigger('validationComplete', false, 'address', 'ripple name does not exist');
+        _this.trigger('validationComplete', false, 'address', 'ripple name/address does not exist');
       }
     })
     .error(function() {
@@ -223,10 +219,6 @@ var Payment = Backbone.Model.extend({
   },
 
   validateField: function(fieldName, fieldValue) {
-    if (fieldValue === null) {
-      return false;
-    }
-
     var updatedField = {};
     updatedField[fieldName] = fieldValue;
 
