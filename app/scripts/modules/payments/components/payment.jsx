@@ -11,23 +11,35 @@ var Payment = React.createClass({
   },
 
   render: function() {
-    var doneButton = <button onClick={this.handleClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
+    var doneButton, address;
+
+    if (this.props.direction === 'from-ripple') {
+      address = ['From', this.props.fromAddress];
+    } else {
+      address = ['To', this.props.toAddress];
+    }
+
+    //make a done button component and put this logic there!!
+    if (this.props.state === 'incoming') {
+      doneButton = <button onClick={this.handleClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
+    } else {
+      doneButton = null;
+    }
 
     return (
       <li className="list-group-item">
         <div className="row border-bottom">
           <div className="col-sm-3">
-            Address: {this.props.sourceAddress}
+          {address[0]} Address: {address[1]}
           </div>
           <div className="col-sm-3">
           </div>
           <div className="col-sm-3">
-            Currency: {this.props.currency} <br />
-            Amount: {this.props.symbol}{this.props.amount}
+            Currency: {this.props.currency} {this.props.amount}
           </div>
           <div className="col-sm-3">
           Status: {this.props.state}
-          {this.props.state === 'incoming' ? doneButton : null}
+          {doneButton}
           </div>
         </div>
         <div className="clearfix">

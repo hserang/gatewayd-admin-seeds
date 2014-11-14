@@ -6,10 +6,10 @@ var DocumentTitle = require('react-document-title');
 var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
+var Link = require('react-router').Link;
 var url = require('url');
 var moment = require('moment');
 var numeral = require('numeral');
-var getSymbol = require('currency-symbol-map');
 var NavSecondary = require('../../../components/nav-secondary.jsx');
 
 var PaymentItem = require('./payment.jsx');
@@ -98,20 +98,21 @@ var Payments = React.createClass({
     var paymentItems = this.state.payments
         .filterByDirection(this.props.params.filter).map(function(model) {
       var id = model.get('id'),
-          currency = model.get("from_currency");
+          currency = model.get('from_currency');
+          console.log("=======", model.attributes);
 
       return (
           <PaymentItem
             key={id}
             id={id}
-            timeStamp={moment(model.get("createdAt")).format('MMM D, YYYY HH:mm z')}
-            sourceAddress={model.get("from_issuer")}
+            direction={model.get('direction')}
+            timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+            fromAddress={model.get('fromAddress').address}
+            toAddress={model.get('toAddress').address}
             currency={currency}
             state={model.get('state')}
+            amount={model.get('from_amount')}
             clickHandler={this.handleClick}
-            symbol={getSymbol(currency)}
-            // amount={numeral(model.get("from_amount")).format('0,0.00')}
-            amount={model.get("from_amount")}
           />);
     }, this);
 
