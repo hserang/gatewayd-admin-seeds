@@ -18,13 +18,20 @@ var LoginForm = React.createClass({
 
     // var name = this.refs.name.getValue().trim();
     var name = 'admin';
+    var gatewaydUrl = this.refs.gatewaydUrl.getValue().trim();
     var sessionKey = this.refs.sessionKey.getValue().trim();
 
-    if (!name || !sessionKey) {
+    if (!name || !sessionKey || !gatewaydUrl) {
       return false;
     }
 
-    SessionActions.login(name, sessionKey);
+    var loginDetails = {
+      name: name,
+      gatewaydUrl: gatewaydUrl,
+      sessionKey: sessionKey
+    };
+
+    SessionActions.login(loginDetails);
   },
 
   componentDidMount: function() {
@@ -41,8 +48,15 @@ var LoginForm = React.createClass({
   render: function() {
     return (
       <form role="form" className="col-xs-12" onSubmit={this.handleSubmit}>
-        <Input type="password" label="Enter key:" ref="sessionKey" autoFocus={true} required />
-        <Button type="submit" bsStyle="primary">Log In</Button>
+        <Input type="gatewaydUrl" label="Enter gatewayd host url:"
+          ref="gatewaydUrl" autoFocus={true} value={this.state.baseGatewaydUrl}
+          onChange={this.handleChange} />
+        <Input type="password" label="Enter key:" ref="sessionKey" />
+        <Button className="pull-right" type="submit" bsStyle="primary" block>Log In</Button>
+        {this.state.showErrorMessage ?
+          <Label className="pull-left" bsStyle="warning">
+            API key/gatewayd host url is not correct. Please try again.
+          </Label> : null}
       </form>
     );
   }

@@ -12,12 +12,17 @@ Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
   defaults: {
+    gatewaydUrl: '',
     sessionKey: '',
     lastLogin: 0,
     credentials: 'ABC' // Base64
   },
 
   requiredAttrs: {
+    gatewaydUrl: {
+      type: 'string',
+      minLength: 1
+    },
     sessionKey: {
       type: 'string',
       minLength: 1
@@ -27,7 +32,7 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  url: 'http://localhost:5000/v1/users/login',
+  // url: 'http://localhost:5000/v1/users/login',
 
   resetUserModel: function() {
     var defaults = this.get('userModel').defaults;
@@ -114,8 +119,9 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  updateSession: function(sessionKey) {
+  updateSession: function(gatewaydUrl, sessionKey) {
     this.set({
+      gatewaydUrl: gatewaydUrl,
       sessionKey: sessionKey,
       lastLogin: Date.now()
     });
@@ -136,18 +142,19 @@ var Session = Backbone.Model.extend({
   },
 
   login: function(payload) {
-    if (!payload.name || !payload.sessionKey) {
+    if (!payload.name || !payload.gatewaydUrl || !payload.sessionKey) {
       return false;
     }
 
     var _this = this;
 
-    this.updateSession(payload.sessionKey);
+    this.updateSession(payload.gatewaydUrl, payload.sessionKey);
     this.updateUser(payload.name);
     this.createCredentials(payload.name, payload.sessionKey);
 
     this.save(null, {
       wait: true,
+      url: _this.get('gatewaydUrl') + '/v1/users/login',
       contentType: 'application/json',
       data: JSON.stringify({
         name: payload.name + '@example.com',
@@ -157,12 +164,8 @@ var Session = Backbone.Model.extend({
         'Authorization': _this.get('credentials')
       },
       success: function(model, xhr, response) {
-        console.log('login SUCCESS', arguments); // response = {user: {admin: true}}
         sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
         _this.trigger('loggedIn');
-      },
-      error: function() {
-        console.log('login FAIL', arguments);
       }
     });
   },

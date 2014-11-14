@@ -2,13 +2,10 @@ var AdminDispatcher = require('../../dispatchers/admin-dispatcher');
 var session = require('./config.json').actions;
 
 var SessionActions = {
-  login: function(name, sessionKey) {
+  login: function(loginDetails) {
     AdminDispatcher.dispatch({
       actionType: session.login,
-      data: {
-        name: name,
-        sessionKey: sessionKey
-      }
+      data: loginDetails
     });
   },
 

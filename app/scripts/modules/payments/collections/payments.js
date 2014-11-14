@@ -14,8 +14,6 @@ var Payments = Backbone.Collection.extend({
 
   model: Model,
 
-  baseUrl: "http://localhost:5000",
-
   comparator: function(a, b) {
     return b.id - a.id;
   },
@@ -71,7 +69,7 @@ var Payments = Backbone.Collection.extend({
       return false;
     }
 
-    this.url = this.baseUrl + this.urlObject[page].path;
+    this.url = session.get('gatewaydUrl') + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchData();
@@ -80,7 +78,7 @@ var Payments = Backbone.Collection.extend({
   flagAsDone: function(id) {
     var model = this.get(id);
 
-    model.url = this.baseUrl + this.urlObject.flagAsDone.path + id;
+    this.url += this.urlObject.flagAsDone.path + id;
     model.save('state', 'completed', {
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));

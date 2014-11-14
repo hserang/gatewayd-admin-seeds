@@ -65,8 +65,6 @@ var Payment = Backbone.Model.extend({
     }
   },
 
-  url: 'http://localhost:5000/v1/ripple_transactions',
-
   initialize: function() {
     _.bindAll(this);
 
@@ -159,7 +157,7 @@ var Payment = Backbone.Model.extend({
   pollStatusHelper: function() {
     console.log('polling payment');
     this.fetch({
-      url: this.url + '/' + this.get('id'),
+      url: session.get('gatewaydUrl') + '/v1/ripple_transactions/' + this.get('id'),
       dataType: 'json',
       contentType: 'application/json',
       headers: {

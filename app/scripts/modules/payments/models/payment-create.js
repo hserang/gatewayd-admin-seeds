@@ -72,8 +72,6 @@ var Payment = Backbone.Model.extend({
     }
   },
 
-  url: "http://localhost:5000/v1/payments/outgoing",
-
   initialize: function() {
     _.bindAll(this);
 
@@ -171,6 +169,7 @@ var Payment = Backbone.Model.extend({
     var _this = this;
 
     this.save(null, {
+      url: session.get('gatewaydUrl') + '/v1/payments/outgoing',
       contentType: 'application/json',
       headers: {
         Authorization: session.get('credentials')
@@ -181,12 +180,10 @@ var Payment = Backbone.Model.extend({
   sendPaymentAttempt: function(payment) {
     var _this = this;
 
-    this.clear({silent: true});
-    this.set(payment, {validate: true});
+    this.validateAddress(payment.address);
 
     if (this.isValid()) {
       this.postPayment();
-
     }
   },
 
