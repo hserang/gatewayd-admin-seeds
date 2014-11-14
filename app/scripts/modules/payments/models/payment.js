@@ -7,6 +7,7 @@ var Backbone = require('backbone');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var payment = require('../config.json');
 var session = require('../../../modules/session/models/session');
+var appConfig = require('../../../shared/app-config');
 
 var pollingHeart = new heartbeats.Heart(5000);
 
@@ -65,6 +66,8 @@ var Payment = Backbone.Model.extend({
     }
   },
 
+  url: appConfig.baseUrl,
+
   initialize: function() {
     _.bindAll(this);
 
@@ -77,6 +80,10 @@ var Payment = Backbone.Model.extend({
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
+  },
+
+  updateBaseUrl: function(newBaseUrl) {
+    this.url = newBaseUrl;
   },
 
   validationErrors: [],
@@ -149,13 +156,11 @@ var Payment = Backbone.Model.extend({
 
   handleSuccess: function(model) {
     if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
-      console.log('polling', model.get('state'));
       pollingHeart.clearEvents();
     }
   },
 
   pollStatusHelper: function() {
-    console.log('polling payment');
     this.fetch({
       url: session.get('gatewaydUrl') + '/v1/ripple_transactions/' + this.get('id'),
       dataType: 'json',
@@ -170,7 +175,7 @@ var Payment = Backbone.Model.extend({
   pollStatus: function() {
     pollingHeart.onBeat(1, this.pollStatusHelper);
     pollingHeart.onBeat(10, pollingHeart.clearEvents);
-  }
+  },
 });
 
 module.exports = Payment;

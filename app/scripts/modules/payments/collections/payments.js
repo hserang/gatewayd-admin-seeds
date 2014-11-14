@@ -7,12 +7,15 @@ var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var payments = require('../config.json');
 var Model = require('../models/payment.js');
 var session = require('../../../modules/session/models/session');
+var appConfig = require('../../../shared/app-config');
 
 Backbone.$ = $;
 
 var Payments = Backbone.Collection.extend({
 
   model: Model,
+
+  url: appConfig.baseUrl,
 
   comparator: function(a, b) {
     return b.id - a.id;
@@ -31,6 +34,10 @@ var Payments = Backbone.Collection.extend({
     }
 
     this[payload.actionType](payload.data);
+  },
+
+  updateBaseUrl: function(newBaseUrl) {
+    this.url = newBaseUrl;
   },
 
   urlObject: {
@@ -69,7 +76,7 @@ var Payments = Backbone.Collection.extend({
       return false;
     }
 
-    this.url = session.get('gatewaydUrl') + this.urlObject[page].path;
+    this.url += this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchData();

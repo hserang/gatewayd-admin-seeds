@@ -5,7 +5,8 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
-var sessionActions = require('../config.json').actions;
+var sessionConfigActions = require('../config.json').actions;
+var sessionActions = require('../actions.js');
 var UserModel = require('../../../modules/users/models/user');
 
 Backbone.$ = $;
@@ -51,9 +52,9 @@ var Session = Backbone.Model.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[sessionActions.login] = this.login;
-    handleAction[sessionActions.logout] = this.logout;
-    handleAction[sessionActions.restore] = this.restore;
+    handleAction[sessionConfigActions.login] = this.login;
+    handleAction[sessionConfigActions.logout] = this.logout;
+    handleAction[sessionConfigActions.restore] = this.restore;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -161,8 +162,10 @@ var Session = Backbone.Model.extend({
       headers: {
         'Authorization': _this.get('credentials')
       },
-      success: function(model, xhr, response) {
+      success: function() {
         sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
+
+        sessionActions.updateBaseUrl(_this.get('gatewaydUrl'));
       }
     });
   },

@@ -7,6 +7,8 @@ var RippleName = require('ripple-name');
 var dispatcher = require('../../../dispatchers/admin-dispatcher');
 var session = require('../../session/models/session');
 var paymentActions = require('../config.json').actions;
+var appConfig = require('../../../shared/app-config');
+
 Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
@@ -72,6 +74,8 @@ var Payment = Backbone.Model.extend({
     }
   },
 
+  url: appConfig.baseUrl,
+
   initialize: function() {
     _.bindAll(this);
 
@@ -86,6 +90,10 @@ var Payment = Backbone.Model.extend({
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
+  },
+
+  updateBaseUrl: function(newBaseUrl) {
+    this.url = newBaseUrl;
   },
 
   validationErrors: [],

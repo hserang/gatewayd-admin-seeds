@@ -2,6 +2,7 @@
   "actions": {
     "login": "login",
     "logout": "logout",
-    "restore": "restore"
+    "restore": "restore",
+    "updateBaseUrl": "updateBaseUrl"
   }
 }

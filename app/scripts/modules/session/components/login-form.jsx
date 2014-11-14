@@ -11,6 +11,8 @@ var Label = require('react-bootstrap').Label;
 var Session = require('../models/session');
 var SessionActions = require('../actions');
 
+var appConfig = require('../../../shared/app-config');
+
 var LoginForm = React.createClass({
   mixins: [Navigation],
 
@@ -49,8 +51,15 @@ var LoginForm = React.createClass({
     });
   },
 
+  handleChange: function(event) {
+    this.setState({
+      baseGatewaydUrl: event.target.value,
+    });
+  },
+
   getInitialState: function() {
     return {
+      baseGatewaydUrl: appConfig.baseUrl,
       showErrorMessage: false
     };
   },

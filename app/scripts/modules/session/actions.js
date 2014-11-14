@@ -19,6 +19,13 @@ var SessionActions = {
     AdminDispatcher.dispatch({
       actionType: session.restore
     });
+  },
+
+  updateBaseUrl: function(newBaseUrl) {
+    AdminDispatcher.dispatch({
+      actionType: session.updateBaseUrl,
+      data: newBaseUrl
+    });
   }
 };
 
