@@ -112,6 +112,10 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
+  filterByState: function(state, data) {
+    console.log('filter by state', arguments);
+  },
+
   //create fixture. delete when db ready
   getFakeType: function(data) {
     var output;

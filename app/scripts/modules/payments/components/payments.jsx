@@ -64,6 +64,15 @@ var Payments = React.createClass({
     PaymentActions.flagAsDone(id);
   },
 
+  handleFilter: function(e) {
+    e.preventDefault();
+    var filterType = e.target.getAttribute('value');
+
+    if (filterType) {
+      PaymentActions.filterByState(filterType);
+    }
+  },
+
   toggleForm: function() {
     var newShowFormState = !this.state.showForm;
 
@@ -99,7 +108,6 @@ var Payments = React.createClass({
         .filterByDirection(this.props.params.filter).map(function(model) {
       var id = model.get('id'),
           currency = model.get('from_currency');
-          console.log("=======", model.attributes);
 
       return (
           <PaymentItem
@@ -136,9 +144,14 @@ var Payments = React.createClass({
           </div>
           <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
         </div>
-        <div className='row'>
+        <div className='row' onClick={this.handleFilter}>
           <div className="col-xs-12">
-            Filter By: incoming outgoing failed completed
+            Filter By:
+            <button value="incoming">incoming</button>
+            <button value="outgoing">outgoing</button>
+            <button value="failed">failed</button>
+            <button value="pending">pending</button>
+            <button value="completed">completed</button>
           </div>
         </div>
         <div className="row">

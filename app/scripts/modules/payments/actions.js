@@ -2,6 +2,13 @@ var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var paymentActions = require('./config.json').actions;
 
 var actions = {
+  updateUrl: function(path) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.updateUrl,
+      data: path
+    });
+  },
+
   flagAsDone: function(id) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.flagAsDone,
@@ -9,10 +16,10 @@ var actions = {
     });
   },
 
-  updateUrl: function(path) {
+  filterByState: function(state) {
     adminDispatcher.handleEvent({
-      actionType: paymentActions.updateUrl,
-      data: path
+      actionType: paymentActions.filterByState,
+      data: state
     });
   },
 
