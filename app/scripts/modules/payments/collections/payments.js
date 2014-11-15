@@ -41,27 +41,27 @@ var Payments = Backbone.Collection.extend({
   },
 
   urlObject: {
-    "/payments": {
+    "payments": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/incoming": {
+    "incoming": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/completed": {
+    "completed": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/failed": {
+    "failed": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/outgoing": {
+    "outgoing": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "/payments/new": {
+    "new": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
@@ -72,7 +72,10 @@ var Payments = Backbone.Collection.extend({
   },
 
   updateUrl: function(page) {
+    var page = page.split('/')[2];
+
     if (!page || _.isUndefined(this.urlObject[page])) {
+      console.warn("undefined route in url object");
       return false;
     }
 
@@ -107,13 +110,27 @@ var Payments = Backbone.Collection.extend({
   },
 
   filterByDirection: function(direction) {
-    return this.where({
-      direction: this.directionMap[direction]
+    var _this = this;
+
+    var filtered = this.filter(function(payment) {
+      return payment.get('direction') === _this.directionMap[direction];
     });
+
+    return new Payments(filtered);
   },
 
-  filterByState: function(state, data) {
-    console.log('filter by state', arguments);
+  filterByState: function(state) {
+    var _this = this;
+
+    if (state === 'all') {
+      return this;
+    }
+
+    var filtered = this.filter(function(payment) {
+      return payment.get('state') === state;
+    });
+
+    return new Payments(filtered);
   },
 
   //create fixture. delete when db ready
@@ -139,6 +156,7 @@ var Payments = Backbone.Collection.extend({
     // set up listener for sync - check status: succeeded/failed
 
     this.add(paymentModel);
+    this.trigger("paymentAdded", this);
 
     paymentModel.pollStatus();
   }

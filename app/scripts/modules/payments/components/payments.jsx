@@ -6,6 +6,7 @@ var DocumentTitle = require('react-document-title');
 var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
+var ActiveState = require('react-router').ActiveState;
 var Link = require('react-router').Link;
 var url = require('url');
 var moment = require('moment');
@@ -23,7 +24,7 @@ var model = new Model();
 var PaymentCreateForm = require('./payment-create.jsx');
 
 var Payments = React.createClass({
-  mixins: [CurrentPath],
+  mixins: [CurrentPath, ActiveState],
 
   formSymbolMap: {
     true: '-',
@@ -45,32 +46,24 @@ var Payments = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('sync add', this.handleCollectionChange);
+    collection.on('sync paymentAdded', this.handleCollectionSync);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   componentWillUnmount: function() {
     collection.off('sync');
-    collection.off('add');
+    collection.off('change');
   },
 
-  handleCollectionChange: function() {
+  handleCollectionSync: function(collection) {
+    console.log("sync", arguments);
     this.setState({
-      payments: this.state.payments
+      payments: collection
     });
   },
 
   handleClick: function(id) {
     PaymentActions.flagAsDone(id);
-  },
-
-  handleFilter: function(e) {
-    e.preventDefault();
-    var filterType = e.target.getAttribute('value');
-
-    if (filterType) {
-      PaymentActions.filterByState(filterType);
-    }
   },
 
   toggleForm: function() {
@@ -92,20 +85,31 @@ var Payments = React.createClass({
     });
   },
 
-  createTitle: function(filter) {
-    filter = filter || 'incoming';
+  createTitle: function(direction) {
+    direction = direction || 'incoming';
 
     var titleMap = {
       incoming: 'Received Payments',
       outgoing: 'Sent Payments'
     };
 
-    return titleMap[filter];
+    return titleMap[direction];
   },
 
   render: function() {
+
+    console.log("render");
+
+    var direction = this.props.params.direction,
+        state = this.props.params.state,
+        tertiaryNav;
+
+    // less than ideal, will refactor when we have pagination, if not sooner.
+    // We could keep different collections for each type, but it depends on use case.
     var paymentItems = this.state.payments
-        .filterByDirection(this.props.params.filter).map(function(model) {
+        .filterByDirection(direction)
+        .filterByState(state)
+        .map(function(model) {
       var id = model.get('id'),
           currency = model.get('from_currency');
 
@@ -124,19 +128,37 @@ var Payments = React.createClass({
           />);
     }, this);
 
-    //todo abstract the ul and its children to a component
+    //todo make separate component with iterator. Oy.
+    if (direction === 'incoming') {
+      tertiaryNav = (
+        <div className="nav-tertiary">
+          <Link to='payments' params={{direction: 'incoming', state: 'all'}}>All</Link>
+          <Link to='payments' params={{direction: 'incoming', state: 'incoming'}}>Queued</Link>
+          <Link to='payments' params={{direction: 'incoming', state: 'completed'}}>Completed</Link>
+        </div>);
+    } else {
+      tertiaryNav = (
+        <div className="nav-tertiary">
+          <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>All</Link>
+          <Link to='payments' params={{direction: 'outgoing', state: 'outgoing'}}>Queued</Link>
+          <Link to='payments' params={{direction: 'outgoing', state: 'pending'}}>Pending</Link>
+          <Link to='payments' params={{direction: 'outgoing', state: 'completed'}}>Completed</Link>
+          <Link to='payments' params={{direction: 'outgoing', state: 'failed'}}>Failed</Link>
+        </div>);
+    }
+
     return (
-      <DocumentTitle title={this.createTitle(this.props.params.filter)}>
+      <DocumentTitle title={this.createTitle(direction)}>
       <div>
         <div className="row">
           {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
           <div className="col-sm-4 col-xs-4">
             <h1>Payments:
               <span className='header-links'>
-                <Link to='/payments/outgoing'>
+                <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>
                   Sent
                 </Link>
-                <Link to='/payments/incoming'>
+                <Link to='payments' params={{direction: 'incoming', state: 'all'}}>
                   Received
                 </Link>
               </span>
@@ -144,14 +166,9 @@ var Payments = React.createClass({
           </div>
           <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
         </div>
-        <div className='row' onClick={this.handleFilter}>
+        <div className='row'>
           <div className="col-xs-12">
-            Filter By:
-            <button value="incoming">incoming</button>
-            <button value="outgoing">outgoing</button>
-            <button value="failed">failed</button>
-            <button value="pending">pending</button>
-            <button value="completed">completed</button>
+            {tertiaryNav}
           </div>
         </div>
         <div className="row">

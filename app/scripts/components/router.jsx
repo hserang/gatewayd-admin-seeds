@@ -48,7 +48,7 @@ var routes = (
       <DefaultRoute handler={Payments} path="payments/outgoing" />
       <Route name="login" handler={Session} />
       <Route name="logout" handler={Session} />
-      <Route name="payments" path="payments/:filter" handler={Payments}/>
+      <Route name="payments" path="payments/:direction/:state" handler={Payments}/>
       <Route name="notFound" handler={NotFound} />
       <NotFoundRoute handler={NotFound} />
     </Route>

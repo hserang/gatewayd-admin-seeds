@@ -273,3 +273,27 @@
     }
   }
 }
+
+.nav-tertiary {
+  padding: 15px 0;
+  text-align: center;
+
+  > a {
+    min-width: 60px;
+    padding: 5px 10px;
+    margin: 0 5px;
+    color: $navbar-default-link-active-color;
+    border: 1px solid $btn-default-border;
+    border-radius: 3px;
+
+    &:hover {
+      color: $link-hover-color;
+      text-decoration: none;
+    }
+  }
+
+  .active {
+    color: $btn-default-color;
+    background: $navbar-default-link-active-bg;
+  }
+}
