@@ -112,7 +112,9 @@ var Payments = React.createClass({
         .map(function(model) {
       var id = model.get('id'),
           currency = model.get('from_currency');
+          // console.log("=======", model.attributes);
 
+      // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
       return (
           <PaymentItem
             key={id}
