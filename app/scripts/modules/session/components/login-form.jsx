@@ -68,7 +68,7 @@ var LoginForm = React.createClass({
     var _this = this;
 
     Session.on('sync', function() {
-      _this.transitionTo('/payments/outgoing');
+      _this.transitionTo('/payments/outgoing/all');
     });
 
     Session.on('error', this.handleError);
