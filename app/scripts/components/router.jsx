@@ -18,7 +18,7 @@ var session = require('../modules/session/models/session');
 // continuously fetch when tab is active
 var paymentActions = require('../modules/payments/actions.js');
 var heartbeats = require('heartbeats');
-var pollingHeart = new heartbeats.Heart(5000);
+var pollingHeart = new heartbeats.Heart(1000);
 
 var pollWhenActive = function() {
   if (session.isLoggedIn()) {
@@ -26,15 +26,15 @@ var pollWhenActive = function() {
   }
 };
 
-pollingHeart.onBeat(1, pollWhenActive);
+pollingHeart.onBeat(5, pollWhenActive);
 
 window.onfocus = function() {
   pollingHeart.clearEvents();
-  pollingHeart.onBeat(1, pollWhenActive);
+  pollingHeart.onBeat(5, pollWhenActive);
 };
 
 window.onblur = function() {
-  pollingHeart.clearEvents();
+  pollingHeart.onBeat(60 * 5, pollingHeart.clearEvents);
 };
 
 // needed for dev tools to work
