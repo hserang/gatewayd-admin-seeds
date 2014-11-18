@@ -102,10 +102,31 @@ var Payments = Backbone.Collection.extend({
   },
 
   fetchRippleTransactions: function() {
+    var ids = _.map(this.models, function(model) {
+      return model.get('id');
+    });
+
     this.fetch({
       headers: {
         Authorization: session.get('credentials')
       }
+    })
+    .then(function() {
+      var newIds = _.map(this.models, function(model) {
+        return model.get('id');
+      });
+
+      var diffIds = _.pick(ids, function(id) {
+        return !newIds.indexOf(id);
+      });
+
+      this.models.forEach(function(model) {
+        if (diffIds.indexOf(model.get('id'))) {
+          model.set('new', true);
+        } else {
+          model.set('new', false);
+        }
+      });
     });
   },
 
