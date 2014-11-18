@@ -152,7 +152,7 @@ var Payments = React.createClass({
         <div className="nav-tertiary">
           <Link to='payments' params={{direction: 'incoming', state: 'all'}}>All</Link>
           <Link to='payments' params={{direction: 'incoming', state: 'incoming'}}>Queued</Link>
-          <Link to='payments' params={{direction: 'incoming', state: 'completed'}}>Completed</Link>
+          <Link to='payments' params={{direction: 'incoming', state: 'succeeded'}}>Succeeded</Link>
         </div>);
     } else {
       tertiaryNav = (
@@ -160,7 +160,7 @@ var Payments = React.createClass({
           <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>All</Link>
           <Link to='payments' params={{direction: 'outgoing', state: 'outgoing'}}>Queued</Link>
           <Link to='payments' params={{direction: 'outgoing', state: 'pending'}}>Pending</Link>
-          <Link to='payments' params={{direction: 'outgoing', state: 'completed'}}>Completed</Link>
+          <Link to='payments' params={{direction: 'outgoing', state: 'succeeded'}}>Succeeded</Link>
           <Link to='payments' params={{direction: 'outgoing', state: 'failed'}}>Failed</Link>
         </div>);
     }

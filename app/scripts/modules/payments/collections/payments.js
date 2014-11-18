@@ -51,7 +51,7 @@ var Payments = Backbone.Collection.extend({
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
-    "completed": {
+    "succeded": {
       "path":"/v1/ripple_transactions",
       "method": "get"
     },
@@ -90,10 +90,10 @@ var Payments = Backbone.Collection.extend({
     var model = this.get(id);
 
     model.set({
-      state: 'completed'
+      state: 'succeeded'
     });
 
-    model.save('state', 'completed', {
+    model.save('state', 'succeeded', {
       url: model.baseUrl + this.urlObject.flagAsDone.path + id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));
