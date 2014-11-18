@@ -17,6 +17,8 @@ var Payments = Backbone.Collection.extend({
 
   url: appConfig.baseUrl,
 
+  baseUrl: appConfig.baseUrl,
+
   comparator: function(a, b) {
     return b.id - a.id;
   },
@@ -37,7 +39,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   updateBaseUrl: function(newBaseUrl) {
-    this.url = newBaseUrl;
+    this.url = this.baseUrl = newBaseUrl;
   },
 
   urlObject: {
@@ -75,11 +77,10 @@ var Payments = Backbone.Collection.extend({
     var page = page.split('/')[2];
 
     if (!page || _.isUndefined(this.urlObject[page])) {
-      console.warn("undefined route in url object");
       return false;
     }
 
-    this.url += this.urlObject[page].path;
+    this.url = this.baseUrl + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchRippleTransactions();
@@ -88,8 +89,12 @@ var Payments = Backbone.Collection.extend({
   flagAsDone: function(id) {
     var model = this.get(id);
 
-    this.url += this.urlObject.flagAsDone.path + id;
+    model.set({
+      state: 'completed'
+    });
+
     model.save('state', 'completed', {
+      url: model.baseUrl + this.urlObject.flagAsDone.path + id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));
       }
@@ -104,34 +109,34 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
-  directionMap: {
-    incoming: "from-ripple",
-    outgoing: "to-ripple"
-  },
+  // directionMap: {
+  //   incoming: "from-ripple",
+  //   outgoing: "to-ripple"
+  // },
 
-  filterByDirection: function(direction) {
-    var _this = this;
+  // filterByDirection: function(direction) {
+  //   var _this = this;
 
-    var filtered = this.filter(function(payment) {
-      return payment.get('direction') === _this.directionMap[direction];
-    });
+  //   var filtered = this.filter(function(payment) {
+  //     return payment.get('direction') === _this.directionMap[direction];
+  //   });
 
-    return new Payments(filtered);
-  },
+  //   return new Payments(filtered);
+  // },
 
-  filterByState: function(state) {
-    var _this = this;
+  // filterByState: function(state) {
+  //   var _this = this;
 
-    if (state === 'all') {
-      return this;
-    }
+  //   if (state === 'all') {
+  //     return this;
+  //   }
 
-    var filtered = this.filter(function(payment) {
-      return payment.get('state') === state;
-    });
+  //   var filtered = this.filter(function(payment) {
+  //     return payment.get('state') === state;
+  //   });
 
-    return new Payments(filtered);
-  },
+  //   return new Payments(filtered);
+  // },
 
   //create fixture. delete when db ready
   getFakeType: function(data) {

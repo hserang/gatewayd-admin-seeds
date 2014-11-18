@@ -46,17 +46,25 @@ var Payments = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('sync paymentAdded', this.handleCollectionSync);
+    collection.on('sync change paymentAdded', this.handleCollectionSync);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   componentWillUnmount: function() {
     collection.off('sync');
     collection.off('change');
+    collection.off('paymentAdded');
   },
 
   handleCollectionSync: function(collection) {
-    console.log("sync", arguments);
+
+    // model syncs bubble up through collection and are passed into this handler as well
+    if (_.isUndefined(collection.length)) {
+      this.forceUpdate();
+
+      return false;
+    }
+
     this.setState({
       payments: collection
     });
@@ -85,6 +93,11 @@ var Payments = React.createClass({
     });
   },
 
+  directionMap: {
+    incoming: "from-ripple",
+    outgoing: "to-ripple"
+  },
+
   createTitle: function(direction) {
     direction = direction || 'incoming';
 
@@ -97,22 +110,23 @@ var Payments = React.createClass({
   },
 
   render: function() {
-
-    console.log("render");
-
     var direction = this.props.params.direction,
         state = this.props.params.state,
+        _this = this,
         tertiaryNav;
 
     // less than ideal, will refactor when we have pagination, if not sooner.
     // We could keep different collections for each type, but it depends on use case.
-    var paymentItems = this.state.payments
-        .filterByDirection(direction)
-        .filterByState(state)
+    var paymentItems = this.state.payments.chain()
+        .filter(function(model) {
+          return model.get('direction') === _this.directionMap[direction];
+        })
+        .filter(function(model) {
+          return state === 'all'? true : model.get('state') === state;
+        })
         .map(function(model) {
       var id = model.get('id'),
           currency = model.get('from_currency');
-          // console.log("=======", model.attributes);
 
       // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
       return (

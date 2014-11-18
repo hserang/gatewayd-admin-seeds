@@ -68,6 +68,8 @@ var Payment = Backbone.Model.extend({
 
   url: appConfig.baseUrl,
 
+  baseUrl: appConfig.baseUrl,
+
   initialize: function() {
     _.bindAll(this);
 
@@ -83,7 +85,7 @@ var Payment = Backbone.Model.extend({
   },
 
   updateBaseUrl: function(newBaseUrl) {
-    this.url = newBaseUrl;
+    this.url = this.baseUrl = newBaseUrl;
   },
 
   validationErrors: [],
