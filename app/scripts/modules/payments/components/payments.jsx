@@ -141,6 +141,7 @@ var Payments = React.createClass({
           fromAmount={model.get('from_amount')}
           toAmount={model.get('to_amount')}
           state={model.get('state')}
+          isNew={model.get('new')}
           clickHandler={this.handleClick}
         />);
     }, this);

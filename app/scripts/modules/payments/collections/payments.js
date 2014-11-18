@@ -102,6 +102,8 @@ var Payments = Backbone.Collection.extend({
   },
 
   fetchRippleTransactions: function() {
+    var _this = this;
+
     var ids = _.map(this.models, function(model) {
       return model.get('id');
     });
@@ -112,16 +114,17 @@ var Payments = Backbone.Collection.extend({
       }
     })
     .then(function() {
-      var newIds = _.map(this.models, function(model) {
+      var newIds = _.map(_this.models, function(model) {
         return model.get('id');
       });
 
-      var diffIds = _.pick(ids, function(id) {
-        return !newIds.indexOf(id);
+      var diffIds = _.reject(newIds, function(id) {
+        return ids.indexOf(id) > -1;
       });
 
-      this.models.forEach(function(model) {
-        if (diffIds.indexOf(model.get('id'))) {
+
+      _this.models.forEach(function(model) {
+        if (diffIds.indexOf(model.get('id')) > -1) {
           model.set('new', true);
         } else {
           model.set('new', false);

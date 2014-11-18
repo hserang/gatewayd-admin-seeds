@@ -19,6 +19,11 @@ var Payment = React.createClass({
       address = ['To', this.props.toAddress];
     }
 
+    var classes = 'list-group-item';
+    if (this.props.isNew) {
+      classes += ' highlight';
+    }
+
     //make a done button component and put this logic there!!
     if (this.props.state === 'incoming') {
       doneButton = <button onClick={this.handleClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
@@ -27,7 +32,7 @@ var Payment = React.createClass({
     }
 
     return (
-      <li className="list-group-item">
+      <li className={classes}>
         <div className="row">
           <div className="col-sm-4">
             To Currency: {this.props.toCurrency} {this.props.toAmount}

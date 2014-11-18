@@ -1,5 +1,5 @@
 var config = {
-  baseUrl: 'http://localhost:5000'
+  baseUrl: 'https://localhost:5000'
 };
 
 module.exports = config;
