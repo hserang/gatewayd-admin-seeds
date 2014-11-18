@@ -125,23 +125,24 @@ var Payments = React.createClass({
           return state === 'all'? true : model.get('state') === state;
         })
         .map(function(model) {
-      var id = model.get('id'),
-          currency = model.get('from_currency');
+      var id = model.get('id');
 
       // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
       return (
-          <PaymentItem
-            key={id}
-            id={id}
-            direction={model.get('direction')}
-            timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
-            fromAddress={model.get('fromAddress').address}
-            toAddress={model.get('toAddress').address}
-            currency={currency}
-            state={model.get('state')}
-            amount={model.get('from_amount')}
-            clickHandler={this.handleClick}
-          />);
+        <PaymentItem
+          key={id}
+          id={id}
+          direction={model.get('direction')}
+          timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+          fromAddress={model.get('fromAddress').address}
+          toAddress={model.get('toAddress').address}
+          fromCurrency={model.get('from_currency')}
+          toCurrency={model.get('to_currency')}
+          fromAmount={model.get('from_amount')}
+          toAmount={model.get('to_amount')}
+          state={model.get('state')}
+          clickHandler={this.handleClick}
+        />);
     }, this);
 
     //todo make separate component with iterator. Oy.

@@ -28,18 +28,25 @@ var Payment = React.createClass({
 
     return (
       <li className="list-group-item">
+        <div className="row">
+          <div className="col-sm-4">
+            To Currency: {this.props.toCurrency} {this.props.toAmount}
+          </div>
+          <div className="col-sm-1">
+          </div>
+          <div className="col-sm-4">
+            From Currency: {this.props.fromCurrency} {this.props.fromAmount}
+          </div>
+          <div className="col-sm-3">
+            Status: {this.props.state}
+          </div>
+        </div>
         <div className="row border-bottom">
-          <div className="col-sm-3">
-          {address[0]} Address: {address[1]}
+          <div className="col-sm-6">
+            {address[0]} Address: {address[1]}
           </div>
-          <div className="col-sm-3">
-          </div>
-          <div className="col-sm-3">
-            Currency: {this.props.currency} {this.props.amount}
-          </div>
-          <div className="col-sm-3">
-          Status: {this.props.state}
-          {doneButton}
+          <div className="col-sm-6">
+            {doneButton}
           </div>
         </div>
         <div className="clearfix">
