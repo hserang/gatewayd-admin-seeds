@@ -132,6 +132,7 @@ var Payments = React.createClass({
         <PaymentItem
           key={id}
           id={id}
+          transactionHash={model.get('transaction_hash')}
           direction={model.get('direction')}
           timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
           fromAddress={model.get('fromAddress').address}

@@ -12,6 +12,12 @@ var Payment = React.createClass({
 
   render: function() {
     var doneButton, address;
+    var classes = 'list-group-item';
+    var rippleGraphLink = 'http://ripple.com/graph/' + this.props.transactionHash;
+
+    if (this.props.isNew) {
+      classes += ' highlight';
+    }
 
     if (this.props.direction === 'from-ripple') {
       address = ['From', this.props.fromAddress];
@@ -19,10 +25,6 @@ var Payment = React.createClass({
       address = ['To', this.props.toAddress];
     }
 
-    var classes = 'list-group-item';
-    if (this.props.isNew) {
-      classes += ' highlight';
-    }
 
     //make a done button component and put this logic there!!
     if (this.props.state === 'incoming') {
@@ -46,16 +48,21 @@ var Payment = React.createClass({
             Status: {this.props.state}
           </div>
         </div>
-        <div className="row border-bottom">
-          <div className="col-sm-6">
+        <div className="row">
+          <div className="col-sm-8">
             {address[0]} Address: {address[1]}
           </div>
-          <div className="col-sm-6">
+          <div className="col-sm-4">
             {doneButton}
           </div>
         </div>
+        <div className="row border-bottom">
+          <div className="col-sm-12">
+            <a href={rippleGraphLink}>Ripple Graph Link</a>
+          </div>
+        </div>
         <div className="clearfix">
-          <span className="pull-right">{this.props.timeStamp}</span>
+          <span className="pull-left">{this.props.timeStamp}</span>
         </div>
       </li>
     );
