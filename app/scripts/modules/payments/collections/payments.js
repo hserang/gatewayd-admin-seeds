@@ -114,6 +114,14 @@ var Payments = Backbone.Collection.extend({
       }
     })
     .then(function() {
+      if (!ids.length) {
+        _this.models.forEach(function(model) {
+          model.set('new', false);
+        });
+
+        return true;
+      }
+
       var newIds = _.map(_this.models, function(model) {
         return model.get('id');
       });
