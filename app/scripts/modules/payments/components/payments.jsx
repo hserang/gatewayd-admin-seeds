@@ -70,7 +70,11 @@ var Payments = React.createClass({
     });
   },
 
-  handleClick: function(id) {
+  handleItemClick: function(id) {
+    console.log('id', id, 'was clicked!');
+  },
+
+  handleDoneButtonClick: function(id) {
     PaymentActions.flagAsDone(id);
   },
 
@@ -143,7 +147,8 @@ var Payments = React.createClass({
           toAmount={model.get('to_amount')}
           state={model.get('state')}
           isNew={model.get('new')}
-          clickHandler={this.handleClick}
+          itemClickHandler={this.handleItemClick}
+          buttonClickHandler={this.handleDoneButtonClick}
         />);
     }, this);
 

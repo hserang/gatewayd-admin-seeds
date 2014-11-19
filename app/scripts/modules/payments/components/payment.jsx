@@ -5,9 +5,14 @@ var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
 
 var Payment = React.createClass({
+  handleItemClick: function(id) {
+    this.props.itemClickHandler(id);
+  },
 
-  handleClick: function(id) {
-    this.props.clickHandler(id);
+  handleButtonClick: function(id, e) {
+    e.stopPropagation();
+
+    this.props.buttonClickHandler(id);
   },
 
   render: function() {
@@ -28,13 +33,13 @@ var Payment = React.createClass({
 
     //make a done button component and put this logic there!!
     if (this.props.state === 'incoming') {
-      doneButton = <button onClick={this.handleClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
+      doneButton = <button onClick={this.handleButtonClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
     } else {
       doneButton = null;
     }
 
     return (
-      <li className={classes}>
+      <li className={classes} onClick={this.handleItemClick.bind(this, this.props.id)}>
         <div className="row">
           <div className="col-sm-4">
             To Currency: {this.props.toCurrency} {this.props.toAmount}
