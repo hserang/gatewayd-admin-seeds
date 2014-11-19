@@ -13,7 +13,7 @@ var Payment = React.createClass({
   render: function() {
     var doneButton, address;
     var classes = 'list-group-item';
-    var rippleGraphLink = 'http://ripple.com/graph/' + this.props.transactionHash;
+    var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.transactionHash;
 
     if (this.props.isNew) {
       classes += ' highlight';
