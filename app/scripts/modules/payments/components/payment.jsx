@@ -1,8 +1,10 @@
 "use strict";
 
 var React = require('react');
-var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var BootstrapButton = require('react-bootstrap').Button;
+
+var ModalTrigger = require('react-bootstrap').ModalTrigger;
+var ModalPaymentDetails = require('./payment-detail.jsx');
 
 var Payment = React.createClass({
   handleItemClick: function(id) {
@@ -39,37 +41,46 @@ var Payment = React.createClass({
     }
 
     return (
-      <li className={classes} onClick={this.handleItemClick.bind(this, this.props.id)}>
-        <div className="row">
-          <div className="col-sm-4">
-            To Currency: {this.props.toCurrency} {this.props.toAmount}
+      <div className="modal-container">
+      <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} container={this}/>} container={this}>
+        <li className={classes} onClick={this.handleItemClick.bind(this, this.props.id)}>
+          <div className="row">
+            <div className="col-sm-4">
+              To Currency: {this.props.toCurrency} {this.props.toAmount}
+            </div>
+            <div className="col-sm-1">
+            </div>
+            <div className="col-sm-4">
+              From Currency: {this.props.fromCurrency} {this.props.fromAmount}
+            </div>
+            <div className="col-sm-3">
+              Status: {this.props.state}
+            </div>
           </div>
-          <div className="col-sm-1">
+          <div className="row">
+            <div className="col-sm-12">
+              Destination Tag: {this.props.destinationTag}
+            </div>
           </div>
-          <div className="col-sm-4">
-            From Currency: {this.props.fromCurrency} {this.props.fromAmount}
+          <div className="row">
+            <div className="col-sm-8">
+              {address[0]} Address: {address[1]}
+            </div>
+            <div className="col-sm-4">
+              {doneButton}
+            </div>
           </div>
-          <div className="col-sm-3">
-            Status: {this.props.state}
+          <div className="row border-bottom">
+            <div className="col-sm-12">
+              <a href={rippleGraphLink}>Ripple Graph Link</a>
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-8">
-            {address[0]} Address: {address[1]}
+          <div className="clearfix">
+            <span className="pull-left">{this.props.timeStamp}</span>
           </div>
-          <div className="col-sm-4">
-            {doneButton}
-          </div>
-        </div>
-        <div className="row border-bottom">
-          <div className="col-sm-12">
-            <a href={rippleGraphLink}>Ripple Graph Link</a>
-          </div>
-        </div>
-        <div className="clearfix">
-          <span className="pull-left">{this.props.timeStamp}</span>
-        </div>
-      </li>
+        </li>
+      </ModalTrigger>
+      </div>
     );
   }
 });
