@@ -114,9 +114,9 @@ var Payments = React.createClass({
   },
 
   render: function() {
-    var direction = this.props.params.direction,
+    var _this = this,
+        direction = this.props.params.direction,
         state = this.props.params.state,
-        _this = this,
         tertiaryNav;
 
     // less than ideal, will refactor when we have pagination, if not sooner.
@@ -136,6 +136,8 @@ var Payments = React.createClass({
         <PaymentItem
           key={id}
           id={id}
+          model={model}
+          destinationTag={model.get('toAddress').tag}
           transactionHash={model.get('transaction_hash')}
           direction={model.get('direction')}
           timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
@@ -149,7 +151,8 @@ var Payments = React.createClass({
           isNew={model.get('new')}
           itemClickHandler={this.handleItemClick}
           buttonClickHandler={this.handleDoneButtonClick}
-        />);
+        />
+      );
     }, this);
 
     //todo make separate component with iterator. Oy.
@@ -175,6 +178,7 @@ var Payments = React.createClass({
       <DocumentTitle title={this.createTitle(direction)}>
       <div>
         <div className="row">
+          <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
           {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
           <div className="col-sm-4 col-xs-4">
             <h1>Payments:
@@ -188,7 +192,6 @@ var Payments = React.createClass({
               </span>
             </h1>
           </div>
-          <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
         </div>
         <div className='row'>
           <div className="col-xs-12">
