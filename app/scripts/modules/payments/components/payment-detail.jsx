@@ -1,13 +1,34 @@
 'use strict';
 
 var React = require('react');
+var _ = require('lodash');
 var moment = require('moment');
+
+var paymentActions = require('../actions.js');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
+
 var Modal = require('react-bootstrap').Modal;
 var Button = require('react-bootstrap').Button;
 
 var PaymentDetail = React.createClass({
-  handleHide: function() {
+  hidePaymentDetails: function() {
     this.props.onRequestHide();
+  },
+
+  dispatchCallback: function(payload) {
+    var handleAction = {
+      hidePaymentDetails: this.hidePaymentDetails
+    };
+
+    if (!_.isUndefined(handleAction[payload.actionType])) {
+      handleAction[payload.actionType](payload.data);
+    }
+  },
+
+  getInitialState: function() {
+    adminDispatcher.register(this.dispatchCallback);
+
+    return {};
   },
 
   render: function() {
@@ -15,9 +36,8 @@ var PaymentDetail = React.createClass({
       <Modal
         title="Payment Details"
         backdrop={true}
-        onRequestHide={this.handleHide}
+        onRequestHide={this.hidePaymentDetails}
         animation={false}
-        onClick={this.handleHide}
       >
         <div className="modal-body">
           <div className="row border-bottom">
@@ -97,14 +117,16 @@ var PaymentDetail = React.createClass({
             Transaction Hash: {this.props.model.get('transaction_hash') || 'none'}
           </div>
           <br />
-          <Button bsStyle="primary" className="pull-right" onClick={this.handleHide}>
-            Close
-          </Button>
           <div className="row">
             Memo: {'Memo goes here' || 'none'}
           </div>
         </div>
         <div className="modal-footer">
+          <div className="col-sm-12">
+            <Button bsStyle="primary" className="pull-right" onClick={this.hidePaymentDetails} autofocus={true}>
+              Close
+            </Button>
+          </div>
         </div>
       </Modal>
     );
