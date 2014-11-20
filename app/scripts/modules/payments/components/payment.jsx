@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react');
-var BootstrapButton = require('react-bootstrap').Button;
+var moment = require('moment');
 
 var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var ModalPaymentDetails = require('./payment-detail.jsx');
@@ -20,66 +20,75 @@ var Payment = React.createClass({
   render: function() {
     var doneButton, address;
     var classes = 'list-group-item';
-    var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.transactionHash;
+    var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transactionHash');
 
-    if (this.props.isNew) {
+    if (this.props.model.get('isNew')) {
       classes += ' highlight';
     }
 
-    if (this.props.direction === 'from-ripple') {
-      address = ['From', this.props.fromAddress];
+    if (this.props.model.get('direction') === 'from-ripple') {
+      address = ['From', this.props.model.get('fromAddress').address];
     } else {
-      address = ['To', this.props.toAddress];
+      address = ['To', this.props.model.get('toAddress').address];
     }
 
 
     //make a done button component and put this logic there!!
-    if (this.props.state === 'incoming') {
-      doneButton = <button onClick={this.handleButtonClick.bind(this, this.props.id)} className="btn pull-right">Done</button>;
+    if (this.props.model.get('state') === 'incoming') {
+      doneButton = (
+        <button
+          onClick={this.handleButtonClick.bind(this, this.props.model.get('id'))}
+          className="btn pull-right"
+        >
+          Done
+        </button>
+      );
     } else {
       doneButton = null;
     }
 
     return (
       <div className="modal-container">
-      <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} container={this}/>} container={this}>
-        <li className={classes} onClick={this.handleItemClick.bind(this, this.props.id)}>
-          <div className="row">
-            <div className="col-sm-4">
-              To Currency: {this.props.toCurrency} {this.props.toAmount}
+        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} container={this} />} container={this}>
+          <li className={classes} onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}>
+            <div className="row">
+              <div className="col-sm-4">
+                To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
+              </div>
+              <div className="col-sm-1">
+              </div>
+              <div className="col-sm-4">
+                From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
+              </div>
+              <div className="col-sm-3">
+                Status: {this.props.model.get('state')}
+              </div>
             </div>
-            <div className="col-sm-1">
+            <div className="row">
+              <div className="col-sm-12">
+                Destination Tag: {this.props.model.get('toAddress').tag}
+              </div>
             </div>
-            <div className="col-sm-4">
-              From Currency: {this.props.fromCurrency} {this.props.fromAmount}
+            <div className="row">
+              <div className="col-sm-8">
+                {address[0]} Address: {address[1]}
+              </div>
+              <div className="col-sm-4">
+                {doneButton}
+              </div>
             </div>
-            <div className="col-sm-3">
-              Status: {this.props.state}
+            <div className="row border-bottom">
+              <div className="col-sm-12">
+                <a href={rippleGraphLink}>Ripple Graph Link</a>
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-12">
-              Destination Tag: {this.props.destinationTag}
+            <div className="clearfix">
+              <span className="pull-left">
+                {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+              </span>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-8">
-              {address[0]} Address: {address[1]}
-            </div>
-            <div className="col-sm-4">
-              {doneButton}
-            </div>
-          </div>
-          <div className="row border-bottom">
-            <div className="col-sm-12">
-              <a href={rippleGraphLink}>Ripple Graph Link</a>
-            </div>
-          </div>
-          <div className="clearfix">
-            <span className="pull-left">{this.props.timeStamp}</span>
-          </div>
-        </li>
-      </ModalTrigger>
+          </li>
+        </ModalTrigger>
       </div>
     );
   }

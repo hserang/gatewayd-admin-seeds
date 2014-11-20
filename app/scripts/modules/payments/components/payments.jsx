@@ -9,7 +9,6 @@ var CurrentPath = require('react-router').CurrentPath;
 var ActiveState = require('react-router').ActiveState;
 var Link = require('react-router').Link;
 var url = require('url');
-var moment = require('moment');
 var numeral = require('numeral');
 var NavSecondary = require('../../../components/nav-secondary.jsx');
 
@@ -22,6 +21,9 @@ var Model = require('../models/payment-create.js');
 var model = new Model();
 
 var PaymentCreateForm = require('./payment-create.jsx');
+
+var ModalTrigger = require('react-bootstrap').ModalTrigger;
+var ModalPaymentDetails = require('./payment-detail.jsx');
 
 var Payments = React.createClass({
   mixins: [CurrentPath, ActiveState],
@@ -122,37 +124,23 @@ var Payments = React.createClass({
     // less than ideal, will refactor when we have pagination, if not sooner.
     // We could keep different collections for each type, but it depends on use case.
     var paymentItems = this.state.payments.chain()
-        .filter(function(model) {
-          return model.get('direction') === _this.directionMap[direction];
-        })
-        .filter(function(model) {
-          return state === 'all'? true : model.get('state') === state;
-        })
-        .map(function(model) {
-      var id = model.get('id');
+      .filter(function(model) {
+        return model.get('direction') === _this.directionMap[direction];
+      })
+      .filter(function(model) {
+        return state === 'all'? true : model.get('state') === state;
+      })
+      .map(function(model) {
 
-      // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
-      return (
-        <PaymentItem
-          key={id}
-          id={id}
-          model={model}
-          destinationTag={model.get('toAddress').tag}
-          transactionHash={model.get('transaction_hash')}
-          direction={model.get('direction')}
-          timeStamp={moment(model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
-          fromAddress={model.get('fromAddress').address}
-          toAddress={model.get('toAddress').address}
-          fromCurrency={model.get('from_currency')}
-          toCurrency={model.get('to_currency')}
-          fromAmount={model.get('from_amount')}
-          toAmount={model.get('to_amount')}
-          state={model.get('state')}
-          isNew={model.get('new')}
-          itemClickHandler={this.handleItemClick}
-          buttonClickHandler={this.handleDoneButtonClick}
-        />
-      );
+        // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
+        return (
+          <PaymentItem
+            key={model.get('id')}
+            model={model}
+            itemClickHandler={this.handleItemClick}
+            buttonClickHandler={this.handleDoneButtonClick}
+          />
+        );
     }, this);
 
     //todo make separate component with iterator. Oy.
@@ -176,34 +164,34 @@ var Payments = React.createClass({
 
     return (
       <DocumentTitle title={this.createTitle(direction)}>
-      <div>
-        <div className="row">
-          <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
-          {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
-          <div className="col-sm-4 col-xs-4">
-            <h1>Payments:
-              <span className='header-links'>
-                <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>
-                  Sent
-                </Link>
-                <Link to='payments' params={{direction: 'incoming', state: 'all'}}>
-                  Received
-                </Link>
-              </span>
-            </h1>
+        <div>
+          <div className="row">
+            <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
+            {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
+            <div className="col-sm-4 col-xs-4">
+              <h1>Payments:
+                <span className='header-links'>
+                  <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>
+                    Sent
+                  </Link>
+                  <Link to='payments' params={{direction: 'incoming', state: 'all'}}>
+                    Received
+                  </Link>
+                </span>
+              </h1>
+            </div>
+          </div>
+          <div className='row'>
+            <div className="col-xs-12">
+              {tertiaryNav}
+            </div>
+          </div>
+          <div className="row">
+            <ul className="list-group">
+            {paymentItems}
+            </ul>
           </div>
         </div>
-        <div className='row'>
-          <div className="col-xs-12">
-            {tertiaryNav}
-          </div>
-        </div>
-        <div className="row">
-          <ul className="list-group">
-          {paymentItems}
-          </ul>
-        </div>
-      </div>
       </DocumentTitle>
     );
   }
