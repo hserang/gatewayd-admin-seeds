@@ -73,7 +73,6 @@ var Payments = React.createClass({
   },
 
   handleItemClick: function(id) {
-    console.log('id', id, 'was clicked!');
   },
 
   handleDoneButtonClick: function(id) {
