@@ -43,6 +43,12 @@ var actions = {
     adminDispatcher.handleEvent({
       actionType: paymentActions.fetchRippleTransactions
     });
+  },
+
+  hidePaymentDetails: function() {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.hidePaymentDetails
+    });
   }
 };
 
