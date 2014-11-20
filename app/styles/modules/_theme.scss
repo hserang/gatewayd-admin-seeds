@@ -85,5 +85,11 @@ body {
 }
 
 .modal-container .modal, .modal-container .modal-backdrop {
-  border: 1px solid $brand-primary;
+  z-index: 999999;
+  position: absolute;
+  background: $white;
+  top: 242px;
+  left: 8%;
+  box-shadow: #aaaaaa 12px 3px 137px;
+  padding: 20px;
 }
