@@ -79,3 +79,11 @@ body {
 .highlight {
   border: 5px solid $brand-primary;
 }
+
+.modal-body {
+  margin-left: 18px;
+}
+
+.modal-container .modal, .modal-container .modal-backdrop {
+  border: 1px solid $brand-primary;
+}
