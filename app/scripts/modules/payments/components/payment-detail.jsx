@@ -97,14 +97,14 @@ var PaymentDetail = React.createClass({
             Transaction Hash: {this.props.model.get('transaction_hash') || 'none'}
           </div>
           <br />
+          <Button bsStyle="primary" className="pull-right" onClick={this.handleHide}>
+            Close
+          </Button>
           <div className="row">
             Memo: {'Memo goes here' || 'none'}
           </div>
         </div>
         <div className="modal-footer">
-          <Button bsStyle="primary" className="pull-right" onClick={this.handleHide}>
-            Close
-          </Button>
         </div>
       </Modal>
     );
