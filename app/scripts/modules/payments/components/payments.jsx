@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var React = require('react');
 var DocumentTitle = require('react-document-title');
+var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
 var CurrentPath = require('react-router').CurrentPath;
