@@ -85,7 +85,7 @@ body {
   margin-left: 18px;
 }
 
-.modal-container .modal {
+.modal {
   z-index: 2;
   position: fixed;
   background: $white;
@@ -95,7 +95,7 @@ body {
   padding: 20px;
 }
 
-.modal-container .modal-backdrop {
+.modal-backdrop {
   opacity: 0.8;
   z-index: 1;
   position: fixed;

@@ -2,14 +2,12 @@
 
 var _ = require('lodash');
 var React = require('react');
+var Modal = require('react-bootstrap').Modal;
 var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
 var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
-var ProgressBar = require('react-bootstrap').ProgressBar;
-var LoadingBar = require('../../../shared/components/loading-bar/components/loading-bar.jsx');
-var loadingBarActions = require('../../../shared/components/loading-bar/actions');
 var paymentActions = require('../actions');
 
 var PaymentCreate = React.createClass({
@@ -136,13 +134,13 @@ var PaymentCreate = React.createClass({
   },
 
   dispatchSendPaymentComplete: function(model, data) {
-    this.handleClose();
+    this.hideForm();
 
     paymentActions.sendPaymentComplete(data.payment);
   },
 
-  handlePolling: function() {
-    this.advanceProgressBar(25);
+  hideForm: function() {
+    this.props.onRequestHide();
   },
 
   getInitialState: function() {
@@ -174,83 +172,72 @@ var PaymentCreate = React.createClass({
   },
 
   render: function() {
-    var graphLink = (
-      <a href={this.state.graphUrl}>
-        See this transaction in action: Ripple Graph
-      </a>
-    );
-    var progressBar = (
-      <div>
-        <LoadingBar />
-        {this.state.showGraphLink ? graphLink : null}
-      </div>
-    );
-
     return (
-      <div>
-        <h2>Send Payment</h2>
-        <form onSubmit={this.handleSubmit}>
+      <Modal
+        title="Send Payment"
+        backdrop={true}
+        onRequestHide={this.hideForm}
+        animation={false}
+      >
+        <div className="modal-body">
+          <form onSubmit={this.handleSubmit}>
+            <Input type="text" ref="address"
+              label={<div><Label bsStyle="info">Required</Label> Destination Address: </div>}
+              bsStyle={this.validationMap[this.state.address.isValid]}
+              disabled={this.state.disableForm || this.state.disableAddressField}
+              autoFocus={true} onBlur={this.validateAddress.bind(this, false)} />
+            <Label bsStyle="warning">{this.state.address.errorMessage}</Label>
+            <Row>
+              <Col xs={6}>
 
-          <Input type="text" ref="address"
-            label={<div><Label bsStyle="info">Required</Label> Destination Address: </div>}
-            bsStyle={this.validationMap[this.state.address.isValid]}
-            disabled={this.state.disableForm || this.state.disableAddressField}
-            autoFocus={true} onBlur={this.validateAddress.bind(this, false)} />
-          <Label bsStyle="warning">{this.state.address.errorMessage}</Label>
-          <Row>
-            <Col xs={6}>
-
-              <Input type="tel" ref="amount"
-                label={<div><Label bsStyle="info">Required</Label> Amount: </div>}
-                bsStyle={this.validationMap[this.state.amount.isValid]}
-                disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'amount', false)} />
-              <Label bsStyle="warning">{this.state.amount.errorMessage}</Label>
-            </Col>
-            <Col xs={6}>
-              <Input type="text" ref="currency"
-                label={<div><Label bsStyle="info">Required</Label> Currency: </div>}
-                bsStyle={this.validationMap[this.state.currency.isValid]}
-                disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'currency', false)} />
-              <Label bsStyle="warning">{this.state.currency.errorMessage}</Label>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <Input type="tel" ref="destinationTag"
-                label="Destination Tag:"
-                bsStyle={this.validationMap[this.state.destinationTag.isValid]}
-                disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'destinationTag', false)} />
-              <Label bsStyle="warning">{this.state.destinationTag.errorMessage}</Label>
-            </Col>
-            <Col xs={6}>
-              <Input type="tel" ref="sourceTag"
-                label="Source Tag:"
-                bsStyle={this.validationMap[this.state.sourceTag.isValid]}
-                disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'sourceTag', false)} />
-              <Label bsStyle="warning">{this.state.sourceTag.errorMessage}</Label>
-            </Col>
-          </Row>
-          <Input type="text" ref="invoiceId"
-            label="Invoice Id:"
-            bsStyle={this.validationMap[this.state.invoiceId.isValid]}
-            disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
-          <Label bsStyle="warning">{this.state.invoiceId.errorMessage}</Label>
-          <Input type="textarea" ref="memo"
-            label="Memo:"
-            bsStyle={this.validationMap[this.state.memo.isValid]}
-            disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'memo', false)} />
-          <Label bsStyle="warning">{this.state.memo.errorMessage}</Label>
-          <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
-            disabled={this.state.disableForm || this.state.disableSubmitButton}
-            block>
-            {this.state.submitButtonLabel}
-          </Button>
-          <br />
-          <br />
-          <br />
-          {this.state.showProgressBar ? progressBar : null}
-        </form>
-      </div>
+                <Input type="tel" ref="amount"
+                  label={<div><Label bsStyle="info">Required</Label> Amount: </div>}
+                  bsStyle={this.validationMap[this.state.amount.isValid]}
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'amount', false)} />
+                <Label bsStyle="warning">{this.state.amount.errorMessage}</Label>
+              </Col>
+              <Col xs={6}>
+                <Input type="text" ref="currency"
+                  label={<div><Label bsStyle="info">Required</Label> Currency: </div>}
+                  bsStyle={this.validationMap[this.state.currency.isValid]}
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'currency', false)} />
+                <Label bsStyle="warning">{this.state.currency.errorMessage}</Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <Input type="tel" ref="destinationTag"
+                  label="Destination Tag:"
+                  bsStyle={this.validationMap[this.state.destinationTag.isValid]}
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'destinationTag', false)} />
+                <Label bsStyle="warning">{this.state.destinationTag.errorMessage}</Label>
+              </Col>
+              <Col xs={6}>
+                <Input type="tel" ref="sourceTag"
+                  label="Source Tag:"
+                  bsStyle={this.validationMap[this.state.sourceTag.isValid]}
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'sourceTag', false)} />
+                <Label bsStyle="warning">{this.state.sourceTag.errorMessage}</Label>
+              </Col>
+            </Row>
+            <Input type="text" ref="invoiceId"
+              label="Invoice Id:"
+              bsStyle={this.validationMap[this.state.invoiceId.isValid]}
+              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
+            <Label bsStyle="warning">{this.state.invoiceId.errorMessage}</Label>
+            <Input type="textarea" ref="memo"
+              label="Memo:"
+              bsStyle={this.validationMap[this.state.memo.isValid]}
+              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'memo', false)} />
+            <Label bsStyle="warning">{this.state.memo.errorMessage}</Label>
+            <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
+              disabled={this.state.disableForm || this.state.disableSubmitButton}
+              block>
+              {this.state.submitButtonLabel}
+            </Button>
+          </form>
+        </div>
+      </Modal>
     );
   }
 });

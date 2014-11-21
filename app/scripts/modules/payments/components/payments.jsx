@@ -11,36 +11,25 @@ var ActiveState = require('react-router').ActiveState;
 var Link = require('react-router').Link;
 var url = require('url');
 var numeral = require('numeral');
-var NavSecondary = require('../../../components/nav-secondary.jsx');
 
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
 var collection = new Collection();
 
-var Model = require('../models/payment-create.js');
-var model = new Model();
+var PaymentCreateFormModel = require('../models/payment-create.js');
+var paymentCreateFormModel = new PaymentCreateFormModel();
 
 var PaymentCreateForm = require('./payment-create.jsx');
 
-var ModalTrigger = require('react-bootstrap').ModalTrigger;
-var ModalPaymentDetails = require('./payment-detail.jsx');
-
 var Payments = React.createClass({
   mixins: [CurrentPath, ActiveState],
-
-  formSymbolMap: {
-    true: '-',
-    false: '+'
-  },
 
   getStateFromStore: function(props) {
     props = props || this.props;
 
     return {
-      payments: collection,
-      showForm: false,
-      toggledSymbol: this.formSymbolMap[false]
+      payments: collection
     };
   },
 
@@ -77,25 +66,6 @@ var Payments = React.createClass({
 
   handleDoneButtonClick: function(id) {
     PaymentActions.flagAsDone(id);
-  },
-
-  toggleForm: function() {
-    var newShowFormState = !this.state.showForm;
-
-    this.setState({
-      showForm: newShowFormState
-    });
-
-    this.setState({
-      toggledSymbol: this.formSymbolMap[newShowFormState]
-    });
-  },
-
-  closeForm: function() {
-    this.setState({
-      showForm: false,
-      toggledSymbol: this.formSymbolMap[false]
-    });
   },
 
   directionMap: {
@@ -164,17 +134,18 @@ var Payments = React.createClass({
       <DocumentTitle title={this.createTitle(direction)}>
         <div>
           <div className="row">
-            <Button className="pull-right" onClick={this.toggleForm}>{this.state.toggledSymbol}</Button>
-            {this.state.showForm ? <PaymentCreateForm model={model} onSubmitSuccess={this.closeForm} /> : null}
-            <div className="col-sm-4 col-xs-4">
+            <div className="col-sm-12 col-xs-12">
               <h1>Payments:
-                <span className='header-links'>
+                <span className="header-links">
                   <Link to='payments' params={{direction: 'outgoing', state: 'all'}}>
                     Sent
                   </Link>
                   <Link to='payments' params={{direction: 'incoming', state: 'all'}}>
                     Received
                   </Link>
+                  <ModalTrigger modal={<PaymentCreateForm model={paymentCreateFormModel} />}>
+                    <a>Send Payment</a>
+                  </ModalTrigger>
                 </span>
               </h1>
             </div>

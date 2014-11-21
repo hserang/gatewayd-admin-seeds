@@ -23,7 +23,7 @@ var Payment = React.createClass({
 
   render: function() {
     var doneButton, address;
-    var classes = 'modal-container';
+    var classes = '';
     var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transaction_hash');
 
     if (this.props.model.get('new')) {
@@ -44,7 +44,7 @@ var Payment = React.createClass({
           onClick={this.handleButtonClick.bind(this, this.props.model.get('id'))}
           className="btn pull-right"
         >
-          Done
+          Process
         </button>
       );
     } else {
@@ -53,7 +53,7 @@ var Payment = React.createClass({
 
     return (
       <div className={classes}>
-        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} container={this} />} container={this}>
+        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} />}>
           <li className="list-group-item" onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}>
             <div className="row">
               <div className="col-sm-4">
