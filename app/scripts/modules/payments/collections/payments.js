@@ -189,13 +189,15 @@ var Payments = Backbone.Collection.extend({
   },
 
   sendPaymentComplete: function(paymentData) {
-    var paymentModel = new this.model(paymentData);
-    // set up listener for sync - check status: succeeded/failed
+    var _this = this;
 
-    this.add(paymentModel);
-    this.trigger("paymentAdded", this);
-
-    paymentModel.pollStatus();
+    this.fetch({
+      headers: {
+        Authorization: session.get('credentials')
+      }
+    }).then(function() {
+      _this.get(paymentData.id).pollStatus();
+    });
   }
 });
 

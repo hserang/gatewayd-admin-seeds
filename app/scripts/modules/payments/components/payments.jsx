@@ -48,14 +48,13 @@ var Payments = React.createClass({
   },
 
   componentDidMount: function() {
-    collection.on('sync change paymentAdded', this.handleCollectionSync);
+    collection.on('sync change', this.handleCollectionSync);
     PaymentActions.updateUrl(this.getCurrentPath());
   },
 
   componentWillUnmount: function() {
     collection.off('sync');
     collection.off('change');
-    collection.off('paymentAdded');
   },
 
   handleCollectionSync: function(collection) {
