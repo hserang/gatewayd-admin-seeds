@@ -142,50 +142,7 @@ var Payments = Backbone.Collection.extend({
     });
   },
 
-  // directionMap: {
-  //   incoming: "from-ripple",
-  //   outgoing: "to-ripple"
-  // },
-
-  // filterByDirection: function(direction) {
-  //   var _this = this;
-
-  //   var filtered = this.filter(function(payment) {
-  //     return payment.get('direction') === _this.directionMap[direction];
-  //   });
-
-  //   return new Payments(filtered);
-  // },
-
-  // filterByState: function(state) {
-  //   var _this = this;
-
-  //   if (state === 'all') {
-  //     return this;
-  //   }
-
-  //   var filtered = this.filter(function(payment) {
-  //     return payment.get('state') === state;
-  //   });
-
-  //   return new Payments(filtered);
-  // },
-
-  //create fixture. delete when db ready
-  getFakeType: function(data) {
-    var output;
-
-    output = _.map(data.ripple_transactions, function(model) {
-      return _.extend({direction: Math.round(Math.random()) ? "to-ripple" : "from-ripple"}, model);
-    });
-
-    return {ripple_transactions: output};
-  },
-
   parse: function(data) {
-    // add fixture. Remove when db is ready
-    data = this.getFakeType(data);
-
     return data.ripple_transactions;
   },
 

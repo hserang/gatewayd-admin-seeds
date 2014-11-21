@@ -110,9 +110,6 @@ var PaymentCreate = React.createClass({
     this.setState({
       disableForm: true,
       submitButtonLabel: 'Sending Payment...',
-      // progressBarLabel: '',
-      // progressBarPercentage: 0,
-      // showProgressBar: true
     });
 
     // force validate all fields, even if null
@@ -124,8 +121,6 @@ var PaymentCreate = React.createClass({
     this.validateField('invoiceId', true);
     this.validateField('memo', true);
 
-    // loadingBarActions.start();
-
     paymentActions.sendPaymentAttempt(payment);
   },
 
@@ -133,31 +128,15 @@ var PaymentCreate = React.createClass({
     this.props.onSubmitSuccess();
   },
 
-  // handleSuccess: function(payment) {
-  //   this.setState({
-  //     submitButtonLabel: 'Payment Successfully Sent',
-  //     progressBarPercentage: 100,
-  //     progressBarStyle: 'success'
-  //   });
-  // },
-
   handleError: function() {
     this.setState({
       disableForm: false,
       submitButtonLabel: 'Re-Submit Payment?',
-      // progressBarLabel: 'Error: ' + errorMessage,
-      // progressBarPercentage: 100,
-      // progressBarStyle: 'warning'
     });
   },
 
   dispatchSendPaymentComplete: function(model, data) {
     this.handleClose();
-
-    // this.setState({
-    //   showGraphLink: true,
-    //   graphUrl: this.state.graphUrl + payment.transaction_hash
-    // });
 
     paymentActions.sendPaymentComplete(data.payment);
   },
@@ -177,12 +156,6 @@ var PaymentCreate = React.createClass({
       memo: {},
       disableForm: false,
       submitButtonLabel: 'Submit Payment',
-      // showProgressBar: false,
-      // progressBarLabel: '',
-      // progressBarPercentage: 0,
-      // progressBarStyle: 'primary',
-      // showGraphLink: false,
-      // graphUrl: 'http://www.ripple.com/graph/'
     };
   },
 
@@ -191,9 +164,6 @@ var PaymentCreate = React.createClass({
     this.props.model.on('validationComplete', this.showFieldValidationResult);
     this.props.model.on('sync', this.dispatchSendPaymentComplete);
     this.props.model.on('error invalid', this.handleError);
-    // this.props.model.on('sendPaymentSuccess', this.handleSuccess);
-    // this.props.model.on('sendPaymentComplete', this.dispatchSendPaymentComplete);
-    // this.props.model.on('pollingPaymentState', this.handlePolling);
   },
 
   componentWillUnmount: function() {
@@ -201,9 +171,6 @@ var PaymentCreate = React.createClass({
     this.props.model.off('sync');
     this.props.model.off('error');
     this.props.model.off('invalid');
-    // this.props.model.off('sendPaymentSuccess');
-    // this.props.model.off('sendPaymentComplete');
-    // this.props.model.off('pollingPaymentState');
   },
 
   render: function() {

@@ -130,7 +130,6 @@ var Payments = React.createClass({
       })
       .map(function(model) {
 
-        // fromAddress is missing from /v1/payments/outgoing response, so sending a payment breaks app :(
         return (
           <PaymentItem
             key={model.get('id')}
