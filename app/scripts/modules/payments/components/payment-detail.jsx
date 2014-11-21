@@ -31,6 +31,10 @@ var PaymentDetail = React.createClass({
     return {};
   },
 
+  componentWillUnmount: function() {
+    this.hidePaymentDetails();
+  },
+
   render: function() {
     return (
       <Modal
@@ -122,11 +126,9 @@ var PaymentDetail = React.createClass({
           </div>
         </div>
         <div className="modal-footer">
-          <div className="col-sm-12">
-            <Button bsStyle="primary" className="pull-right" onClick={this.hidePaymentDetails} autofocus={true}>
-              Close
-            </Button>
-          </div>
+          <Button bsStyle="primary" onClick={this.hidePaymentDetails} block>
+            Close
+          </Button>
         </div>
       </Modal>
     );
