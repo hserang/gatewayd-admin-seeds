@@ -57,7 +57,7 @@ var PaymentDetail = React.createClass({
               </div>
               <div className="row">
                 <div className="col-sm-9 col-sm-offset-3">
-                  - {this.props.model.get('from_amount')} {this.props.model.get('from_currency')}
+                  {this.props.model.get('from_amount')} {this.props.model.get('from_currency')}
                 </div>
               </div>
             </div>
@@ -85,7 +85,7 @@ var PaymentDetail = React.createClass({
               </div>
               <div className="row">
                 <div className="col-sm-9 col-sm-offset-3">
-                  + {this.props.model.get('to_amount')} {this.props.model.get('to_currency')}
+                  +{this.props.model.get('to_amount')} {this.props.model.get('to_currency')}
                 </div>
               </div>
             </div>
@@ -100,7 +100,10 @@ var PaymentDetail = React.createClass({
           </div>
           <br />
           <div className="row">
-            Memo: {'Memo goes here' || 'none'}
+            Memo: {
+              this.props.model.get('memo') ?
+                sjcl.codec.utf8String.fromBits(sjcl.codec.hex.toBits(this.props.model.get('memo'))) : 'none'
+            }
           </div>
         </div>
         <div className="modal-footer">
