@@ -85,18 +85,18 @@ body {
 }
 
 .modal-container .modal {
-  z-index: 999999;
-  position: absolute;
+  z-index: 2;
+  position: fixed;
   background: $white;
   top: 242px;
-  left: 8%;
+  left: 27%;
   box-shadow: #aaaaaa 12px 3px 137px;
   padding: 20px;
 }
 
 .modal-container .modal-backdrop {
   opacity: 0.8;
-  z-index: 999998;
+  z-index: 1;
   position: fixed;
   top: 0;
   left: 0;
