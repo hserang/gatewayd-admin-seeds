@@ -75,12 +75,13 @@ var Payments = Backbone.Collection.extend({
 
   updateUrl: function(page) {
     var page = page.split('/')[2];
+    var baseUrl = session.get('gatewaydUrl') || this.baseUrl;
 
     if (!page || _.isUndefined(this.urlObject[page])) {
       return false;
     }
 
-    this.url = this.baseUrl + this.urlObject[page].path;
+    this.url = baseUrl + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchRippleTransactions();

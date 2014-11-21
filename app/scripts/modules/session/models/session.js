@@ -144,10 +144,6 @@ var Session = Backbone.Model.extend({
   },
 
   login: function(payload) {
-    if (!payload.name || !payload.gatewaydUrl || !payload.sessionKey) {
-      return false;
-    }
-
     var _this = this;
 
     this.updateSession(payload.gatewaydUrl, payload.sessionKey);
@@ -156,14 +152,14 @@ var Session = Backbone.Model.extend({
 
     this.save(null, {
       wait: true,
-      url: _this.get('gatewaydUrl') + '/v1/users/login',
+      url: this.get('gatewaydUrl') + '/v1/users/login',
       contentType: 'application/json',
       data: JSON.stringify({
-        name: payload.name + '@example.com',
-        password: payload.sessionKey
+        name: this.get('userModel').get('name') + '@example.com',
+        password: this.get('sessionKey')
       }),
       headers: {
-        'Authorization': _this.get('credentials')
+        'Authorization': this.get('credentials')
       },
       success: function() {
         sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));

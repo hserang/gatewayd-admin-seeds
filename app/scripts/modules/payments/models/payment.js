@@ -68,8 +68,6 @@ var Payment = Backbone.Model.extend({
 
   url: appConfig.baseUrl,
 
-  baseUrl: appConfig.baseUrl,
-
   initialize: function() {
     _.bindAll(this);
 
@@ -85,7 +83,7 @@ var Payment = Backbone.Model.extend({
   },
 
   updateBaseUrl: function(newBaseUrl) {
-    this.url = this.baseUrl = newBaseUrl;
+    this.url = newBaseUrl;
   },
 
   validationErrors: [],
@@ -164,7 +162,7 @@ var Payment = Backbone.Model.extend({
 
   pollStatusHelper: function() {
     this.fetch({
-      url: session.get('gatewaydUrl') + '/v1/ripple_transactions/' + this.get('id'),
+      url: this.url + '/v1/ripple_transactions/' + this.get('id'),
       dataType: 'json',
       contentType: 'application/json',
       headers: {

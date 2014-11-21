@@ -27,13 +27,9 @@ var App =
       }
     },
 
-    attemptSessionRestoration: function() {
-      sessionActions.restore();
-    },
-
     render:function(){
       if (!session.get('lastLogin')) {
-        this.attemptSessionRestoration();
+        sessionActions.restore();
         this.redirectToLogin();
       }
 

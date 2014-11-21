@@ -9,11 +9,11 @@ var NotFoundRoute = Router.NotFoundRoute;
 
 var NotFound = require('./not-found/not-found.jsx');
 
+var Session = require('../modules/session/components/session.jsx');
+var session = require('../modules/session/models/session');
+
 var Payments = require('../modules/payments/components/payments.jsx');
 var LoginForm = require('../modules/session/components/login-form.jsx');
-var Session = require('../modules/session/components/session.jsx');
-
-var session = require('../modules/session/models/session');
 
 // continuously fetch when tab is active
 var paymentActions = require('../modules/payments/actions.js');
@@ -21,6 +21,7 @@ var heartbeats = require('heartbeats');
 var pollingHeart = new heartbeats.Heart(1000);
 
 var pollWhenActive = function() {
+
   if (session.isLoggedIn()) {
     paymentActions.fetchRippleTransactions();
   }
