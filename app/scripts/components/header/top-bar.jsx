@@ -1,62 +1,48 @@
+var _ = require('lodash');
 var React = require('react');
-var Navbar = require('react-bootstrap').Navbar;
-var NavItem = require('react-bootstrap').NavItem;
-var Nav = require('react-bootstrap').Nav;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-var MenuItem = require('react-bootstrap').MenuItem;
-
-//Sample config. TODO: pass it into props
-var config = {
-  brandName: "Your Brand Here",
-  links: [
-    {
-      text: "link1",
-      href: "fakeref1"
-    },
-    {
-      text: "link2",
-      href: "fakeref2"
-    },
-    {
-      text: "link3",
-      href: "fakeref3"
-    }
-  ]
-};
+var Branding = require('../../shared/components/branding/branding.jsx');
+var NavLinks = require('../../shared/components/nav-links/nav-links.jsx');
+var Greeting = require('../../shared/components/greeting/greeting.jsx');
 
 var TopBar = React.createClass({
-      getInitialState: function() {
-        return config;
+  getDefaultProps: function() {
+    //Sample config. TODO: pass it into props
+    var defaults = {
+      brandName: "Your Brand Here",
+      wrapperClass: "top-bar",
+      links: [{
+        text: "link1",
+        href: "/"
       },
-
-      getLinks: function(links) {
-        var items = links.map(function(link, i) {
-          return(
-            <NavItem key={i+1} href={link.href}>{link.text}</NavItem>
-          );
-        });
-
-        return items;
+      {
+        text: "link2",
+        href: "/"
       },
+      {
+        text: "link3",
+        href: "/"
+      }]
+    };
 
-      render: function() {
-        var links = this.getLinks(this.state.links);
+    return {setup: defaults};
+  },
 
-        return (
-          <div className="top-bar">
-            <Navbar>
-              <div className="navbar-header">
-                <a className="navbar-brand">
-                  {this.state.brandName}
-                </a>
-              </div>
-              <Nav>
-                {links}
-              </Nav>
-            </Navbar>
-          </div>
-        );
-      }
+  render: function() {
+    var nav;
+    if (!_.isEmpty(this.props.links)) {
+      nav = (<NavLinks
+          links={this.props.setup.links}
+          className="nav navbar-nav navbar-right"/>)
+    }
+
+    return (
+      <div className={this.props.setup.wrapperClass}>
+        <Branding brandName={this.props.setup.brandName} />
+        <Greeting />
+        {nav}
+      </div>
+    );
+  }
 });
 
 module.exports = TopBar;
