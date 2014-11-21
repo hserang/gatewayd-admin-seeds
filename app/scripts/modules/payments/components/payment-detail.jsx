@@ -3,6 +3,7 @@
 var React = require('react');
 var _ = require('lodash');
 var moment = require('moment');
+var sjcl = require('ripple-lib/build/sjcl');
 
 var Modal = require('react-bootstrap').Modal;
 var Button = require('react-bootstrap').Button;
