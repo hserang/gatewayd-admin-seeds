@@ -1,0 +1,10 @@
+{
+  "actions": {
+    "updateUrl": "updateUrl",
+    "flagAsDone": "flagAsDone",
+    "filterByState": "filterByState",
+    "sendPaymentAttempt": "sendPaymentAttempt",
+    "sendPaymentComplete": "sendPaymentComplete",
+    "fetchRippleTransactions": "fetchRippleTransactions"
+  }
+}
