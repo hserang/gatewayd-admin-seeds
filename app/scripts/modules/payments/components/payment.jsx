@@ -9,6 +9,10 @@ var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var ModalPaymentDetails = require('./payment-detail.jsx');
 
 var Payment = React.createClass({
+  handleLinkClick: function(e) {
+    e.stopPropagation();
+  },
+
   handleItemClick: function(id) {
     this.props.itemClickHandler(id);
 
@@ -24,7 +28,7 @@ var Payment = React.createClass({
   render: function() {
     var doneButton, address;
     var classes = 'modal-container';
-    var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transactionHash');
+    var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transaction_hash');
 
     if (this.props.model.get('new')) {
       classes += ' highlight';
@@ -83,7 +87,7 @@ var Payment = React.createClass({
             </div>
             <div className="row border-bottom">
               <div className="col-sm-12">
-                <a href={rippleGraphLink}>Ripple Graph Link</a>
+                <a href={rippleGraphLink} onClick={this.handleLinkClick}>Ripple Graph Link</a>
               </div>
             </div>
             <div className="clearfix">
