@@ -1,0 +1,8 @@
+{
+  "actions": {
+    "login": "login",
+    "logout": "logout",
+    "restore": "restore",
+    "updateBaseUrl": "updateBaseUrl"
+  }
+}
