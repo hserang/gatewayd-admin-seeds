@@ -4,35 +4,12 @@ var React = require('react');
 var _ = require('lodash');
 var moment = require('moment');
 
-var paymentActions = require('../actions.js');
-var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-
 var Modal = require('react-bootstrap').Modal;
 var Button = require('react-bootstrap').Button;
 
 var PaymentDetail = React.createClass({
   hidePaymentDetails: function() {
     this.props.onRequestHide();
-  },
-
-  dispatchCallback: function(payload) {
-    var handleAction = {
-      hidePaymentDetails: this.hidePaymentDetails
-    };
-
-    if (!_.isUndefined(handleAction[payload.actionType])) {
-      handleAction[payload.actionType](payload.data);
-    }
-  },
-
-  getInitialState: function() {
-    adminDispatcher.register(this.dispatchCallback);
-
-    return {};
-  },
-
-  componentWillUnmount: function() {
-    this.hidePaymentDetails();
   },
 
   render: function() {

@@ -3,8 +3,6 @@
 var React = require('react');
 var moment = require('moment');
 
-var paymentActions = require('../actions.js');
-
 var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var ModalPaymentDetails = require('./payment-detail.jsx');
 
@@ -15,8 +13,6 @@ var Payment = React.createClass({
 
   handleItemClick: function(id) {
     this.props.itemClickHandler(id);
-
-    paymentActions.hidePaymentDetails();
   },
 
   handleButtonClick: function(id, e) {

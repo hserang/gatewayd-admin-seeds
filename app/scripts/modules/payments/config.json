@@ -5,7 +5,6 @@
     "filterByState": "filterByState",
     "sendPaymentAttempt": "sendPaymentAttempt",
     "sendPaymentComplete": "sendPaymentComplete",
-    "fetchRippleTransactions": "fetchRippleTransactions",
-    "hidePaymentDetails": "hidePaymentDetails"
+    "fetchRippleTransactions": "fetchRippleTransactions"
   }
 }
