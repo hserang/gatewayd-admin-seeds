@@ -21,7 +21,7 @@ The gatewayd basic admin webapp allows administrators to log in to their gateway
     ```
     "Advanced" => "Proceed anyway"
     ```
-4. Visit to the [gatewayd basic admin webapp](http://gatewayd.org/tools/basic).
+4. Visit the [gatewayd basic admin webapp](http://gatewayd.org/tools/basic).
 
 5. Enter gatewayd username (*admin@example.com* by default*), host url, and API key.
 
@@ -44,10 +44,11 @@ _* If admin@example.com does not work as the username, check_ **/config/config.j
     ```
     $ git clone git@github.com:hserang/gatewayd-admin-seeds.git
     ```
-2. Navigate to directory and npm install:
+2. Navigate to directory and install dependencies:
 
     ```
     $ npm install
+    $ bower install
     ```
 3. Run gulp build process/live reload server:
 
