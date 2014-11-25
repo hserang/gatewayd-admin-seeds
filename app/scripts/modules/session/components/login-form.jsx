@@ -88,12 +88,12 @@ var LoginForm = React.createClass({
   render: function() {
     return (
       <form role="form" className="col-xs-6 col-xs-offset-3" onSubmit={this.handleSubmit}>
-        <Input type="text" label="Username:"
-          ref="name" value={this.state.baseName} autoFocus={true}
-          onChange={this.handleNameChange} />
         <Input type="text" label="Host url:"
           ref="gatewaydUrl" value={this.state.baseUrl}
           onChange={this.handleGatewayUrlChange} />
+        <Input type="text" label="Username:"
+          ref="name" value={this.state.baseName} autoFocus={true}
+          onChange={this.handleNameChange} />
         <Input type="password" label="Key:" ref="sessionKey" />
         <Button className="pull-right" type="submit" bsStyle="primary" block>Log In</Button>
         {this.state.showErrorMessage ?
