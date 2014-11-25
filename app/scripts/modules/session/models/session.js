@@ -155,7 +155,7 @@ var Session = Backbone.Model.extend({
       url: this.get('gatewaydUrl') + '/v1/users/login',
       contentType: 'application/json',
       data: JSON.stringify({
-        name: this.get('userModel').get('name') + '@example.com',
+        name: this.get('userModel').get('name'),
         password: this.get('sessionKey')
       }),
       headers: {

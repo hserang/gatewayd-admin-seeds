@@ -19,8 +19,7 @@ var LoginForm = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
 
-    // var name = this.refs.name.getValue().trim();
-    var name = 'admin';
+    var name = this.refs.name.getValue().trim();
     var gatewaydUrl = this.refs.gatewaydUrl.getValue().trim();
     var sessionKey = this.refs.sessionKey.getValue().trim();
 
@@ -51,15 +50,22 @@ var LoginForm = React.createClass({
     });
   },
 
-  handleChange: function(event) {
+  handleNameChange: function(event) {
     this.setState({
-      baseGatewaydUrl: event.target.value,
+      baseName: event.target.value
+    });
+  },
+
+  handleGatewayUrlChange: function(event) {
+    this.setState({
+      baseUrl: event.target.value
     });
   },
 
   getInitialState: function() {
     return {
-      baseGatewaydUrl: appConfig.baseUrl,
+      baseUrl: appConfig.baseUrl,
+      baseName: appConfig.baseName,
       showErrorMessage: false
     };
   },
@@ -81,11 +87,14 @@ var LoginForm = React.createClass({
 
   render: function() {
     return (
-      <form role="form" className="col-xs-12" onSubmit={this.handleSubmit}>
-        <Input type="gatewaydUrl" label="Enter gatewayd host url:"
-          ref="gatewaydUrl" autoFocus={true} value={this.state.baseGatewaydUrl}
-          onChange={this.handleChange} />
-        <Input type="password" label="Enter key:" ref="sessionKey" />
+      <form role="form" className="col-xs-6 col-xs-offset-3" onSubmit={this.handleSubmit}>
+        <Input type="text" label="Username:"
+          ref="name" value={this.state.baseName} autoFocus={true}
+          onChange={this.handleNameChange} />
+        <Input type="text" label="Host url:"
+          ref="gatewaydUrl" value={this.state.baseUrl}
+          onChange={this.handleGatewayUrlChange} />
+        <Input type="password" label="Key:" ref="sessionKey" />
         <Button className="pull-right" type="submit" bsStyle="primary" block>Log In</Button>
         {this.state.showErrorMessage ?
           <Label className="pull-left" bsStyle="warning">
