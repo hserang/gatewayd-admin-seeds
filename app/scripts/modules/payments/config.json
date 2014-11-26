@@ -2,6 +2,7 @@
   "actions": {
     "updateUrl": "updateUrl",
     "flagAsDone": "flagAsDone",
+    "retryFailedPayment": "retryFailedPayment",
     "filterByState": "filterByState",
     "sendPaymentAttempt": "sendPaymentAttempt",
     "sendPaymentComplete": "sendPaymentComplete",

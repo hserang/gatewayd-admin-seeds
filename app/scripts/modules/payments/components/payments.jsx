@@ -68,6 +68,10 @@ var Payments = React.createClass({
     PaymentActions.flagAsDone(id);
   },
 
+  handleRetryButtonClick: function(id) {
+    PaymentActions.retryFailedPayment(id);
+  },
+
   directionMap: {
     incoming: "from-ripple",
     outgoing: "to-ripple"
@@ -106,7 +110,8 @@ var Payments = React.createClass({
             key={model.get('id')}
             model={model}
             itemClickHandler={this.handleItemClick}
-            buttonClickHandler={this.handleDoneButtonClick}
+            doneButtonClickHandler={this.handleDoneButtonClick}
+            retryButtonClickHandler={this.handleRetryButtonClick}
           />
         );
     }, this);

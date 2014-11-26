@@ -77,6 +77,8 @@ var Payment = Backbone.Model.extend({
   dispatchCallback: function(payload) {
     var handleAction = {};
 
+    handleAction.retryFailedPayment = this.retryFailedPayment;
+
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
@@ -150,13 +152,25 @@ var Payment = Backbone.Model.extend({
     return data.ripple_transaction;
   },
 
-  retry: function() {
-    //
+  retryFailedPayment: function(id) {
+    if (id !== this.get('id')) {
+      return false;
+    }
+
+    this.save(null, {
+      type: 'post',
+      url: this.url + '/v1/payments/failed/' + this.get('id') + '/retry',
+      contentType: 'application/json',
+      headers: {
+        Authorization: session.get('credentials')
+      }
+    }).then(this.pollStatus);
   },
 
   handleSuccess: function(model) {
     if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
       pollingHeart.clearEvents();
+      this.trigger('retryStop');
     }
   },
 
@@ -173,8 +187,14 @@ var Payment = Backbone.Model.extend({
   },
 
   pollStatus: function() {
+    var _this = this;
+
     pollingHeart.onBeat(1, this.pollStatusHelper);
-    pollingHeart.onBeat(10, pollingHeart.clearEvents);
+    pollingHeart.onceOnBeat(0, this.trigger('retryStart'));
+    pollingHeart.onceOnBeat(10, function() {
+      pollingHeart.clearEvents();
+      _this.trigger('retryStop');
+    });
   },
 });
 

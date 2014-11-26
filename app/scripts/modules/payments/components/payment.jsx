@@ -15,19 +15,53 @@ var Payment = React.createClass({
     this.props.itemClickHandler(id);
   },
 
-  handleButtonClick: function(id, e) {
+  handleDoneButtonClick: function(id, e) {
     e.stopPropagation();
 
-    this.props.buttonClickHandler(id);
+    this.props.doneButtonClickHandler(id);
+  },
+
+  handleRetryButtonClick: function(id, e) {
+    e.stopPropagation();
+
+    this.props.retryButtonClickHandler(id);
+  },
+
+  showSpinningIcon: function() {
+    this.setState({
+      refreshIconClasses: 'glyphicon glyphicon-refresh glyphicon-spin'
+    });
+  },
+
+  hideSpinningIcon: function() {
+    this.setState({
+      refreshIconClasses: ''
+    });
+  },
+
+  getInitialState: function() {
+    return {
+      refreshIconClasses: ''
+    };
+  },
+
+  componentDidMount: function() {
+    this.props.model.on('retryStart', this.showSpinningIcon);
+    this.props.model.on('retryStop', this.hideSpinningIcon);
+  },
+
+  componentWillUnmount: function() {
+    this.props.model.off('retryStart');
+    this.props.model.off('retryStop');
   },
 
   render: function() {
-    var doneButton, address;
-    var classes = '';
+    var doneButton, retryLink, refreshIcon, address;
+    var paymentItemClasses = '';
     var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transaction_hash');
 
     if (this.props.model.get('new')) {
-      classes += ' highlight';
+      paymentItemClasses += ' highlight';
     }
 
     if (this.props.model.get('direction') === 'from-ripple') {
@@ -41,7 +75,7 @@ var Payment = React.createClass({
     if (this.props.model.get('state') === 'incoming') {
       doneButton = (
         <button
-          onClick={this.handleButtonClick.bind(this, this.props.model.get('id'))}
+          onClick={this.handleDoneButtonClick.bind(this, this.props.model.get('id'))}
           className="btn pull-right"
         >
           Process
@@ -51,8 +85,18 @@ var Payment = React.createClass({
       doneButton = null;
     }
 
+    if (this.props.model.get('state') === 'failed') {
+      retryLink=(
+        <a onClick={this.handleRetryButtonClick.bind(this,this.props.model.get('id'))}>
+          Retry?
+        </a>
+      );
+    } else {
+      retryLink = null;
+    }
+
     return (
-      <div className={classes}>
+      <div className={paymentItemClasses}>
         <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} />}>
           <li className="list-group-item" onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}>
             <div className="row">
@@ -65,7 +109,7 @@ var Payment = React.createClass({
                 From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
               </div>
               <div className="col-sm-3">
-                Status: {this.props.model.get('state')}
+                Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
               </div>
             </div>
             <div className="row">

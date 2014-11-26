@@ -16,6 +16,13 @@ var actions = {
     });
   },
 
+  retryFailedPayment: function(id) {
+    adminDispatcher.handleEvent({
+      actionType: paymentActions.retryFailedPayment,
+      data: id
+    });
+  },
+
   filterByState: function(state) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.filterByState,
