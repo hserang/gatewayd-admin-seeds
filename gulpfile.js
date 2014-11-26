@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var sass = require('gulp-sass');
 var merge = require('merge-stream');
 
@@ -18,6 +17,7 @@ var paths = {
     main_js: ['./app/scripts/main.jsx'],
     js: ['app/scripts/**/*.js'],
     jsx: ['app/scripts/**/*.jsx'],
+    json: ['app/scripts/**/*.json'],
     fonts: './app/libs/bootstrap-sass-official/assets/fonts/**/*.{ttf,woff,eot,svg}',
     build: {
       fonts: './dist/fonts/',
@@ -31,7 +31,6 @@ var paths = {
 gulp.task('clean', function(cb) {
   del(['build'], cb);
 });
-
 
 gulp.task('copy', ['clean'], function() {
   var fonts, index;
@@ -76,6 +75,7 @@ gulp.task('watch', function() {
   gulp.watch(paths.html, ['copy']);
   gulp.watch(paths.js, ['js']);
   gulp.watch(paths.jsx, ['js']);
+  gulp.watch(paths.json, ['js']);
   gulp.watch('./dist/**/*.{html,css,js}').on('change', function() {
     console.log("watch", arguments);
     livereload.changed();
