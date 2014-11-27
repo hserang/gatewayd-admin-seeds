@@ -8,6 +8,7 @@ var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
 var Input = require('../../../shared/components/form/input.jsx');
+var TextArea = require('../../../shared/components/form/textarea.jsx');
 var Button = require('react-bootstrap').Button;
 var paymentActions = require('../actions');
 
@@ -159,7 +160,6 @@ var PaymentCreate = React.createClass({
     };
   },
 
-
   componentDidMount: function() {
     this.props.model.on('validationComplete', this.showFieldValidationResult);
     this.props.model.on('sync', this.dispatchSendPaymentComplete);
@@ -179,6 +179,10 @@ var PaymentCreate = React.createClass({
       return false;
     };
 
+    Formsy.defaults({
+      submitButtonClass: 'btn btn-lg btn-primary btn-block'
+    });
+
     return (
       <Modal
         title="Send Payment"
@@ -187,8 +191,9 @@ var PaymentCreate = React.createClass({
         animation={false}
       >
         <div className="modal-body">
-          <Formsy.Form onSubmit={this.handleSubmit} submitButtonClass="btn btn-lg btn-primary btn-block">
+          <Formsy.Form onSubmit={this.handleSubmit} submitLabel="Send Payment">
             <Input type="text" ref="address" name="address" required
+              autofocus={true}
               label={<span><Label bsStyle="info">Required</Label> Destination Address</span>}
               bsStyle={this.validationMap[this.state.address.isValid]}
               disabled={disabled()}
@@ -232,7 +237,7 @@ var PaymentCreate = React.createClass({
               bsStyle={this.validationMap[this.state.invoiceId.isValid]}
               disabled={disabled()} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
             <Label bsStyle="warning">{this.state.invoiceId.errorMessage}</Label>
-            <Input type="textarea" ref="memo" name="memo"
+            <TextArea ref="memo" name="memo"
               label="Memo"
               bsStyle={this.validationMap[this.state.memo.isValid]}
               disabled={disabled()} onBlur={this.validateField.bind(this, 'memo', false)} />

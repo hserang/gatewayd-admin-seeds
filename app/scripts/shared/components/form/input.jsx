@@ -34,6 +34,7 @@ var Input = React.createClass({
       <div className={className}>
         {label}
         <input
+          autofocus={this.props.autofocus}
           className={this.props.inputClass}
           type={this.props.type}
           disabled={this.props.disabled}
