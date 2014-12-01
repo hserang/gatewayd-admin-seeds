@@ -20,13 +20,6 @@ var PaymentCreate = React.createClass({
   },
 
   typeMap: {
-    address: 'string',
-    amount: 'number',
-    currency: 'string',
-    destinationTag: 'number',
-    sourceTag: 'number',
-    invoiceId: 'string',
-    memo: 'string'
   },
 
   formatInput: function(rawInputRef, type) {
@@ -192,25 +185,31 @@ var PaymentCreate = React.createClass({
       >
         <div className="modal-body">
           <Formsy.Form onSubmit={this.handleSubmit} submitLabel="Send Payment">
-            <Input type="text" ref="address" name="address" required
+            <Input type="text" ref="address" name="address"
+              required
+              validations="isValue"
               autofocus={true}
-              label={<span><Label bsStyle="info">Required</Label> Destination Address</span>}
+              label="Destination Address"
               bsStyle={this.validationMap[this.state.address.isValid]}
               disabled={disabled()}
               autoFocus={true} onBlur={this.validateAddress.bind(this, false)} />
             <Label bsStyle="warning">{this.state.address.errorMessage}</Label>
             <Row>
               <Col xs={6}>
-
                 <Input type="tel" ref="amount" name="amount"
-                  label={<span><Label bsStyle="info">Required</Label> Amount </span>}
+                  required
+                  validations="isValue"
+                  label="Amount"
                   bsStyle={this.validationMap[this.state.amount.isValid]}
                   disabled={disabled()} onBlur={this.validateField.bind(this, 'amount', false)} />
                 <Label bsStyle="warning">{this.state.amount.errorMessage}</Label>
               </Col>
               <Col xs={6}>
                 <Input type="text" ref="currency" name="currency"
-                  label={<span><Label bsStyle="info">Required</Label> Currency </span>}
+                  required
+                  validations="isAlpha"
+                  validationError="must be letters only"
+                  label="Currency"
                   bsStyle={this.validationMap[this.state.currency.isValid]}
                   disabled={disabled()} onBlur={this.validateField.bind(this, 'currency', false)} />
                 <Label bsStyle="warning">{this.state.currency.errorMessage}</Label>
@@ -220,6 +219,8 @@ var PaymentCreate = React.createClass({
               <Col xs={6}>
                 <Input type="tel" ref="destinationTag" name="destinationTag"
                   label="Destination Tag"
+                  validations="isNumeric"
+                  validationError="must be numeric"
                   bsStyle={this.validationMap[this.state.destinationTag.isValid]}
                   disabled={disabled()} onBlur={this.validateField.bind(this, 'destinationTag', false)} />
                 <Label bsStyle="warning">{this.state.destinationTag.errorMessage}</Label>
@@ -227,6 +228,8 @@ var PaymentCreate = React.createClass({
               <Col xs={6}>
                 <Input type="tel" ref="sourceTag" name="sourceTag"
                   label="Source Tag"
+                  validations="isNumeric"
+                  validationError="must be numeric"
                   bsStyle={this.validationMap[this.state.sourceTag.isValid]}
                   disabled={disabled()} onBlur={this.validateField.bind(this, 'sourceTag', false)} />
                 <Label bsStyle="warning">{this.state.sourceTag.errorMessage}</Label>
@@ -234,6 +237,7 @@ var PaymentCreate = React.createClass({
             </Row>
             <Input type="text" ref="invoiceId" name="invoiceId"
               label="Invoice Id"
+              validations="isValue"
               bsStyle={this.validationMap[this.state.invoiceId.isValid]}
               disabled={disabled()} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
             <Label bsStyle="warning">{this.state.invoiceId.errorMessage}</Label>

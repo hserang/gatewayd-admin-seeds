@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var React = require('react');
 var Formsy = require('formsy-react');
+var Label = require('react-bootstrap').Label;
 
 var Input = React.createClass({
   mixins: [Formsy.Mixin],
@@ -23,7 +24,7 @@ var Input = React.createClass({
     var label;
 
     if (this.props.label) {
-      label = <label htmlFor={this.props.name}> {this.props.label} </label>;
+      label = <label htmlFor={this.props.name}>{this.isRequired() ? <Label bsStyle="info">Required</Label> : null} {this.props.label}</label>;
     } else {
       label = null;
     }
