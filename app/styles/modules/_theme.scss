@@ -82,23 +82,21 @@ body {
   border: 5px solid $brand-primary;
 }
 
-.modal-body {
-  margin-left: 18px;
-}
-
 .modal {
-  z-index: 2;
-  position: fixed;
-  background: $white;
-  top: 242px;
-  left: 27%;
-  box-shadow: #aaaaaa 3px 3px 60px;
+  min-width: 300px;
   padding: 20px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: $white;
+  box-shadow: #aaaaaa 3px 3px 60px;
 }
 
 .modal-backdrop {
   opacity: 0.8;
-  z-index: 1;
+  z-index: 500;
   position: fixed;
   top: 0;
   left: 0;
