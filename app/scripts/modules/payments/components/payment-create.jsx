@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
+var RippleName = require('ripple-name');
 var Formsy = require('formsy-react');
 var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
@@ -11,6 +12,34 @@ var Input = require('../../../shared/components/form/input.jsx');
 var TextArea = require('../../../shared/components/form/textarea.jsx');
 var Button = require('react-bootstrap').Button;
 var paymentActions = require('../actions');
+
+Formsy.addValidationRule('isRippleAddress', function(address) {
+  console.log("validate address", arguments);
+  if (!address) {
+    return;
+  }
+
+  RippleName.lookup(address)
+    .then(function(data) {
+      var addressAttr;
+
+      console.log("name lookup return", arguments);
+
+      if (data.exists) {
+        //pass case
+        addressAttr = {address: data.address};
+
+        console.log("passed val");
+        return true;
+      } else {
+        //fail case
+        return false;
+      }
+    })
+    .error(function() {
+      //handle error
+    });
+});
 
 var PaymentCreate = React.createClass({
 
@@ -187,7 +216,8 @@ var PaymentCreate = React.createClass({
           <Formsy.Form onSubmit={this.handleSubmit} submitLabel="Send Payment">
             <Input type="text" ref="address" name="address"
               required
-              validations="isValue"
+              validations="isValue,isRippleAddress"
+              validationError="yo yo yo, cool it"
               autofocus={true}
               label="Destination Address"
               bsStyle={this.validationMap[this.state.address.isValid]}
