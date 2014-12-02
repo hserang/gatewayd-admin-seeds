@@ -13,7 +13,7 @@ var TextArea = require('../../../shared/components/form/textarea.jsx');
 var Button = require('react-bootstrap').Button;
 var paymentActions = require('../actions');
 
-Formsy.addValidationRule('isRippleAddress', function(address) {
+Formsy.addValidationRule('isRippleAddress', function(address, cb) {
   console.log("validate address", arguments);
   if (!address) {
     return;
@@ -30,15 +30,14 @@ Formsy.addValidationRule('isRippleAddress', function(address) {
         addressAttr = {address: data.address};
 
         console.log("passed val");
-        return true;
       } else {
         //fail case
-        return false;
       }
     })
     .error(function() {
       //handle error
     });
+
 });
 
 var PaymentCreate = React.createClass({
@@ -216,8 +215,7 @@ var PaymentCreate = React.createClass({
           <Formsy.Form onSubmit={this.handleSubmit} submitLabel="Send Payment">
             <Input type="text" ref="address" name="address"
               required
-              validations="isValue,isRippleAddress"
-              validationError="yo yo yo, cool it"
+              validations={this.isValue}
               autofocus={true}
               label="Destination Address"
               bsStyle={this.validationMap[this.state.address.isValid]}
