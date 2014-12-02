@@ -4,7 +4,6 @@ var _ = require('lodash');
 var React = require('react');
 
 var Router = require('react-router');
-var CurrentPath = Router.CurrentPath;
 var Navigation = Router.Navigation;
 
 var session = require('../models/session');
@@ -12,7 +11,7 @@ var sessionActions = require('../actions');
 var LoginForm = require('./login-form.jsx');
 
 var Session = React.createClass({
-  mixins: [Router.state, Navigation],
+  mixins: [Router.State, Navigation],
 
   toLogin: function() {
     return <LoginForm />;

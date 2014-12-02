@@ -6,7 +6,7 @@ var routes = require('./components/router.jsx');
 
 // React.renderComponent(<App />, document.getElementById('content-main'));
 //React.renderComponent(routes, document.getElementById('content-main'));
-Router.run(routes, Router.HistoryLocation, function(Handler) {
+Router.run(routes, function(Handler) {
   React.render(<Handler/>, document.getElementById('content-main'));
 });
 

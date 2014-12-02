@@ -39,7 +39,6 @@ var Payments = React.createClass({
 
   componentDidMount: function() {
     collection.on('sync change', this.handleCollectionSync);
-    console.log("path", this.getPath());
     PaymentActions.updateUrl(this.getPath());
   },
 
