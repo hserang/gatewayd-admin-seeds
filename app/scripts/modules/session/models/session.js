@@ -165,8 +165,6 @@ var Session = Backbone.Model.extend({
         sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
 
         // _this.setUpSessionTimer();
-
-        sessionActions.updateBaseUrl(_this.get('gatewaydUrl'));
       }
     });
   },
