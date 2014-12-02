@@ -2,11 +2,11 @@
 
 var _ = require('lodash');
 var React = require('react');
+var Router = require('react-router');
 var DocumentTitle = require('react-document-title');
 var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var Button = require('react-bootstrap').Button;
 var PaymentActions = require('../actions.js');
-var CurrentPath = require('react-router').CurrentPath;
 var ActiveState = require('react-router').ActiveState;
 var Link = require('react-router').Link;
 var url = require('url');
@@ -23,7 +23,7 @@ var paymentCreateFormModel = new PaymentCreateFormModel();
 var PaymentCreateForm = require('./payment-create.jsx');
 
 var Payments = React.createClass({
-  mixins: [CurrentPath, ActiveState],
+  mixins: [ActiveState, Router.State],
 
   getStateFromStore: function(props) {
     props = props || this.props;
@@ -39,7 +39,8 @@ var Payments = React.createClass({
 
   componentDidMount: function() {
     collection.on('sync change', this.handleCollectionSync);
-    PaymentActions.updateUrl(this.getCurrentPath());
+    console.log("path", this.getPath());
+    PaymentActions.updateUrl(this.getPath());
   },
 
   componentWillUnmount: function() {
@@ -90,8 +91,8 @@ var Payments = React.createClass({
 
   render: function() {
     var _this = this,
-        direction = this.props.params.direction,
-        state = this.props.params.state,
+        direction = this.getParams().direction,
+        state = this.getParams().state,
         tertiaryNav;
 
     // less than ideal, will refactor when we have pagination, if not sooner.

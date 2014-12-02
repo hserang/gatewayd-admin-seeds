@@ -12,7 +12,7 @@ var sessionActions = require('../actions');
 var LoginForm = require('./login-form.jsx');
 
 var Session = React.createClass({
-  mixins: [CurrentPath, Navigation],
+  mixins: [Router.state, Navigation],
 
   toLogin: function() {
     return <LoginForm />;
@@ -39,7 +39,7 @@ var Session = React.createClass({
   render: function() {
     return (
       <div>
-        {this.switchState(this.getCurrentPath())}
+        {this.switchState(this.getPath())}
       </div>
     );
   }
