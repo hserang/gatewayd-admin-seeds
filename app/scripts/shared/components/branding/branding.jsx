@@ -1,3 +1,5 @@
+'use strict';
+
 var React = require('react');
 
 var Branding = React.createClass({
@@ -15,7 +17,7 @@ var Branding = React.createClass({
         data-target="#navbar"
         aria-expanded="false"
         aria-controls="navbar"></button>
-      <a className="navbar-brand">
+      <a className="navbar-brand" href="/#/payments/outgoing/all">
         {this.props.brandName}
       </a>
       </div>

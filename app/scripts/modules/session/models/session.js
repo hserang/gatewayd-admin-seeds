@@ -36,14 +36,6 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  resetUserModel: function() {
-    var defaults = this.get('userModel').defaults;
-
-    this.get('userModel').set(defaults);
-
-    return this.get('userModel');
-  },
-
   initialize: function() {
     _.bindAll(this);
 
@@ -132,7 +124,7 @@ var Session = Backbone.Model.extend({
   updateUser: function(name) {
     this.get('userModel').set({
       name: name,
-      role: name,
+      role: name.split('@')[0],
       isLoggedIn: true
     });
   },
@@ -147,7 +139,7 @@ var Session = Backbone.Model.extend({
     var _this = this;
 
     this.updateSession(payload.gatewaydUrl, payload.sessionKey);
-    this.updateUser(payload.name);
+    this.get('userModel').update(payload.name);
     this.createCredentials(payload.name, payload.sessionKey);
 
     this.save(null, {
@@ -160,30 +152,35 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
-      },
-      success: function() {
-        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-
-        // _this.setUpSessionTimer();
       }
+    })
+    .then(function() {
+      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
+
+      // _this.setUpSessionTimer();
     });
   },
 
   restore: function() {
-    var oldSession = sessionStorage.length === 0 ? null : sessionStorage.getItem('session');
+    var oldSession, oldUser, restoredUser;
 
-    if (oldSession) {
-      var oldUser, restoredUser;
-
-      this.set(JSON.parse(oldSession));
-      oldUser = this.get('userModel');
-      restoredUser = new UserModel(oldUser);
-      this.set('userModel', restoredUser);
+    if (sessionStorage.length === 0) {
+      return;
     }
+
+    oldSession = sessionStorage.getItem('session');
+
+    this.set(JSON.parse(oldSession));
+    oldUser = this.get('userModel');
+    restoredUser = new UserModel(oldUser);
+    this.set('userModel', restoredUser);
   },
 
   logout: function() {
-    var resetUser = this.resetUserModel();
+    var resetUser;
+
+    this.get('userModel').reset();
+    resetUser = this.get('userModel');
 
     this.set(this.defaults);
     this.set('userModel', resetUser);
@@ -196,12 +193,12 @@ var Session = Backbone.Model.extend({
   },
 
   getLogState: function() {
-    var logState = {
+    var logStateMap = {
       true: 'loggedIn',
       false: 'loggedOut'
     };
 
-    return logState[this.isLoggedIn()];
+    return logStateMap[this.isLoggedIn()];
   },
 
   setUpSessionTimer: function() {

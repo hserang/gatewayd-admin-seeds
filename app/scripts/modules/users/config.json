@@ -1,3 +1,6 @@
 {
-  "actions": {}
+  "actions": {
+    "reset": "reset",
+    "update": "update"
+  }
 }
