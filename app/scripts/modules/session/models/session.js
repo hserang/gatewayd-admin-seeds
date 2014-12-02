@@ -9,9 +9,6 @@ var sessionConfigActions = require('../config.json').actions;
 var sessionActions = require('../actions.js');
 var UserModel = require('../../../modules/users/models/user');
 
-var Heartbeats = require('heartbeats');
-var sessionHeart = new Heartbeats.Heart(60000); // 1 minute
-
 Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
@@ -171,8 +168,6 @@ var Session = Backbone.Model.extend({
     })
     .then(function() {
       sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-
-      // _this.setUpSessionTimer();
     });
   },
 
@@ -201,6 +196,7 @@ var Session = Backbone.Model.extend({
     this.set('userModel', resetUser);
 
     sessionStorage.clear();
+    this.trigger('logout');
   },
 
   isLoggedIn: function() {
@@ -214,17 +210,6 @@ var Session = Backbone.Model.extend({
     };
 
     return logStateMap[this.isLoggedIn()];
-  },
-
-  setUpSessionTimer: function() {
-    sessionHeart.onceOnBeat(10, function() { // 10 minutes
-      sessionActions.logout();
-    });
-  },
-
-  resetSessionTimer: function() {
-    sessionHeart.clearEvents();
-    this.setUpSessionTimer();
   }
 });
 

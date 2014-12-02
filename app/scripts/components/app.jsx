@@ -8,7 +8,6 @@ var DocumentTitle = require('react-document-title');
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
 var TopBar = require('./header/top-bar.jsx');
-var Greeting = require('../shared/components/greeting/greeting.jsx');
 
 require('react-bootstrap');
 

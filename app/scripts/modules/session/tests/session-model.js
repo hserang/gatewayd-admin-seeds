@@ -78,37 +78,21 @@ describe('updateSession', function() {
   });
 });
 
-describe('restore', function() {
+describe('updateSession', function() {
   beforeEach(setUpSuccessfulModel);
 
-  it('should restore the session', function() {
+  it('should update the session', function() {
+    var expected = {
+      gatewaydUrl: 'www.passing.com',
+      sessionKey: '1234'
+    };
+    var previousLastLogin = this.model.get('lastLogin');
 
-    // figure out how to mock session storage
+    this.model.updateSession(expected.gatewaydUrl, expected.sessionKey);
 
-    return true;
-  });
-});
-
-describe('logout', function() {
-  beforeEach(setUpSuccessfulModel);
-
-  it('should log out', function() {
-
-    // figure out how to mock session storage
-
-    return true;
-  });
-});
-
-describe('login', function() {
-  beforeEach(setUpSuccessfulModel);
-
-  it('should log in', function() {
-
-    // figure out how to mock save response
-    // figure out how to mock session storage
-
-    return true;
+    this.model.get('gatewaydUrl').should.equal(expected.gatewaydUrl);
+    this.model.get('sessionKey').should.equal(expected.sessionKey);
+    this.model.get('lastLogin').should.not.equal(previousLastLogin);
   });
 });
 
