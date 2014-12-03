@@ -8,7 +8,7 @@ var data = {
     gatewaydUrl: 'http://localhost:5000',
     sessionKey: 'gatewaydapikey',
     lastLogin: Date.now(),
-    credentials: chance.color().substring(1)
+    credentials: chance.string({length: 64})
   }
 };
 

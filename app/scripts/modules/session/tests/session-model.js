@@ -44,6 +44,22 @@ describe('defaults', function() {
   });
 });
 
+describe('valid model', function() {
+  beforeEach(setUpSuccessfulModel);
+
+  it('should be valid', function() {
+    this.model.isValid().should.equal(true);
+  });
+});
+
+describe('invalid model', function() {
+  beforeEach(setUpErroneousModel);
+
+  it('should be invalid', function() {
+    this.model.isValid().should.equal(false);
+  });
+});
+
 describe('updateSession', function() {
   beforeEach(setUpSuccessfulModel);
 
