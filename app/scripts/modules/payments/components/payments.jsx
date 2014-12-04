@@ -10,7 +10,6 @@ var PaymentActions = require('../actions.js');
 var ActiveState = require('react-router').ActiveState;
 var Link = require('react-router').Link;
 var url = require('url');
-var numeral = require('numeral');
 
 var PaymentItem = require('./payment.jsx');
 
