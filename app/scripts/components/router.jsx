@@ -9,8 +9,8 @@ var Redirect = Router.Redirect;
 
 var NotFound = require('./not-found/not-found.jsx');
 
-var Session = require('../modules/session/components/session.jsx');
-var session = require('../modules/session/models/session');
+var sessionModel = require('../modules/session/models/session');
+var SessionComponent = require('../modules/session/components/session.jsx');
 
 var Payments = require('../modules/payments/components/payments.jsx');
 var LoginForm = require('../modules/session/components/login-form.jsx');
@@ -21,8 +21,7 @@ var heartbeats = require('heartbeats');
 var pollingHeart = new heartbeats.Heart(1000);
 
 var pollWhenActive = function() {
-
-  if (session.isLoggedIn()) {
+  if (sessionModel.isLoggedIn()) {
     paymentActions.fetchRippleTransactions();
   }
 };

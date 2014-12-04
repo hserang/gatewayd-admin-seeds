@@ -1,16 +1,13 @@
-'use strict';
+"use strict";
 
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
 var sessionConfigActions = require('../config.json').actions;
 var sessionActions = require('../actions.js');
 var UserModel = require('../../../modules/users/models/user');
-
-var Heartbeats = require('heartbeats');
-var sessionHeart = new Heartbeats.Heart(60000); // 1 minute
 
 Backbone.$ = $;
 
@@ -22,26 +19,26 @@ var Session = Backbone.Model.extend({
     credentials: 'ABC' // Base64
   },
 
-  requiredAttrs: {
+  validationRules: {
     gatewaydUrl: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
+      isRequired: true
     },
     sessionKey: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
+      isRequired: true
     },
     lastLogin: {
-      type: 'number' // milliseconds since 1970/01/01
+      type: 'number', // milliseconds since 1970/01/01
+      isRequired: true
+    },
+    credentials: {
+      type: 'string',
+      minLength: 1,
+      isRequired: true
     }
-  },
-
-  resetUserModel: function() {
-    var defaults = this.get('userModel').defaults;
-
-    this.get('userModel').set(defaults);
-
-    return this.get('userModel');
   },
 
   initialize: function() {
@@ -49,7 +46,7 @@ var Session = Backbone.Model.extend({
 
     this.set('userModel', new UserModel());
 
-    AdminDispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
@@ -66,60 +63,67 @@ var Session = Backbone.Model.extend({
 
   validationErrors: [],
 
-  handleObject: function(attr, minLength) {
-    if (attr === null) {
+  testValid: function(value, attr, rules) {
+    if (_.isNull(value) && !rules[attr].isRequired) {
+      return true;
+    } else if (_.isUndefined(value)) {
+      this.validationErrors.push(attr + ' is undefined');
+
       return false;
     }
 
-    if (Array.isArray(attr)) {
-      return attr.length >= minLength;
+    var isValid = false;
+    var minLength = rules[attr].minLength;
+
+    if (typeof value === 'number') {
+      isValid = !isNaN(value);
+    } else if (typeof value === 'string') {
+      isValid = !_.isEmpty(value) && value.length >= minLength;
+    } else if (_.isArray(value)) {
+      isValid = value.length >= minLength;
+    } else if (typeof value === 'object') {
+      isValid = !_.isNull(value) && _.keys(value).length >= minLength;
     }
-
-    return Object.keys(attr).length >= minLength;
-  },
-
-  handleString: function(attr, minLength) {
-    return !!attr && attr.length >= minLength;
-  },
-
-  testValid: function(attr, requirements) {
-    var attribute = this.get(attr);
-    var testValid = {
-      object: this.handleObject,
-      string: this.handleString,
-    };
-    var isDefined = !_.isUndefined(attribute);
-    var type = requirements.type === 'array' ? 'object' : requirements.type;
-    var isValid = typeof attribute === type;
-
-    if (isValid && !_.isUndefined(testValid[typeof attribute])) {
-      isValid = testValid[typeof attribute](attribute, requirements.minLength);
-    }
-
-    // custom error messaging
-    if (!isDefined) {
-      this.validationErrors.push('"' + attr + '" of session data is undefined');
-    } else if (!isValid) {
-      this.validationErrors.push('"' + attr + '" of session data is invalid');
-    }
-
-    return isDefined && isValid;
-  },
-
-  validate: function() {
-    var isValid = true,
-        _this = this;
-
-    _.each(this.requiredAttrs, function(requirements, requiredAttr) {
-      if (!_this.testValid(requiredAttr, requirements)) {
-        isValid = false;
-      }
-    });
 
     if (!isValid) {
-      return 'There is an error';
+      this.validationErrors.push(attr + ' is invalid');
+    }
+
+    return isValid;
+  },
+
+  validate: function(attributes) {
+    var _this = this;
+
+    this.validationErrors = [];
+
+    var isValid = _.reduce(attributes, function(accumulator, value, attr) {
+      if (_.isUndefined(_this.validationRules[attr])) {
+        return accumulator && true;
+      }
+
+      if (_this.testValid(value, attr, _this.validationRules)) {
+        return accumulator && true;
+      }
+
+      return false;
+    }, true);
+
+
+    if (!Object.keys(attributes).length) {
+      isValid = false;
+    }
+
+    if (!isValid) {
+      return this.validationErrors.join(', ');
     }
   },
+
+  // isValid: function() {
+  //   this.validate(this.attributes);
+
+  //   return !this.validationError;
+  // },
 
   updateSession: function(gatewaydUrl, sessionKey) {
     this.set({
@@ -132,7 +136,7 @@ var Session = Backbone.Model.extend({
   updateUser: function(name) {
     this.get('userModel').set({
       name: name,
-      role: name,
+      role: name.split('@')[0],
       isLoggedIn: true
     });
   },
@@ -147,7 +151,7 @@ var Session = Backbone.Model.extend({
     var _this = this;
 
     this.updateSession(payload.gatewaydUrl, payload.sessionKey);
-    this.updateUser(payload.name);
+    this.get('userModel').update(payload.name);
     this.createCredentials(payload.name, payload.sessionKey);
 
     this.save(null, {
@@ -160,37 +164,39 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
-      },
-      success: function() {
-        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-
-        // _this.setUpSessionTimer();
-
-        sessionActions.updateBaseUrl(_this.get('gatewaydUrl'));
       }
+    })
+    .then(function() {
+      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
     });
   },
 
   restore: function() {
-    var oldSession = sessionStorage.length === 0 ? null : sessionStorage.getItem('session');
+    var oldSession, oldUser, restoredUser;
 
-    if (oldSession) {
-      var oldUser, restoredUser;
-
-      this.set(JSON.parse(oldSession));
-      oldUser = this.get('userModel');
-      restoredUser = new UserModel(oldUser);
-      this.set('userModel', restoredUser);
+    if (sessionStorage.length === 0) {
+      return;
     }
+
+    oldSession = sessionStorage.getItem('session');
+
+    this.set(JSON.parse(oldSession));
+    oldUser = this.get('userModel');
+    restoredUser = new UserModel(oldUser);
+    this.set('userModel', restoredUser);
   },
 
   logout: function() {
-    var resetUser = this.resetUserModel();
+    var resetUser;
+
+    this.get('userModel').reset();
+    resetUser = this.get('userModel');
 
     this.set(this.defaults);
     this.set('userModel', resetUser);
 
     sessionStorage.clear();
+    this.trigger('logout');
   },
 
   isLoggedIn: function() {
@@ -198,23 +204,12 @@ var Session = Backbone.Model.extend({
   },
 
   getLogState: function() {
-    var logState = {
+    var logStateMap = {
       true: 'loggedIn',
       false: 'loggedOut'
     };
 
-    return logState[this.isLoggedIn()];
-  },
-
-  setUpSessionTimer: function() {
-    sessionHeart.onceOnBeat(10, function() { // 10 minutes
-      sessionActions.logout();
-    });
-  },
-
-  resetSessionTimer: function() {
-    sessionHeart.clearEvents();
-    this.setUpSessionTimer();
+    return logStateMap[this.isLoggedIn()];
   }
 });
 

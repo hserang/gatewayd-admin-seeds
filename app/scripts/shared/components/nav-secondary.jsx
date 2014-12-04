@@ -20,7 +20,7 @@ var NavSecondary = React.createClass({
         text: "Sent",
         href: "/payments/outgoing"
       }],
-      wrapperClassName:"foo",
+      wrapperClassName: "foo",
       className: "nav-secondary"
     };
   },

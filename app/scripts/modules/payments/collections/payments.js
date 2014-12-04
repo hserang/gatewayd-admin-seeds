@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var _ = require('lodash');
 var $ = require('jquery');
@@ -7,17 +7,12 @@ var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var payments = require('../config.json');
 var Model = require('../models/payment.js');
 var session = require('../../../modules/session/models/session');
-var appConfig = require('../../../shared/app-config');
 
 Backbone.$ = $;
 
 var Payments = Backbone.Collection.extend({
 
   model: Model,
-
-  url: appConfig.baseUrl,
-
-  baseUrl: appConfig.baseUrl,
 
   comparator: function(a, b) {
     return b.id - a.id;
@@ -36,10 +31,6 @@ var Payments = Backbone.Collection.extend({
     }
 
     this[payload.actionType](payload.data);
-  },
-
-  updateBaseUrl: function(newBaseUrl) {
-    this.url = this.baseUrl = newBaseUrl;
   },
 
   urlObject: {
@@ -75,13 +66,12 @@ var Payments = Backbone.Collection.extend({
 
   updateUrl: function(page) {
     var page = page.split('/')[2];
-    var baseUrl = session.get('gatewaydUrl') || this.baseUrl;
 
     if (!page || _.isUndefined(this.urlObject[page])) {
       return false;
     }
 
-    this.url = baseUrl + this.urlObject[page].path;
+    this.url = session.get('gatewaydUrl') + this.urlObject[page].path;
     this.httpMethod = this.urlObject[page].method;
 
     this.fetchRippleTransactions();
@@ -95,7 +85,7 @@ var Payments = Backbone.Collection.extend({
     });
 
     model.save('state', 'succeeded', {
-      url: model.baseUrl + this.urlObject.flagAsDone.path + id,
+      url: session.get('gatewaydUrl') + this.urlObject.flagAsDone.path + id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader('Authorization', session.get('credentials'));
       }

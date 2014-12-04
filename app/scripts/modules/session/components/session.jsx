@@ -23,20 +23,27 @@ var Session = React.createClass({
 
   toLogout: function() {
     sessionActions.logout();
-    this.transitionTo('/login');
   },
 
   switchState: function(path) {
-    var loginState = {
+    var loginStateMap = {
       '/login': this.toLogin,
       '/logout': this.toLogout
     };
 
-    if (!_.isUndefined(loginState[path])) {
-      return loginState[path]();
+    if (!_.isUndefined(loginStateMap[path])) {
+      return loginStateMap[path]();
     } else {
       return false;
     }
+  },
+
+  componentWillMount: function() {
+    session.on('logout', this.redirectToLogin, this);
+  },
+
+  componentWillUnmount: function() {
+    session.off('logout');
   },
 
   render: function() {
