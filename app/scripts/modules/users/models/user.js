@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var user = require('../config.json');
 Backbone.$ = $;
 
@@ -27,12 +27,12 @@ var User = Backbone.Model.extend({
   initialize: function() {
     _.bindAll(this, 'testValid', 'validate');
 
-    AdminDispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
     var handleAction = {};
-    handleAction[user.actions.login] = this.login;
+    handleAction[user.actions.reset] = this.reset;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -94,6 +94,18 @@ var User = Backbone.Model.extend({
     if (!isValid) {
       return 'There is an error';
     }
+  },
+
+  reset: function() {
+    this.set(this.defaults);
+  },
+
+  update: function(name) {
+    this.set({
+      name: name,
+      role: name.split('@')[0],
+      isLoggedIn: true
+    });
   }
 });
 

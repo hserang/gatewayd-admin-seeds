@@ -7,15 +7,14 @@ var DocumentTitle = require('react-document-title');
 
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
-var RouterHeader = require('./header/top-bar.jsx');
-var Greeting = require('../shared/components/greeting/greeting.jsx');
+var TopBar = require('../shared/components/header/top-bar.jsx');
 
 require('react-bootstrap');
 
 var topBarConfig = {
   brandName: 'Gatewayd Basic',
   wrapperClass: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
-  links: [ ]
+  links: []
 };
 
 var App =
@@ -36,7 +35,7 @@ var App =
 
       return (
         <div>
-          <RouterHeader setup={topBarConfig} />
+          <TopBar setup={topBarConfig} />
           <div className="container">
             <div className="row">
               <div className="col-sm-12  col-md-12 main">
