@@ -1,16 +1,21 @@
 "use strict";
 
 var _ = require('lodash');
-var React = require('react');
-var Router = require('react-router');
-var DocumentTitle = require('react-document-title');
-var ModalTrigger = require('react-bootstrap').ModalTrigger;
-var Button = require('react-bootstrap').Button;
-var PaymentActions = require('../actions.js');
-var ActiveState = require('react-router').ActiveState;
-var Link = require('react-router').Link;
 var url = require('url');
 
+var React = require('react');
+var DocumentTitle = require('react-document-title');
+
+// React Router
+var Router = require('react-router');
+var ActiveState = require('react-router').ActiveState;
+var Link = require('react-router').Link;
+
+
+// React Bootstrap
+var ModalTrigger = require('react-bootstrap').ModalTrigger;
+
+var paymentActions = require('../actions.js');
 var PaymentItem = require('./payment.jsx');
 
 var Collection = require('../collections/payments.js');
@@ -18,32 +23,25 @@ var collection = new Collection();
 
 var PaymentCreateFormModel = require('../models/payment-create.js');
 var paymentCreateFormModel = new PaymentCreateFormModel();
-
 var PaymentCreateForm = require('./payment-create.jsx');
+
 
 var Payments = React.createClass({
   mixins: [ActiveState, Router.State],
 
-  getStateFromStore: function(props) {
-    props = props || this.props;
-
+  getInitialState: function() {
     return {
       payments: collection
     };
   },
 
-  getInitialState: function() {
-    return this.getStateFromStore();
-  },
-
   componentDidMount: function() {
     collection.on('sync change', this.handleCollectionSync);
-    PaymentActions.updateUrl(this.getPath());
+    paymentActions.updateUrl(this.getPath());
   },
 
   componentWillUnmount: function() {
-    collection.off('sync');
-    collection.off('change');
+    collection.off('sync change');
   },
 
   handleCollectionSync: function(collection) {
@@ -64,11 +62,11 @@ var Payments = React.createClass({
   },
 
   handleDoneButtonClick: function(id) {
-    PaymentActions.flagAsDone(id);
+    paymentActions.flagAsDone(id);
   },
 
   handleRetryButtonClick: function(id) {
-    PaymentActions.retryFailedPayment(id);
+    paymentActions.retryFailedPayment(id);
   },
 
   directionMap: {
@@ -103,7 +101,6 @@ var Payments = React.createClass({
         return state === 'all'? true : model.get('state') === state;
       })
       .map(function(model) {
-
         return (
           <PaymentItem
             key={model.get('id')}
@@ -154,7 +151,7 @@ var Payments = React.createClass({
               </h1>
             </div>
           </div>
-          <div className='row'>
+          <div className="row">
             <div className="col-xs-12">
               {tertiaryNav}
             </div>

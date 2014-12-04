@@ -1,6 +1,7 @@
-'use strict;'
+"use strict;"
 
 var _ = require('lodash');
+
 var React = require('react');
 
 var Router = require('react-router');
