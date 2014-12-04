@@ -199,6 +199,10 @@ input[type="month"] {
 
 .form-group {
   margin-bottom: 15px;
+
+  &.has-warning {
+    margin-bottom: 0;
+  }
 }
 
 
