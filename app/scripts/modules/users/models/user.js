@@ -3,30 +3,30 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
+var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var user = require('../config.json');
 Backbone.$ = $;
 
 var User = Backbone.Model.extend({
+
+  //todo: review the defaults and tests since they pass validation tests
   defaults: {
     name: 'guest',
     role: 'guest',
     isLoggedIn: false
   },
 
-  requiredAttrs: {
+  validationRules: {
     name: {
-      type: 'string',
-      minLength: 1
+     validators: ['isRequired', 'minLength:1']
     },
     isLoggedIn: {
-      type: 'boolean'
+      validators: ['isBoolean']
     }
   },
 
   initialize: function() {
-    _.bindAll(this, 'testValid', 'validate');
-
     adminDispatcher.register(this.dispatchCallback);
   },
 
@@ -36,63 +36,6 @@ var User = Backbone.Model.extend({
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
-    }
-  },
-
-  validationErrors: [],
-
-  handleObject: function(attr, minLength) {
-    if (attr === null) {
-      return false;
-    }
-
-    if (Array.isArray(attr)) {
-      return attr.length >= minLength;
-    }
-
-    return Object.keys(attr).length >= minLength;
-  },
-
-  handleString: function(attr, minLength) {
-    return !!attr && attr.length >= minLength;
-  },
-
-  testValid: function(attr, requirements) {
-    var attribute = this.get(attr);
-    var testValid = {
-      object: this.handleObject,
-      string: this.handleString,
-    };
-    var isDefined = !_.isUndefined(attribute);
-    var type = requirements.type === 'array' ? 'object' : requirements.type;
-    var isValid = typeof attribute === type;
-
-    if (isValid && !_.isUndefined(testValid[typeof attribute])) {
-      isValid = testValid[typeof attribute](attribute, requirements.minLength);
-    }
-
-    // custom error messaging
-    if (!isDefined) {
-      this.validationErrors.push('"' + attr + '" of user data is undefined');
-    } else if (!isValid) {
-      this.validationErrors.push('"' + attr + '" of user data is invalid');
-    }
-
-    return isDefined && isValid;
-  },
-
-  validate: function() {
-    var isValid = true,
-        _this = this;
-
-    _.each(this.requiredAttrs, function(requirements, requiredAttr) {
-      if (!_this.testValid(requiredAttr, requirements)) {
-        isValid = false;
-      }
-    });
-
-    if (!isValid) {
-      return 'There is an error';
     }
   },
 
@@ -108,5 +51,8 @@ var User = Backbone.Model.extend({
     });
   }
 });
+
+//add validation mixin
+_.extend(User.prototype, ValidationMixins);
 
 module.exports = User;

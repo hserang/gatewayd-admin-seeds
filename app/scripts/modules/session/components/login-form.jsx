@@ -19,22 +19,10 @@ var LoginForm = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
 
-    var name = this.refs.name.getValue().trim();
-    var gatewaydUrl = this.refs.gatewaydUrl.getValue().trim();
-    var sessionKey = this.refs.sessionKey.getValue().trim();
-
-    if (!name || !sessionKey || !gatewaydUrl) {
-      this.setState({
-        showErrorMessage: true
-      });
-
-      return null;
-    }
-
     var loginDetails = {
-      name: name,
-      gatewaydUrl: gatewaydUrl,
-      sessionKey: sessionKey
+      name: this.refs.name.getValue().trim(),
+      gatewaydUrl: this.refs.gatewaydUrl.getValue().trim(),
+      sessionKey: this.refs.sessionKey.getValue().trim()
     };
 
     this.setState({

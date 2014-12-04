@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
+var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
 var sessionConfigActions = require('../config.json').actions;
@@ -12,6 +13,7 @@ var UserModel = require('../../../modules/users/models/user');
 Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
+
   defaults: {
     gatewaydUrl: '',
     sessionKey: '',
@@ -21,23 +23,13 @@ var Session = Backbone.Model.extend({
 
   validationRules: {
     gatewaydUrl: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
+      validators: ['isRequired', 'isString', 'minLength:4']
     },
     sessionKey: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
-    },
-    lastLogin: {
-      type: 'number', // milliseconds since 1970/01/01
-      isRequired: true
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
     credentials: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
+      validators: ['isRequired', 'isString']
     }
   },
 
@@ -61,70 +53,6 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  validationErrors: [],
-
-  testValid: function(value, attr, rules) {
-    if (_.isNull(value) && !rules[attr].isRequired) {
-      return true;
-    } else if (_.isUndefined(value)) {
-      this.validationErrors.push(attr + ' is undefined');
-
-      return false;
-    }
-
-    var isValid = false;
-    var minLength = rules[attr].minLength;
-
-    if (typeof value === 'number') {
-      isValid = !isNaN(value);
-    } else if (typeof value === 'string') {
-      isValid = !_.isEmpty(value) && value.length >= minLength;
-    } else if (_.isArray(value)) {
-      isValid = value.length >= minLength;
-    } else if (typeof value === 'object') {
-      isValid = !_.isNull(value) && _.keys(value).length >= minLength;
-    }
-
-    if (!isValid) {
-      this.validationErrors.push(attr + ' is invalid');
-    }
-
-    return isValid;
-  },
-
-  validate: function(attributes) {
-    var _this = this;
-
-    this.validationErrors = [];
-
-    var isValid = _.reduce(attributes, function(accumulator, value, attr) {
-      if (_.isUndefined(_this.validationRules[attr])) {
-        return accumulator && true;
-      }
-
-      if (_this.testValid(value, attr, _this.validationRules)) {
-        return accumulator && true;
-      }
-
-      return false;
-    }, true);
-
-
-    if (!Object.keys(attributes).length) {
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return this.validationErrors.join(', ');
-    }
-  },
-
-  // isValid: function() {
-  //   this.validate(this.attributes);
-
-  //   return !this.validationError;
-  // },
-
   updateSession: function(gatewaydUrl, sessionKey) {
     this.set({
       gatewaydUrl: gatewaydUrl,
@@ -147,16 +75,23 @@ var Session = Backbone.Model.extend({
     this.set('credentials', 'Basic ' + encodedString);
   },
 
+  setUrl: function() {
+    this.url = this.get('gatewaydUrl') + '/v1/users/login';
+  },
+
   login: function(payload) {
     var _this = this;
 
     this.updateSession(payload.gatewaydUrl, payload.sessionKey);
-    this.get('userModel').update(payload.name);
     this.createCredentials(payload.name, payload.sessionKey);
+
+    this.get('userModel').update(payload.name);
+
+    this.set(payload);
+    this.setUrl();
 
     this.save(null, {
       wait: true,
-      url: this.get('gatewaydUrl') + '/v1/users/login',
       contentType: 'application/json',
       data: JSON.stringify({
         name: this.get('userModel').get('name'),
@@ -164,11 +99,11 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
+      },
+      success:function() {
+        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
       }
     })
-    .then(function() {
-      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-    });
   },
 
   restore: function() {
@@ -212,5 +147,8 @@ var Session = Backbone.Model.extend({
     return logStateMap[this.isLoggedIn()];
   }
 });
+
+//add validation mixin
+_.extend(Session.prototype, ValidationMixins);
 
 module.exports = new Session();
