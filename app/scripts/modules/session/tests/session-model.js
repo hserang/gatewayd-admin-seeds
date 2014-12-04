@@ -1,47 +1,35 @@
+"use strict";
+
 var chai = require('chai');
 var should = chai.should();
 var sinon = require('sinon');
-var sinonChai = require('sinon-chai');
+var CryptoJS = require('crypto-js');
 
 chai.should();
-chai.use(sinonChai);
 
 var properFixture = require('./fixtures/successes');
 var improperFixture = require('./fixtures/errors');
 
 var Model = require('../models/session');
-var SubModel = require('../../users/models/user'); // what to do with this?
 
 var setUpSuccessfulModel = function() {
-  this.model = new Model();
+  this.model = Model;
 
   this.model.set(properFixture.admin);
 };
 
 var setUpErroneousModel = function() {
-  this.model = new Model();
+  this.model = Model;
 
   this.model.set(improperFixture.defaults);
 };
 
-describe('invalid model', function() {
-  beforeEach(setUpErroneousModel);
-
-  it('should determine if model data is invalid', function() {
-    this.model.isValid().should.equal(false);
-  });
-});
-
-describe('valid model', function() {
-  beforeEach(setUpSuccessfulModel);
-
-  it('should determine if model data is valid', function() {
-    this.model.isValid().should.equal(true);
-  });
-});
-
 describe('defaults', function() {
   beforeEach(setUpSuccessfulModel);
+
+  it('should have a gateway url', function() {
+    this.model.get('gatewaydUrl').should.exist;
+  });
 
   it('should have a session key', function() {
     this.model.get('sessionKey').should.exist;
@@ -50,6 +38,74 @@ describe('defaults', function() {
   it('should have a last login date/timestamp', function() {
     this.model.get('lastLogin').should.exist;
   });
+
+  it('should have credentials', function() {
+    this.model.get('credentials').should.exist;
+  });
 });
 
+describe('valid model', function() {
+  beforeEach(setUpSuccessfulModel);
 
+  it('should be valid', function() {
+    this.model.isValid().should.equal(true);
+  });
+});
+
+describe('invalid model', function() {
+  beforeEach(setUpErroneousModel);
+
+  it('should be invalid', function() {
+    this.model.isValid().should.equal(false);
+  });
+});
+
+describe('updateSession', function() {
+  beforeEach(setUpSuccessfulModel);
+
+  it('should update the session', function() {
+    var expected = {
+      gatewaydUrl: 'www.passing.com',
+      sessionKey: '1234'
+    };
+    var previousLastLogin = this.model.get('lastLogin');
+
+    this.model.updateSession(expected.gatewaydUrl, expected.sessionKey);
+
+    this.model.get('gatewaydUrl').should.equal(expected.gatewaydUrl);
+    this.model.get('sessionKey').should.equal(expected.sessionKey);
+    this.model.get('lastLogin').should.not.equal(previousLastLogin);
+  });
+});
+
+describe('updateSession', function() {
+  beforeEach(setUpSuccessfulModel);
+
+  it('should update the session', function() {
+    var expected = {
+      gatewaydUrl: 'www.passing.com',
+      sessionKey: '1234'
+    };
+    var previousLastLogin = this.model.get('lastLogin');
+
+    this.model.updateSession(expected.gatewaydUrl, expected.sessionKey);
+
+    this.model.get('gatewaydUrl').should.equal(expected.gatewaydUrl);
+    this.model.get('sessionKey').should.equal(expected.sessionKey);
+    this.model.get('lastLogin').should.not.equal(previousLastLogin);
+  });
+});
+
+describe('createCredentials', function() {
+  beforeEach(setUpSuccessfulModel);
+
+  it('should create credentials', function() {
+    var name = 'admin@example.com';
+    var sessionKey = '1234';
+    var expected = 'Basic ' + CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
+
+    this.model.createCredentials(name, sessionKey);
+
+    this.model.get('credentials').should.equal(expected);
+  });
+});

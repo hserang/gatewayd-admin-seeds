@@ -23,15 +23,15 @@ var setUpErroneousModel = function() {
   this.model.set(improperFixture.defaults);
 };
 
-describe('invalid model', function() {
+describe('invalid user model', function() {
   beforeEach(setUpErroneousModel);
 
-  it('should determine if model data is invalid', function() {
+  it('should be invalid', function() {
     this.model.isValid().should.equal(false);
   });
 });
 
-describe('valid model', function() {
+describe('valid user model', function() {
   beforeEach(setUpSuccessfulModel);
 
   it('should determine if model data is valid', function() {

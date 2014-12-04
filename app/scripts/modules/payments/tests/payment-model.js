@@ -23,56 +23,63 @@ var setUpErroneousModel = function() {
   this.model.set(improperPayment.defaults);
 };
 
-describe('invalid model', function() {
-  beforeEach(setUpErroneousModel);
+describe('Payment Model:', function() {
+  describe('validation', function() {
+    describe('should pass when isValid', function() {
+      beforeEach(setUpSuccessfulModel);
 
-  it('should determine if model data is invalid', function() {
-    this.model.isValid().should.equal(false);
+      it('is true', function() {
+        this.model.isValid().should.equal(true);
+      });
+    });
+
+    describe('should fail when isValid', function() {
+      beforeEach(setUpErroneousModel);
+
+      it('is false', function() {
+        this.model.isValid().should.equal(false);
+      });
+    });
+  });
+
+  describe('should have required attributes:', function() {
+    beforeEach(setUpSuccessfulModel);
+
+    it('has to_address_id', function() {
+      this.model.get('to_address_id').should.exist;
+    });
+
+    it('has from_address_id', function() {
+      this.model.get('from_address_id').should.exist;
+    });
+
+    it('has to_amount', function() {
+      this.model.get('to_amount').should.exist;
+    });
+
+    it('has to_currency', function() {
+      this.model.get('to_currency').should.exist;
+    });
+
+    it('has to_issuer', function() {
+      this.model.get('to_issuer').should.exist;
+    });
+
+    it('has from_amount', function() {
+      this.model.get('from_amount').should.exist;
+    });
+
+    it('has from_currency', function() {
+      this.model.get('from_currency').should.exist;
+    });
+
+    it('has from_issuer', function() {
+      this.model.get('from_issuer').should.exist;
+    });
   });
 });
 
-describe('valid model', function() {
-  beforeEach(setUpSuccessfulModel);
 
-  it('should determine if model data is valid', function() {
-    this.model.isValid().should.equal(true);
-  });
-});
 
-describe('defaults', function() {
-  beforeEach(setUpSuccessfulModel);
-
-  it('should have a to_address_id', function() {
-    this.model.get('to_address_id').should.exist;
-  });
-
-  it('should have a from_address_id', function() {
-    this.model.get('from_address_id').should.exist;
-  });
-
-  it('should have a to_amount', function() {
-    this.model.get('to_amount').should.exist;
-  });
-
-  it('should have a to_currency', function() {
-    this.model.get('to_currency').should.exist;
-  });
-
-  it('should have a to_issuer', function() {
-    this.model.get('to_issuer').should.exist;
-  });
-
-  it('should have a from_amount', function() {
-    this.model.get('from_amount').should.exist;
-  });
-
-  it('should have a from_currency', function() {
-    this.model.get('from_currency').should.exist;
-  });
-
-  it('should have a from_issuer', function() {
-    this.model.get('from_issuer').should.exist;
-  });
-});
 
 

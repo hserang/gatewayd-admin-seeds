@@ -1,7 +1,8 @@
 var data = {
   defaults: {
-    name: '',
-    isLoggedIn: ''
+    value: 0,
+    currency: '',
+    counterparty: ''
   }
 };
 
