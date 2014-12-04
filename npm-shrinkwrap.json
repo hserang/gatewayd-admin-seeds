@@ -2767,6 +2767,11 @@
         }
       }
     },
+    "chance": {
+      "version": "0.6.4",
+      "from": "chance@^0.6.3",
+      "resolved": "https://registry.npmjs.org/chance/-/chance-0.6.4.tgz"
+    },
     "crypto-js": {
       "version": "3.1.2",
       "from": "crypto-js@3.1.2",
@@ -2918,11 +2923,6 @@
       "version": "2.0.1",
       "from": "flux@^2.0.1",
       "resolved": "https://registry.npmjs.org/flux/-/flux-2.0.1.tgz"
-    },
-    "formsy-react": {
-      "version": "0.2.3",
-      "from": "formsy-react@",
-      "resolved": "https://registry.npmjs.org/formsy-react/-/formsy-react-0.2.3.tgz"
     },
     "gulp": {
       "version": "3.8.10",
