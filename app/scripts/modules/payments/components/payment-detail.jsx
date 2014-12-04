@@ -1,115 +1,70 @@
 "use strict";
 
-var React = require('react');
 var _ = require('lodash');
-var moment = require('moment');
-var sjcl = require('ripple-lib/build/sjcl');
 
+var React = require('react');
+
+// React Bootstrap
 var Modal = require('react-bootstrap').Modal;
 var Button = require('react-bootstrap').Button;
+var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
+
+var paymentActions = require('../actions.js');
+
+var PaymentDetailContent = require('./payment-detail-content.jsx');
 
 var PaymentDetail = React.createClass({
   hidePaymentDetails: function() {
     this.props.onRequestHide();
   },
 
+  handleProcessButtonClick: function() {
+    paymentActions.flagAsDone(this.props.model.get('id'));
+  },
+
   render: function() {
+    var _this = this;
+    var modalFooterButton = function() {
+     return (
+        <div className="row">
+          <div className="col-sm-7 col-sm-offset-2">
+            <h4>
+              Are you sure you want to process this payment?
+            </h4>
+          </div>
+          <div className="col-sm-3">
+            <ButtonToolbar>
+              <Button
+                bsStyle="success"
+                bsSize="large"
+                onClick={_this.handleProcessButtonClick}
+              >
+                <span className="glyphicon glyphicon-ok" />
+              </Button>
+              <Button
+                bsStyle="danger"
+                bsSize="large"
+                onClick={_this.hidePaymentDetails}
+              >
+                <span className="glyphicon glyphicon-remove" />
+              </Button>
+            </ButtonToolbar>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <Modal
         title="Payment Details"
-        backdrop={true}
         onRequestHide={this.hidePaymentDetails}
         animation={false}
       >
         <div className="modal-body">
-          <div className="row border-bottom">
-            {moment(this.props.model.get('updatedAt')).format('MMM D, YYYY HH:mm z')}
-          </div>
-          <br />
-          <div className="row">
-            Transaction Id: {this.props.model.get('id')}
-          </div>
-          <br />
-          <div className="row">
-          </div>
-          <div className="row">
-            <div className="col-sm-5 border-bottom">
-              <div className="row">
-                <div className="col-sm-3">
-                  Source:
-                </div>
-                <div className="col-sm-9">
-                  {this.props.model.get('fromAddress').address}
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-3">
-                  Tag:
-                </div>
-                <div className="col-sm-9">
-                  {this.props.model.get('fromAddress').tag || 'none'}
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
-                  Balance Changes:
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-9 col-sm-offset-3">
-                  {this.props.model.get('from_amount')} {this.props.model.get('from_currency')}
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6 col-sm-offset-1 border-bottom">
-              <div className="row">
-                <div className="col-sm-3">
-                  Destination:
-                </div>
-                <div className="col-sm-9">
-                  {this.props.model.get('toAddress').address}
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-3">
-                  Tag:
-                </div>
-                <div className="col-sm-9">
-                  {this.props.model.get('toAddress').tag || 'none'}
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
-                  Balance Changes:
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-9 col-sm-offset-3">
-                  +{this.props.model.get('to_amount')} {this.props.model.get('to_currency')}
-                </div>
-              </div>
-            </div>
-          </div>
-          <br />
-          <div className="row">
-            Invoice Id: {this.props.model.get('invoice_id') || 'none'}
-          </div>
-          <br />
-          <div className="row">
-            Transaction Hash: {this.props.model.get('transaction_hash') || 'none'}
-          </div>
-          <br />
-          <div className="row">
-            Memo: {
-              this.props.model.get('memo') ?
-                sjcl.codec.utf8String.fromBits(sjcl.codec.hex.toBits(this.props.model.get('memo'))) : 'none'
-            }
-          </div>
+          <PaymentDetailContent model={this.props.model} />
         </div>
         <div className="modal-footer">
-          <Button bsStyle="primary" onClick={this.hidePaymentDetails} block>
-            Close
-          </Button>
+          {modalFooterButton()}
         </div>
       </Modal>
     );
