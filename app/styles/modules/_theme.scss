@@ -1,15 +1,35 @@
 //styles and includes specific to admin basic
 
+//mixins
+@mixin ellipsis {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+//layout
 body {
   padding-top: 50px;
 }
 
-
 //top-bar styles
-.navbar-inverse {
+.top-bar {
   height: 50px;
+  min-width: 320px;
+
+  .button-sidebar {
+    margin: 6px 5px 0 0;
+    padding: 5px;
+    float: left;
+    color: $white;
+    font-size: 22px;
+    font-weight: 300;
+  }
 
   .navbar-brand {
+    padding: 15px 5px;
     color: $white;
   }
 
@@ -55,10 +75,6 @@ body {
   }
 }
 
-.border-bottom {
-  border-bottom: 1px dotted #eee;
-}
-
 //todo: move this
 .header-links {
   margin-left: 10px;
@@ -77,34 +93,54 @@ body {
   }
 }
 
-// modal
 .highlight {
   border: 5px solid $brand-primary;
 }
 
-.modal-body {
-  margin-left: 18px;
-}
-
+// modal
 .modal {
-  z-index: 2;
-  position: fixed;
-  background: $white;
-  top: 242px;
-  left: 27%;
-  box-shadow: #aaaaaa 3px 3px 60px;
+  width: 95%;
+  max-width: 600px;
+  min-width: 300px;
   padding: 20px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: $white;
+  box-shadow: #aaaaaa 3px 3px 60px;
+  overflow: scroll;
 }
 
 .modal-backdrop {
   opacity: 0.8;
-  z-index: 1;
+  z-index: 500;
   position: fixed;
   top: 0;
   left: 0;
   background: $gray-dark;
   height: 100%;
   width: 100%;
+}
+
+.details {
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  left: 0;
+  top: 0;
+  transform: none;
+  z-index: 0;
+  background: #F8F8FF;
+  border: 1px solid $gray-lighter;
+  box-shadow: none;
+  overflow: scroll;
+}
+
+.glyphicon-chevron-up, .glyphicon-chevron-down {
+  font-size: 25px;
+  padding-top: 5px;
 }
 
 // spining refresh icon
@@ -131,4 +167,111 @@ body {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
+}
+
+//sidebar
+.sidebar-wallets {
+  max-width: 500px;
+  width: 80%;
+  background: rgba(0, 0, 0, 0.85);
+  color: $white;
+
+  .sidebar-header {
+  }
+
+  .wallet-header {
+    color: #000000;
+    margin-left: -20px;
+  }
+
+  .wallet {
+    color: #000000;
+    margin-left: -20px;
+  }
+}
+
+//payment
+.payment-item {
+  .header {
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .data {
+    font-weight: 300;
+  }
+
+  .address {
+    @include ellipsis;
+    font-weight: 300;
+    vertical-align: middle;
+
+    .header {
+      cursor: pointer;
+    }
+
+    &.show-full {
+      width: auto;
+      padding: 2px 5px;
+      text-overflow: inherit;
+      background: $state-warning-bg;
+    }
+  }
+
+  .currency {
+    padding: 2px;
+    font-size: 70%;
+    font-weight: 300;
+    color: $white;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid $btn-primary-border;
+    background-color: $btn-primary-bg;
+  }
+
+  .date {
+    font-weight: 300;
+  }
+
+  p {
+    margin-bottom: 3px;
+  }
+}
+
+//borders
+.border-right {
+  border-right: 1px solid #efefef;
+}
+
+.border-bottom {
+  border-bottom: 1px dotted #eee;
+}
+
+a {
+  cursor: pointer;
+}
+
+//THIS STAYS AT BOTTOM UNTIL MIGRATED!!!
+@media only screen and (max-width : 540px) {
+  .header-links {
+    margin: 10px 0 0;
+    display: block;
+    text-align: center;
+    font-size: 17px;
+  }
+}
+
+@media only screen and (max-width : 500px) {
+  .greeting {
+    .welcome {
+      display: none;
+    }
+  }
+  .sidebar-wallets {
+    width: 100%;
+  }
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+  /* Styles */
 }
