@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
+var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
 var sessionConfigActions = require('../config.json').actions;
@@ -58,64 +59,6 @@ var Session = Backbone.Model.extend({
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
-    }
-  },
-
-  validationErrors: [],
-
-  testValid: function(value, attr, rules) {
-    if (_.isNull(value) && !rules[attr].isRequired) {
-      return true;
-    } else if (_.isUndefined(value)) {
-      this.validationErrors.push(attr + ' is undefined');
-
-      return false;
-    }
-
-    var isValid = false;
-    var minLength = rules[attr].minLength;
-
-    if (typeof value === 'number') {
-      isValid = !isNaN(value);
-    } else if (typeof value === 'string') {
-      isValid = !_.isEmpty(value) && value.length >= minLength;
-    } else if (_.isArray(value)) {
-      isValid = value.length >= minLength;
-    } else if (typeof value === 'object') {
-      isValid = !_.isNull(value) && _.keys(value).length >= minLength;
-    }
-
-    if (!isValid) {
-      this.validationErrors.push(attr + ' is invalid');
-    }
-
-    return isValid;
-  },
-
-  validate: function(attributes) {
-    var _this = this;
-
-    this.validationErrors = [];
-
-    var isValid = _.reduce(attributes, function(accumulator, value, attr) {
-      if (_.isUndefined(_this.validationRules[attr])) {
-        return accumulator && true;
-      }
-
-      if (_this.testValid(value, attr, _this.validationRules)) {
-        return accumulator && true;
-      }
-
-      return false;
-    }, true);
-
-
-    if (!Object.keys(attributes).length) {
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return this.validationErrors.join(', ');
     }
   },
 
@@ -212,5 +155,8 @@ var Session = Backbone.Model.extend({
     return logStateMap[this.isLoggedIn()];
   }
 });
+
+//add validation mixin
+_.extend(Session.prototype, ValidationMixins);
 
 module.exports = new Session();
