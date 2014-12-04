@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var Chance = require('chance');
 var chance = new Chance();

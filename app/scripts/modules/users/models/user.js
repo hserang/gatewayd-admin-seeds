@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var user = require('../config.json');
 Backbone.$ = $;
 
@@ -27,7 +27,7 @@ var User = Backbone.Model.extend({
   initialize: function() {
     _.bindAll(this, 'testValid', 'validate');
 
-    AdminDispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {

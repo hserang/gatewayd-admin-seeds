@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
-var AdminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
 var CryptoJS = require('crypto-js');
 var sessionConfigActions = require('../config.json').actions;
 var sessionActions = require('../actions.js');
@@ -46,7 +46,7 @@ var Session = Backbone.Model.extend({
 
     this.set('userModel', new UserModel());
 
-    AdminDispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {

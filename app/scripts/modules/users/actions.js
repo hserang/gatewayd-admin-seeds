@@ -1,15 +1,15 @@
-var AdminDispatcher = require('../../dispatchers/admin-dispatcher');
+var adminDispatcher = require('../../dispatchers/admin-dispatcher');
 var userActions = require('./config.json').actions;
 
 var UserActions = {
   reset: function() {
-    AdminDispatcher.handleEvent({
+    adminDispatcher.handleEvent({
       actionType: userActions.reset
     });
   },
 
   update: function(name) {
-    AdminDispatcher.handleEvent({
+    adminDispatcher.handleEvent({
       actionType: userActions.update,
       payload: name
     });
