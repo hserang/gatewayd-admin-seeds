@@ -3,51 +3,27 @@
 var _ = require('lodash');
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
-var RippleName = require('ripple-name');
-var Formsy = require('formsy-react');
 var Row = require('react-bootstrap').Row;
 var Col = require('react-bootstrap').Col;
 var Label = require('react-bootstrap').Label;
-var Input = require('../../../shared/components/form/input.jsx');
-var TextArea = require('../../../shared/components/form/textarea.jsx');
+var Input = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
 var paymentActions = require('../actions');
 
-Formsy.addValidationRule('isRippleAddress', function(address, cb) {
-  console.log("validate address", arguments);
-  if (!address) {
-    return;
-  }
-
-  RippleName.lookup(address)
-    .then(function(data) {
-      var addressAttr;
-
-      console.log("name lookup return", arguments);
-
-      if (data.exists) {
-        //pass case
-        addressAttr = {address: data.address};
-
-        console.log("passed val");
-      } else {
-        //fail case
-      }
-    })
-    .error(function() {
-      //handle error
-    });
-
-});
-
 var PaymentCreate = React.createClass({
-
   validationMap: {
     valid: 'success',
     invalid: 'warning'
   },
 
   typeMap: {
+    address: 'string',
+    amount: 'number',
+    currency: 'string',
+    destinationTag: 'number',
+    sourceTag: 'number',
+    invoiceId: 'string',
+    memo: 'string'
   },
 
   formatInput: function(rawInputRef, type) {
@@ -181,6 +157,7 @@ var PaymentCreate = React.createClass({
     };
   },
 
+
   componentDidMount: function() {
     this.props.model.on('validationComplete', this.showFieldValidationResult);
     this.props.model.on('sync', this.dispatchSendPaymentComplete);
@@ -195,15 +172,6 @@ var PaymentCreate = React.createClass({
   },
 
   render: function() {
-
-    var disabled = function() {
-      return false;
-    };
-
-    Formsy.defaults({
-      submitButtonClass: 'btn btn-lg btn-primary btn-block'
-    });
-
     return (
       <Modal
         title="Send Payment"
@@ -212,69 +180,62 @@ var PaymentCreate = React.createClass({
         animation={false}
       >
         <div className="modal-body">
-          <Formsy.Form onSubmit={this.handleSubmit} submitLabel="Send Payment">
-            <Input type="text" ref="address" name="address"
-              required
-              validations={this.isValue}
-              autofocus={true}
-              label="Destination Address"
+          <form onSubmit={this.handleSubmit}>
+            <Input type="text" ref="address"
+              label={<div><Label bsStyle="info">Required</Label> Destination Address: </div>}
               bsStyle={this.validationMap[this.state.address.isValid]}
-              disabled={disabled()}
+              disabled={this.state.disableForm || this.state.disableAddressField}
               autoFocus={true} onBlur={this.validateAddress.bind(this, false)} />
             <Label bsStyle="warning">{this.state.address.errorMessage}</Label>
             <Row>
               <Col xs={6}>
-                <Input type="tel" ref="amount" name="amount"
-                  required
-                  validations="isValue"
-                  label="Amount"
+
+                <Input type="tel" ref="amount"
+                  label={<div><Label bsStyle="info">Required</Label> Amount: </div>}
                   bsStyle={this.validationMap[this.state.amount.isValid]}
-                  disabled={disabled()} onBlur={this.validateField.bind(this, 'amount', false)} />
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'amount', false)} />
                 <Label bsStyle="warning">{this.state.amount.errorMessage}</Label>
               </Col>
               <Col xs={6}>
-                <Input type="text" ref="currency" name="currency"
-                  required
-                  validations="isAlpha"
-                  validationError="must be letters only"
-                  label="Currency"
+                <Input type="text" ref="currency"
+                  label={<div><Label bsStyle="info">Required</Label> Currency: </div>}
                   bsStyle={this.validationMap[this.state.currency.isValid]}
-                  disabled={disabled()} onBlur={this.validateField.bind(this, 'currency', false)} />
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'currency', false)} />
                 <Label bsStyle="warning">{this.state.currency.errorMessage}</Label>
               </Col>
             </Row>
             <Row>
               <Col xs={6}>
-                <Input type="tel" ref="destinationTag" name="destinationTag"
-                  label="Destination Tag"
-                  validations="isNumeric"
-                  validationError="must be numeric"
+                <Input type="tel" ref="destinationTag"
+                  label="Destination Tag:"
                   bsStyle={this.validationMap[this.state.destinationTag.isValid]}
-                  disabled={disabled()} onBlur={this.validateField.bind(this, 'destinationTag', false)} />
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'destinationTag', false)} />
                 <Label bsStyle="warning">{this.state.destinationTag.errorMessage}</Label>
               </Col>
               <Col xs={6}>
-                <Input type="tel" ref="sourceTag" name="sourceTag"
-                  label="Source Tag"
-                  validations="isNumeric"
-                  validationError="must be numeric"
+                <Input type="tel" ref="sourceTag"
+                  label="Source Tag:"
                   bsStyle={this.validationMap[this.state.sourceTag.isValid]}
-                  disabled={disabled()} onBlur={this.validateField.bind(this, 'sourceTag', false)} />
+                  disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'sourceTag', false)} />
                 <Label bsStyle="warning">{this.state.sourceTag.errorMessage}</Label>
               </Col>
             </Row>
-            <Input type="text" ref="invoiceId" name="invoiceId"
-              label="Invoice Id"
-              validations="isValue"
+            <Input type="text" ref="invoiceId"
+              label="Invoice Id:"
               bsStyle={this.validationMap[this.state.invoiceId.isValid]}
-              disabled={disabled()} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
+              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'invoiceId', false)} />
             <Label bsStyle="warning">{this.state.invoiceId.errorMessage}</Label>
-            <TextArea ref="memo" name="memo"
-              label="Memo"
+            <Input type="textarea" ref="memo"
+              label="Memo:"
               bsStyle={this.validationMap[this.state.memo.isValid]}
-              disabled={disabled()} onBlur={this.validateField.bind(this, 'memo', false)} />
+              disabled={this.state.disableForm} onBlur={this.validateField.bind(this, 'memo', false)} />
             <Label bsStyle="warning">{this.state.memo.errorMessage}</Label>
-          </Formsy.Form>
+            <Button className="pull-right" bsStyle="primary" bsSize="large" type="submit"
+              disabled={this.state.disableForm || this.state.disableSubmitButton}
+              block>
+              {this.state.submitButtonLabel}
+            </Button>
+          </form>
         </div>
       </Modal>
     );
