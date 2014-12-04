@@ -3,9 +3,9 @@
 var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
-var Routes = Router.Routes;
 var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
+var Redirect = Router.Redirect;
 
 var NotFound = require('./not-found/not-found.jsx');
 
@@ -44,17 +44,15 @@ window.React = React;
 var App = require('./app.jsx');
 
 var routes = (
-  <Routes>
-    <Route name="app" path="/" handler={App}>
-      <DefaultRoute handler={Payments} path="payments/outgoing" />
-      <Route name="login" handler={Session} />
-      <Route name="logout" handler={Session} />
-      <Route name="payments" path="payments/:direction/:state" handler={Payments}/>
-      <Route name="notFound" handler={NotFound} />
-      <NotFoundRoute handler={NotFound} />
-    </Route>
-  </Routes>
+  <Route name="app" path="/" handler={App}>
+    <DefaultRoute handler={Payments} />
+    <Route name="login" handler={SessionComponent} />
+    <Route name="logout" handler={SessionComponent} />
+    <Route name="payments" path="payments/:direction/:state" handler={Payments}/>
+    <Route name="notFound" handler={NotFound} />
+    <NotFoundRoute handler={NotFound} />
+    <Redirect from="/" to="/payments/outgoing/all" />
+  </Route>
 );
 
 module.exports = routes;
-

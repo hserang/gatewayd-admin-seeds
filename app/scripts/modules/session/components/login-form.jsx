@@ -28,7 +28,7 @@ var LoginForm = React.createClass({
         showErrorMessage: true
       });
 
-      return false;
+      return null;
     }
 
     var loginDetails = {
