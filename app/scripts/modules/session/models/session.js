@@ -2,10 +2,10 @@
 
 var _ = require('lodash');
 var $ = require('jquery');
+var CryptoJS = require('crypto-js');
 var Backbone = require('backbone');
 var ValidationMixins = require('../../../shared/helpers/validation_mixin');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var CryptoJS = require('crypto-js');
 var sessionConfigActions = require('../config.json').actions;
 var sessionActions = require('../actions.js');
 var UserModel = require('../../../modules/users/models/user');
@@ -13,7 +13,6 @@ var UserModel = require('../../../modules/users/models/user');
 Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
-
   defaults: {
     gatewaydUrl: '',
     sessionKey: '',
@@ -99,12 +98,11 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
-      },
-      success:function(r) {
-        _this.get('userModel').set({isLoggedIn: true});
-        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
       }
-    })
+    }).then(function() {
+      _this.get('userModel').set({isLoggedIn: true});
+      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
+    });
   },
 
   restore: function() {
@@ -127,9 +125,9 @@ var Session = Backbone.Model.extend({
 
     this.get('userModel').reset();
     resetUser = this.get('userModel');
+    this.set('userModel', resetUser);
 
     this.set(this.defaults);
-    this.set('userModel', resetUser);
 
     sessionStorage.clear();
     this.trigger('logout');

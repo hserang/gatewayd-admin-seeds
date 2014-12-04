@@ -1,24 +1,43 @@
 "use strict";
 
-var React = require('react');
 var moment = require('moment');
-
+var React = require('react');
 var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var ModalPaymentDetails = require('./payment-detail.jsx');
+var PaymentDetailsContent = require('./payment-detail-content.jsx');
 
 var Payment = React.createClass({
+  toggleDetails: function() {
+    var iconMap = {
+      down: 'pull-right glyphicon glyphicon-chevron-down',
+      up: 'pull-right glyphicon glyphicon-chevron-up'
+    };
+
+    if (this.state.chevronIcon === iconMap.down) {
+      this.setState({
+        chevronIcon: iconMap.up,
+      });
+    } else {
+      this.setState({
+        chevronIcon: iconMap.down
+      });
+    }
+
+    this.setState({
+      showDetails: !this.state.showDetails
+    });
+  },
+
   handleLinkClick: function(e) {
     e.stopPropagation();
   },
 
   handleItemClick: function(id) {
-    this.props.itemClickHandler(id);
+    this.toggleDetails();
   },
 
-  handleDoneButtonClick: function(id, e) {
+  handleProcessButtonClick: function(e) {
     e.stopPropagation();
-
-    this.props.doneButtonClickHandler(id);
   },
 
   handleRetryButtonClick: function(id, e) {
@@ -41,7 +60,9 @@ var Payment = React.createClass({
 
   getInitialState: function() {
     return {
-      refreshIconClasses: ''
+      refreshIconClasses: '',
+      chevronIcon: 'pull-right glyphicon glyphicon-chevron-down',
+      showDetails: false
     };
   },
 
@@ -56,8 +77,9 @@ var Payment = React.createClass({
   },
 
   render: function() {
+    var _this = this;
     var doneButton, retryLink, refreshIcon, address;
-    var paymentItemClasses = '';
+    var paymentItemClasses = 'modal-container';
     var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transaction_hash');
 
     if (this.props.model.get('new')) {
@@ -74,12 +96,14 @@ var Payment = React.createClass({
     //make a done button component and put this logic there!!
     if (this.props.model.get('state') === 'incoming') {
       doneButton = (
-        <button
-          onClick={this.handleDoneButtonClick.bind(this, this.props.model.get('id'))}
-          className="btn pull-right"
-        >
-          Process
-        </button>
+        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} />}>
+          <button
+            onClick={this.handleProcessButtonClick}
+            className="btn pull-right"
+          >
+            Process
+          </button>
+        </ModalTrigger>
       );
     } else {
       doneButton = null;
@@ -96,47 +120,52 @@ var Payment = React.createClass({
     }
 
     return (
-      <div className={paymentItemClasses}>
-        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} />}>
-          <li className="list-group-item" onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}>
-            <div className="row">
-              <div className="col-sm-4">
-                To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
-              </div>
-              <div className="col-sm-1">
-              </div>
-              <div className="col-sm-4">
-                From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
-              </div>
-              <div className="col-sm-3">
-                Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
-              </div>
+      <div className={paymentItemClasses} ref="container">
+        <li className="list-group-item">
+          <div className="row">
+            <div className="col-sm-4">
+              To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
             </div>
-            <div className="row">
-              <div className="col-sm-12">
-                Destination Tag: {this.props.model.get('toAddress').tag}
-              </div>
+            <div className="col-sm-1">
             </div>
-            <div className="row">
-              <div className="col-sm-8">
-                {address[0]} Address: {address[1]}
-              </div>
-              <div className="col-sm-4">
-                {doneButton}
-              </div>
+            <div className="col-sm-4">
+              From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
             </div>
-            <div className="row border-bottom">
-              <div className="col-sm-12">
-                <a href={rippleGraphLink} onClick={this.handleLinkClick}>Ripple Graph Link</a>
-              </div>
+            <div className="col-sm-3">
+              Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
             </div>
-            <div className="clearfix">
-              <span className="pull-left">
-                {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
-              </span>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              Destination Tag: {this.props.model.get('toAddress').tag}
             </div>
-          </li>
-        </ModalTrigger>
+          </div>
+          <div className="row">
+            <div className="col-sm-8">
+              {address[0]} Address: {address[1]}
+            </div>
+            <div className="col-sm-4">
+              {doneButton}
+            </div>
+          </div>
+          <div className="row border-bottom">
+            <div className="col-sm-12">
+              <a href={rippleGraphLink} onClick={this.handleLinkClick}>Ripple Graph Link</a>
+            </div>
+          </div>
+          <div className="clearfix">
+            <span className="pull-left">
+              {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+            </span>
+            <span
+              className={this.state.chevronIcon}
+              onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}
+            />
+          </div>
+        </li>
+        <div>
+          {this.state.showDetails ? <PaymentDetailsContent model={this.props.model} className={"details"}/> : false}
+        </div>
       </div>
     );
   }
