@@ -1,5 +1,8 @@
 var data = {
-  defaults: {}
+  defaults: {
+    name: "",
+    isLoggedIn: ""
+  }
 };
 
 module.exports = data;
