@@ -77,21 +77,22 @@ body {
   }
 }
 
-// modal
 .highlight {
   border: 5px solid $brand-primary;
 }
 
+// modal
 .modal {
-  min-width: 300px;
+  width: 95%;
   padding: 20px;
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   background: $white;
   box-shadow: #aaaaaa 3px 3px 60px;
+  overflow: scroll;
 }
 
 .modal-backdrop {
@@ -103,6 +104,25 @@ body {
   background: $gray-dark;
   height: 100%;
   width: 100%;
+}
+
+.details {
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  left: 0;
+  top: 0;
+  transform: none;
+  z-index: 0;
+  background: #F8F8FF;
+  border: 1px solid $gray-lighter;
+  box-shadow: none;
+  overflow: scroll;
+}
+
+.glyphicon-chevron-up, .glyphicon-chevron-down {
+  font-size: 25px;
+  padding-top: 5px;
 }
 
 // spining refresh icon
