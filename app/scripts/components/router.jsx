@@ -20,6 +20,7 @@ var paymentActions = require('../modules/payments/actions.js');
 var heartbeats = require('heartbeats');
 var pollingHeart = new heartbeats.Heart(1000);
 
+//todo stop polling when not logged in, start when logged in
 var pollWhenActive = function() {
   if (sessionModel.isLoggedIn()) {
     paymentActions.fetchRippleTransactions();

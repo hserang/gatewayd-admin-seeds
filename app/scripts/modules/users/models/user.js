@@ -44,10 +44,10 @@ var User = Backbone.Model.extend({
   },
 
   update: function(name) {
+
     this.set({
       name: name,
-      role: name.split('@')[0],
-      isLoggedIn: true
+      role: name.split('@')[0]
     });
   }
 });
