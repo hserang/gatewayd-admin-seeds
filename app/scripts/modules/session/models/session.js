@@ -60,14 +60,6 @@ var Session = Backbone.Model.extend({
     });
   },
 
-  updateUser: function(name) {
-    this.get('userModel').set({
-      name: name,
-      role: name.split('@')[0],
-      isLoggedIn: true
-    });
-  },
-
   createCredentials: function(name, sessionKey) {
     var encodedString = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(name + ':' + sessionKey));
 
@@ -99,7 +91,8 @@ var Session = Backbone.Model.extend({
       headers: {
         'Authorization': this.get('credentials')
       }
-    }).then(function() {
+    })
+    .then(function() {
       _this.get('userModel').set({isLoggedIn: true});
       sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
     });
@@ -135,15 +128,6 @@ var Session = Backbone.Model.extend({
 
   isLoggedIn: function() {
     return this.get('userModel').get('isLoggedIn');
-  },
-
-  getLogState: function() {
-    var logStateMap = {
-      true: 'loggedIn',
-      false: 'loggedOut'
-    };
-
-    return logStateMap[this.isLoggedIn()];
   }
 });
 

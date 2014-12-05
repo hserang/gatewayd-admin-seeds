@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require('lodash');
 var Backbone = require('backbone');
 var dispatcher = require('../../../../dispatchers/admin-dispatcher');

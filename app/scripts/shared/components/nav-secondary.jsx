@@ -7,21 +7,20 @@ var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
 
 var NavLinks = require('../shared/components/nav-links/nav-links.jsx');
-
 var NavSecondary = React.createClass({
 
   getDefaultProps: function() {
     return {
       links: [{
-        text: "Received",
-        href: "/payments/incoming"
+        text: 'Received',
+        href: '/payments/incoming'
       },
       {
-        text: "Sent",
-        href: "/payments/outgoing"
+        text: 'Sent',
+        href: '/payments/outgoing'
       }],
-      wrapperClassName: "foo",
-      className: "nav-secondary"
+      wrapperClassName: 'foo',
+      className: 'nav-secondary'
     };
   },
 

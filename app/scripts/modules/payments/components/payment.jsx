@@ -150,7 +150,7 @@ var Payment = React.createClass({
           </div>
           <div className="row border-bottom">
             <div className="col-sm-12">
-              <a href={rippleGraphLink} onClick={this.handleLinkClick}>Ripple Graph Link</a>
+              <a href={rippleGraphLink} onClick={this.handleLinkClick} target="_blank">Ripple Graph Link</a>
             </div>
           </div>
           <div className="clearfix">

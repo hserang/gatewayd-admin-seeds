@@ -1,19 +1,42 @@
+"use strict";
+
 var React = require('react');
 var Link = require('react-router').Link;
 
+/*
+  Sample links array:
+
+  [
+    {
+      text: "Login"
+      href: "/login"
+    },
+    {
+      text: "Main"
+      href: "/"
+    },
+    {
+      text: "Logout"
+      href: "/logout"
+    }
+  ]
+*/
+
 var NavLinks = React.createClass({
   propTypes: {
-    links: React.PropTypes.array
+    links: React.PropTypes.array,
+    className: React.PropTypes.string
   },
 
-      //<ul className="nav navbar-nav navbar-right">
   getDefaultProps: function() {
-    return {className: "nav navbar-nav"};
+    return {
+      className: "nav navbar-nav"
+    };
   },
 
   getLinks: function(links) {
     var items = links.map(function(link, i) {
-      return(
+      return (
         <li key={i++}>
           <Link to={link.href}>
             {link.text}

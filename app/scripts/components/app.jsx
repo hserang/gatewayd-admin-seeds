@@ -1,14 +1,20 @@
 "use strict";
 
 var React = require('react');
+
+// React Router
 var RouteHandler = require('react-router').RouteHandler;
 var Navigation = require('react-router').Navigation;
 var DocumentTitle = require('react-document-title');
 
+// session model and dispatch actions
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
+
+// React components
 var TopBar = require('../shared/components/header/top-bar.jsx');
 
+// required to use React Bootstrap in child modules
 require('react-bootstrap');
 
 var topBarConfig = {
@@ -21,16 +27,16 @@ var App =
   React.createClass({
     mixins: [Navigation],
 
-    redirectToLogin: function() {
-      if (!session.isLoggedIn()) {
-        this.transitionTo('/login');
-      }
-    },
-
     render:function(){
-      if (!session.get('lastLogin')) {
+      if (!session.isLoggedIn()) {
+
+        // attempt session restoration
         sessionActions.restore();
-        this.redirectToLogin();
+
+        // redirect to login if session restoration failed
+        if (!session.isLoggedIn()) {
+          this.transitionTo('/login');
+        }
       }
 
       return (
@@ -38,7 +44,7 @@ var App =
           <TopBar setup={topBarConfig} />
           <div className="container">
             <div className="row">
-              <div className="col-sm-12  col-md-12 main">
+              <div className="col-sm-12 col-md-12 main">
               <DocumentTitle title='Gatewayd Basic Admin'>
                 <RouteHandler />
               </DocumentTitle>

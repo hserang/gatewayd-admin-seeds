@@ -1,14 +1,16 @@
+"use strict";
+
 var React = require('react');
 var ProgressBar = require('react-bootstrap').ProgressBar;
 var Model = require('../models/loading-bar');
-var model = new Model();
+var loadingBarModel = new Model();
 
 var LoadingBar = React.createClass({
   updateProgress: function() {
     this.setState({
-      style: model.get('style'),
-      label: model.get('label'),
-      currentProgress: model.get('currentProgress')
+      style: loadingBarModel.get('style'),
+      label: loadingBarModel.get('label'),
+      currentProgress: loadingBarModel.get('currentProgress')
     });
   },
 
@@ -21,7 +23,7 @@ var LoadingBar = React.createClass({
   },
 
   componentDidMount: function() {
-    model.on('change', this.updateProgress);
+    loadingBarModel.on('change', this.updateProgress);
   },
 
   render: function() {

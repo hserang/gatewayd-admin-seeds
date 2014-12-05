@@ -65,6 +65,7 @@ var validationMixin = {
         valMethod = args.shift();
       } else if (_.isObject(test)) {
         args = test.args;
+
         valMethod = test.name;
       }
 
