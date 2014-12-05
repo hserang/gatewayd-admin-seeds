@@ -23,10 +23,10 @@ var setUpErroneousModel = function() {
   this.model.set(improperPayment.defaults);
 };
 
-describe('invalid model', function() {
+describe('invalid payment model', function() {
   beforeEach(setUpErroneousModel);
 
-  it('should determine if model data is invalid', function() {
+  it('should be invalid', function() {
     this.model.isValid().should.equal(false);
   });
 });
@@ -34,7 +34,7 @@ describe('invalid model', function() {
 describe('valid model', function() {
   beforeEach(setUpSuccessfulModel);
 
-  it('should determine if model data is valid', function() {
+  it('should be valid', function() {
     this.model.isValid().should.equal(true);
   });
 });
