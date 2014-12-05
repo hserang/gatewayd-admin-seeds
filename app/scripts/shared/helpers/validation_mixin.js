@@ -4,68 +4,122 @@ var _ = require('lodash');
 
 var validationMixin = {
 
-  validationErrors: [],
+  //todo map error messages to object or external module
+  //for localization
+  validators: {
+    isString: function(val) {
+      return _.isString(val) || ('is not a string');
+    },
 
-  testValid: function(value, attr, rules) {
-    if (_.isNull(value) && !rules[attr].isRequired) {
-      return true;
-    } else if (_.isUndefined(value)) {
-      this.validationErrors.push(attr + ' is undefined');
+    isNumber: function(val) {
+      return _.isNumber(val) || ('is not a number');
+    },
 
-      return false;
-    }
+    isBoolean: function(val) {
+      return _.isBoolean(val) || ('is not a boolean');
+    },
 
-    var isValid = false;
-    var minLength = rules[attr].minLength;
+    isArray: function(val) {
+      return _.isArray(val) || ('is not a boolean');
+    },
 
-    if (typeof value === 'number') {
-      isValid = !isNaN(value);
-    } else if (typeof value === 'string') {
-      isValid = !_.isEmpty(value) && value.length >= minLength;
-    } else if (_.isArray(value)) {
-      isValid = value.length >= minLength;
-    } else if (typeof value === 'object') {
-      isValid = !_.isNull(value) && _.keys(value).length >= minLength;
-    }
+    minLength: function(val, length) {
+      var length = parseInt(length, 10);
 
-    if (!isValid) {
-      this.validationErrors.push(attr + ' is invalid');
-    }
+      return (val.length >= length) || ('length should be greater than ' + (length - 1));
+    },
 
-    return isValid;
-  },
+    isObject: function(val) {
+      return _.isObject(val) || ('is not an object');
+    },
 
-  validate: function(attributes) {
-    var _this = this;
-    var isValid;
-
-    this.resetValidationErrors();
-
-    isValid = _.reduce(attributes, function(accumulator, value, attr) {
-      if (_.isUndefined(_this.validationRules[attr])) {
-        return accumulator && true;
-      }
-
-      if (_this.testValid(value, attr, _this.validationRules)) {
-        return accumulator && true;
-      }
-
-      return false;
-    }, true);
-
-
-    if (!Object.keys(attributes).length) {
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return this.validationErrors.join(', ');
+    isRequired: function(val) {
+      return !(_.isEmpty(val)) || ('is required');
     }
   },
 
-  resetValidationErrors: function() {
-    this.validationErrors.length = 0;
+  addValidator: function(newValidator) {
+    if (_.isUndefined(newValidator)) {
+      return false;
+    }
+
+    _.extend(this.validators, newValidator);
+  },
+
+  isValidator: function(key) {
+    return _.isFunction(this.validators[key]);
+  },
+
+  testValid: function(val, attr, rule) {
+    var errors = [],
+        _this = this;
+
+    _.each(rule.validators, function(test) {
+      var args = [],
+          valMethod = "";
+
+      //handle string or object
+      if (_.isString(test)) {
+        args = test.split(':');
+
+        valMethod = args.shift();
+      } else if (_.isObject(test)) {
+        args = test.args;
+        valMethod = test.name;
+      }
+
+      //add val to args
+      args.unshift(val);
+
+      //ensure validation method exists
+      if (_this.isValidator(valMethod)) {
+        var result = _this.validators[valMethod].apply(_this, args);
+
+        //only push when false or string
+        if (!result || _.isString(result)) {
+          errors.push(result);
+        }
+      } else {
+        console.warn("validation method does not exist: " + (test.name || test));
+        return null;
+      }
+    });
+
+    //pass errors to validate
+    if (errors.length) {
+      return errors;
+    }
+  },
+
+  validate: function(data) {
+    var _this = this,
+        errors = [];
+
+
+    _.each(data, function(val, key) {
+      var error = {},
+          message;
+
+      //check if it needs to be validated
+      if (_this.validationRules[key]) {
+        message = _this.testValid(val, key, _this.validationRules[key]);
+      }
+
+      if (message) {
+        error[key] = message;
+        errors.push(error);
+      }
+
+    });
+
+    if (errors.length) {
+      return errors;
+    } else {
+      return false;
+    }
+
   }
+
 };
 
 module.exports = validationMixin;

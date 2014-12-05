@@ -13,6 +13,7 @@ var UserModel = require('../../../modules/users/models/user');
 Backbone.$ = $;
 
 var Session = Backbone.Model.extend({
+
   defaults: {
     gatewaydUrl: '',
     sessionKey: '',
@@ -22,23 +23,13 @@ var Session = Backbone.Model.extend({
 
   validationRules: {
     gatewaydUrl: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
+      validators: ['isRequired', 'isString', 'minLength:4']
     },
     sessionKey: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
-    },
-    lastLogin: {
-      type: 'number', // milliseconds since 1970/01/01
-      isRequired: true
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
     credentials: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
+      validators: ['isRequired', 'isString']
     }
   },
 
@@ -62,12 +53,6 @@ var Session = Backbone.Model.extend({
     }
   },
 
-  // isValid: function() {
-  //   this.validate(this.attributes);
-
-  //   return !this.validationError;
-  // },
-
   updateSession: function(gatewaydUrl, sessionKey) {
     this.set({
       gatewaydUrl: gatewaydUrl,
@@ -90,16 +75,23 @@ var Session = Backbone.Model.extend({
     this.set('credentials', 'Basic ' + encodedString);
   },
 
+  setUrl: function() {
+    this.url = this.get('gatewaydUrl') + '/v1/users/login';
+  },
+
   login: function(payload) {
     var _this = this;
 
     this.updateSession(payload.gatewaydUrl, payload.sessionKey);
-    this.get('userModel').update(payload.name);
     this.createCredentials(payload.name, payload.sessionKey);
+
+    this.get('userModel').update(payload.name);
+
+    this.set(payload);
+    this.setUrl();
 
     this.save(null, {
       wait: true,
-      url: this.get('gatewaydUrl') + '/v1/users/login',
       contentType: 'application/json',
       data: JSON.stringify({
         name: this.get('userModel').get('name'),
@@ -107,11 +99,11 @@ var Session = Backbone.Model.extend({
       }),
       headers: {
         'Authorization': this.get('credentials')
+      },
+      success:function() {
+        sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
       }
     })
-    .then(function() {
-      sessionStorage.setItem('session', JSON.stringify(_this.toJSON()));
-    });
   },
 
   restore: function() {
