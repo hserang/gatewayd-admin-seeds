@@ -13,6 +13,7 @@ var sessionActions = require('../modules/session/actions');
 
 // React components
 var TopBar = require('../shared/components/header/top-bar.jsx');
+var Sidebar = require('../shared/components/sidebar.jsx');
 
 // required to use React Bootstrap in child modules
 require('react-bootstrap');
@@ -42,6 +43,7 @@ var App =
       return (
         <div>
           <TopBar setup={topBarConfig} />
+          <Sidebar/>
           <div className="container">
             <div className="row">
               <div className="col-sm-12 col-md-12 main">
