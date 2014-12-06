@@ -42,10 +42,13 @@ var TopBar = React.createClass({
 
     return (
       <div className={this.props.wrapperClass}>
-        <button onClick={this.handleExpand} type="button" className="btn btn-default pull-left" aria-label="Left Align">
+        <a href="#" onClick={this.handleExpand} className="button-sidebar">
           <span className="glyphicon glyphicon-expand" aria-hidden="true"></span>
-        </button>
-        <Branding brandName={this.props.brandName} />
+        </a>
+        <Branding
+          brandName={this.props.brandName}
+          wrapperClass={this.props.brandingClass}
+        />
         <Greeting className={"greeting-wrapper"} />
         {nav}
       </div>

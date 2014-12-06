@@ -33,7 +33,11 @@ var App =
     },
 
     expandSidebar: function() {
-      this.setState({showSidebar: this.state.showSidebar ? false : true});
+      if (session.isLoggedIn()) {
+        this.setState({showSidebar: this.state.showSidebar ? false : true});
+      } else {
+        this.setState({showSidebar: false});
+      }
     },
 
     render:function(){
