@@ -3,21 +3,20 @@
 var React = require('react');
 
 var Branding = React.createClass({
+  getDefaultProps: function() {
+    return {
+      brandName: "foo",
+      brandingClass: "header-branding"
+    };
+  },
+
   propTypes: {
     brandName: React.PropTypes.string
   },
 
   render: function() {
     return (
-      <div className="navbar-header">
-        <button
-          type="button"
-          className="navbar-toggle collapsed"
-          data-toggle="collapse"
-          data-target="#navbar"
-          aria-expanded="false"
-          aria-controls="navbar"
-        />
+      <div className={this.props.class}>
         <a className="navbar-brand" href="/">
           {this.props.brandName}
         </a>

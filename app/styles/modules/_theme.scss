@@ -6,10 +6,21 @@ body {
 
 
 //top-bar styles
-.navbar-inverse {
+.top-bar {
   height: 50px;
+  min-width: 320px;
+
+  .button-sidebar {
+    margin: 6px 5px 0 0;
+    padding: 5px;
+    float: left;
+    color: $white;
+    font-size: 22px;
+    font-weight: 300;
+  }
 
   .navbar-brand {
+    padding: 15px 5px;
     color: $white;
   }
 
@@ -84,6 +95,8 @@ body {
 // modal
 .modal {
   width: 95%;
+  max-width: 600px;
+  min-width: 300px;
   padding: 20px;
   position: fixed;
   left: 50%;
@@ -149,4 +162,44 @@ body {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
+}
+
+//sidebar
+.sidebar-wallets {
+  max-width: 500px;
+  width: 80%;
+  background: rgba(0, 0, 0, 0.85);
+  color: $white;
+
+  .sidebar-header {
+  }
+
+  .wallet {
+    color: #55ff02;
+  }
+}
+
+//THIS STAYS AT BOTTOM UNTIL MIGRATED!!!
+@media only screen and (max-width : 540px) {
+  .header-links {
+    margin: 10px 0 0;
+    display: block;
+    text-align: center;
+    font-size: 17px;
+  }
+}
+
+@media only screen and (max-width : 500px) {
+  .greeting {
+    .welcome {
+      display: none;
+    }
+  }
+  .sidebar-wallets {
+    width: 100%;
+  }
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+  /* Styles */
 }

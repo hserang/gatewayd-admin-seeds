@@ -28,6 +28,18 @@ var App =
   React.createClass({
     mixins: [Navigation],
 
+    getInitialState: function() {
+      return { showSidebar: false };
+    },
+
+    expandSidebar: function() {
+      if (session.isLoggedIn()) {
+        this.setState({showSidebar: this.state.showSidebar ? false : true});
+      } else {
+        this.setState({showSidebar: false});
+      }
+    },
+
     render:function(){
       if (!session.isLoggedIn()) {
 
@@ -42,8 +54,13 @@ var App =
 
       return (
         <div>
-          <TopBar setup={topBarConfig} />
-          <Sidebar/>
+          <TopBar
+            links={topBarConfig.links}
+            brandName={topBarConfig.brandName}
+            wrapperClass={topBarConfig.wrapperClass}
+            expandSidebar={this.expandSidebar}
+          />
+          {this.state.showSidebar ? <Sidebar/> : null}
           <div className="container">
             <div className="row">
               <div className="col-sm-12 col-md-12 main">
