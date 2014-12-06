@@ -13,10 +13,10 @@ var WalletEntry = React.createClass({
     return (
       <li className="list-group-item">
         <div className="row border-bottom">
-          <div className="col-sm-2">
+          <div className="col-sm-3">
             {this.props.currency}
           </div>
-          <div className="col-sm-2 col-sm-offset-1">
+          <div className="col-sm-3 col-sm-offset-2">
             {this.props.amount}
           </div>
         </div>

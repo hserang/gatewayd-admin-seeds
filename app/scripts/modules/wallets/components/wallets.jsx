@@ -3,16 +3,18 @@
 var React = require('react');
 var Wallet = require('./wallet.jsx');
 var Balances = require('../collections/balances');
-var hotWalletBalances = new Balances([], 'hot');
-var coldWalletBalances = new Balances([], 'cold');
+var hotWalletBalances = new Balances([], {walletType: 'hot'});
+var coldWalletBalances = new Balances([], {walletType: 'cold'});
 
-var Wallet = React.createClass({
+var Wallets = React.createClass({
   render: function() {
     return (
-      <Wallet type={"hot"} collection={hotWalletBalances} />
-      <Wallet type={"cold"} collection={coldWalletBalances} />
+      <div>
+        <Wallet type={"hot"} collection={hotWalletBalances} />
+        <Wallet type={"cold"} collection={coldWalletBalances} />
+      </div>
     );
   }
 });
 
-module.exports = Wallet;
+module.exports = Wallets;

@@ -18,7 +18,7 @@ var Balances = Backbone.Collection.extend({
     };
 
     if (!_.isUndefined(walletTypeMap[options.walletType])) {
-      this.url = session.get('gatewaydUrl') + '/v1/' + walletTypeMap[options.walletType];
+      this.urlPath = '/v1/' + walletTypeMap[options.walletType];
     }
 
     _.bindAll(this);
@@ -38,6 +38,7 @@ var Balances = Backbone.Collection.extend({
 
   fetchBalances: function() {
     this.fetch({
+      url: session.get('gatewaydUrl') + this.urlPath,
       headers: {
         Authorization: session.get('credentials')
       }
