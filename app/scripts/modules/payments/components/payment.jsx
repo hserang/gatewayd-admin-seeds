@@ -120,53 +120,51 @@ var Payment = React.createClass({
     }
 
     return (
-      <div className={paymentItemClasses} ref="container">
-        <li className="list-group-item">
-          <div className="row">
-            <div className="col-sm-4">
-              To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
-            </div>
-            <div className="col-sm-1">
-            </div>
-            <div className="col-sm-4">
-              From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
-            </div>
-            <div className="col-sm-3">
-              Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
-            </div>
+      <li className={"list-group-item " + paymentItemClasses} ref="container">
+        <div className="row">
+          <div className="col-sm-4">
+            To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              Destination Tag: {this.props.model.get('toAddress').tag}
-            </div>
+          <div className="col-sm-1">
           </div>
-          <div className="row">
-            <div className="col-sm-8">
-              {address[0]} Address: {address[1]}
-            </div>
-            <div className="col-sm-4">
-              {doneButton}
-            </div>
+          <div className="col-sm-4">
+            From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
           </div>
-          <div className="row border-bottom">
-            <div className="col-sm-12">
-              <a href={rippleGraphLink} onClick={this.handleLinkClick} target="_blank">Ripple Graph Link</a>
-            </div>
+          <div className="col-sm-3">
+            Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
           </div>
-          <div className="clearfix">
-            <span className="pull-left">
-              {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
-            </span>
-            <span
-              className={this.state.chevronIcon}
-              onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}
-            />
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            Destination Tag: {this.props.model.get('toAddress').tag}
           </div>
-        </li>
+        </div>
+        <div className="row">
+          <div className="col-sm-8">
+            {address[0]} Address: {address[1]}
+          </div>
+          <div className="col-sm-4">
+            {doneButton}
+          </div>
+        </div>
+        <div className="row border-bottom">
+          <div className="col-sm-12">
+            <a href={rippleGraphLink} onClick={this.handleLinkClick} target="_blank">Ripple Graph Link</a>
+          </div>
+        </div>
+        <div className="clearfix">
+          <span className="pull-left">
+            {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+          </span>
+          <span
+            className={this.state.chevronIcon}
+            onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}
+          />
+        </div>
         <div>
           {this.state.showDetails ? <PaymentDetailsContent model={this.props.model} className={"details"}/> : false}
         </div>
-      </div>
+      </li>
     );
   }
 });
