@@ -5,49 +5,47 @@ var Branding = require('./branding.jsx');
 var NavLinks = require('./nav-links.jsx');
 var Greeting = require('./greeting.jsx');
 
-/*
-  Sample setup object:
-
-    {
-      brandName: 'Hello World',
-      wrapperClass: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
-      links: [
-        {
-          text: "Login"
-          href: "/login"
-        },
-        {
-          text: "Main"
-          href: "/"
-        },
-        {
-          text: "Logout"
-          href: "/logout"
-        }
-      ]
-    }
-*/
-
 var TopBar = React.createClass({
+  getDefaultProps: function() {
+    return {
+      brandName: "Hello World",
+      wrapperClass: 'navbar',
+      links: [{
+        text: "Login",
+        href: "/login"
+      }]
+    };
+  },
+
   propTypes: {
-    setup: React.PropTypes.object
+    links: React.PropTypes.array,
+    brandName: React.PropTypes.string,
+    wrapperClass: React.PropTypes.string
+  },
+
+  handleExpand: function(e) {
+    e.preventDefault();
+    this.props.expandSidebar();
   },
 
   render: function() {
     var nav;
 
-    if (this.props.setup.links.length) {
+    if (this.props.links.length) {
       nav = (
         <NavLinks
-          links={this.props.setup.links}
+          links={this.props.links}
           className="nav navbar-nav navbar-right"
         />
       );
     }
 
     return (
-      <div className={this.props.setup.wrapperClass}>
-        <Branding brandName={this.props.setup.brandName} />
+      <div className={this.props.wrapperClass}>
+        <button onClick={this.handleExpand} type="button" className="btn btn-default pull-left" aria-label="Left Align">
+          <span className="glyphicon glyphicon-expand" aria-hidden="true"></span>
+        </button>
+        <Branding brandName={this.props.brandName} />
         <Greeting className={"greeting-wrapper"} />
         {nav}
       </div>
