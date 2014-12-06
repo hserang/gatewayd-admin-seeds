@@ -95,6 +95,8 @@ body {
 // modal
 .modal {
   width: 95%;
+  max-width: 600px;
+  min-width: 300px;
   padding: 20px;
   position: fixed;
   left: 50%;
@@ -178,6 +180,15 @@ body {
 }
 
 //THIS STAYS AT BOTTOM UNTIL MIGRATED!!!
+@media only screen and (max-width : 540px) {
+  .header-links {
+    margin: 10px 0 0;
+    display: block;
+    text-align: center;
+    font-size: 17px;
+  }
+}
+
 @media only screen and (max-width : 500px) {
   .greeting {
     .welcome {
