@@ -121,7 +121,6 @@ var Payments = Backbone.Collection.extend({
         return ids.indexOf(id) > -1;
       });
 
-
       _this.models.forEach(function(model) {
         if (diffIds.indexOf(model.get('id')) > -1) {
           model.set('new', true);
