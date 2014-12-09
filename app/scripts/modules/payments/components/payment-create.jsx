@@ -65,6 +65,7 @@ var PaymentCreate = React.createClass({
   validateField: function(fieldName, shouldForceValidate) {
     var fieldValue = this.formatInput(this.refs[fieldName], this.typeMap[fieldName]);
     var clearFieldValidation = {};
+
     clearFieldValidation[fieldName] = {};
 
     this.setState(clearFieldValidation);
@@ -165,10 +166,7 @@ var PaymentCreate = React.createClass({
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('validationComplete');
-    this.props.model.off('sync');
-    this.props.model.off('error');
-    this.props.model.off('invalid');
+    this.props.model.off('validationComplete sync error invalid');
   },
 
   render: function() {

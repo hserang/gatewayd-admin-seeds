@@ -2,11 +2,11 @@
 
 var _ = require('lodash');
 var $ = require('jquery');
-var Backbone = require('backbone');
 var RippleName = require('ripple-name');
-var dispatcher = require('../../../dispatchers/admin-dispatcher');
+var Backbone = require('backbone');
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var paymentConfigActions = require('../config.json').actions;
 var session = require('../../session/models/session');
-var paymentActions = require('../config.json').actions;
 
 Backbone.$ = $;
 
@@ -19,23 +19,6 @@ var Payment = Backbone.Model.extend({
     sourceTag: 0,
     invoiceId: '',
     memo: ''
-  },
-
-  requiredAttrs: {
-    address: {
-      type: 'string',
-      minLength: 1, // some min for ripple address, but none for ripple name
-      isRequired: true
-    },
-    amount: {
-      type: 'number', // decimal,
-      isRequired: true
-    },
-    currency: {
-      type: 'string',
-      minLength: 1,
-      isRequired: true
-    }
   },
 
   validationRules: {
@@ -76,13 +59,13 @@ var Payment = Backbone.Model.extend({
   initialize: function() {
     _.bindAll(this);
 
-    dispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction[paymentActions.sendPaymentAttempt] = this.sendPaymentAttempt;
+    handleAction[paymentConfigActions.sendPaymentAttempt] = this.sendPaymentAttempt;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -124,7 +107,6 @@ var Payment = Backbone.Model.extend({
       isValid = testValid[typeof value](value, rules[attr].minLength);
     }
 
-    // custom error messaging
     if (!isDefined) {
       this.validationErrors.push(attr + ' is undefined');
     } else if (!isValid) {
@@ -167,8 +149,6 @@ var Payment = Backbone.Model.extend({
   },
 
   postPayment: function() {
-    var _this = this;
-
     this.save(null, {
       url: session.get('gatewaydUrl') + '/v1/payments/outgoing',
       contentType: 'application/json',
@@ -179,8 +159,6 @@ var Payment = Backbone.Model.extend({
   },
 
   sendPaymentAttempt: function(payment) {
-    var _this = this;
-
     this.validateAddress(payment.address);
 
     if (this.isValid()) {
@@ -198,10 +176,13 @@ var Payment = Backbone.Model.extend({
 
   validateAddress: function(address) {
     var _this = this;
+
     RippleName.lookup(address)
     .then(function(data) {
+      var addressAttr;
+
       if (data.exists) {
-        var addressAttr = {
+        addressAttr = {
           address: data.address
         };
 
@@ -218,8 +199,8 @@ var Payment = Backbone.Model.extend({
 
   validateField: function(fieldName, fieldValue) {
     var updatedField = {};
-    updatedField[fieldName] = fieldValue;
 
+    updatedField[fieldName] = fieldValue;
     this.set(updatedField);
 
     this.handleFieldValidation(this.validate(updatedField), fieldName);

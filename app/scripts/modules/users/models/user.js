@@ -2,17 +2,18 @@
 
 var _ = require('lodash');
 var $ = require('jquery');
+
 var Backbone = require('backbone');
 var ValidationMixins = require('../../../shared/helpers/validation_mixin');
+
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var user = require('../config.json');
+var userConfigActions = require('../config.json').actions;
+
 Backbone.$ = $;
 
 var User = Backbone.Model.extend({
-
-  //todo: review the defaults and tests since they pass validation tests
   defaults: {
-    name: 'guest',
+    name: 'guest@example.com',
     role: 'guest',
     isLoggedIn: false
   },
@@ -32,7 +33,9 @@ var User = Backbone.Model.extend({
 
   dispatchCallback: function(payload) {
     var handleAction = {};
-    handleAction[user.actions.reset] = this.reset;
+
+    handleAction[userConfigActions.reset] = this.reset;
+    handleAction[userConfigActions.update] = this.update;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
@@ -44,7 +47,6 @@ var User = Backbone.Model.extend({
   },
 
   update: function(name) {
-
     this.set({
       name: name,
       role: name.split('@')[0]

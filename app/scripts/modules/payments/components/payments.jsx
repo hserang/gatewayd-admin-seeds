@@ -48,21 +48,16 @@ var Payments = React.createClass({
 
     // model syncs bubble up through collection and are passed into this handler as well
     if (_.isUndefined(collection.length)) {
+
+      // *NOTE*
+      // The 'payments' state is tied to the collection, so collection changes
+      // will re-render automatically (as if this.setState() was invoked).
+      // But when individual models within the collection are changed,
+      // this component is not automatically re-rendered.
       this.forceUpdate();
 
       return false;
     }
-
-    this.setState({
-      payments: collection
-    });
-  },
-
-  handleItemClick: function(id) {
-  },
-
-  handleDoneButtonClick: function(id) {
-    paymentActions.flagAsDone(id);
   },
 
   handleRetryButtonClick: function(id) {
@@ -105,8 +100,6 @@ var Payments = React.createClass({
           <PaymentItem
             key={model.get('id')}
             model={model}
-            itemClickHandler={this.handleItemClick}
-            doneButtonClickHandler={this.handleDoneButtonClick}
             retryButtonClickHandler={this.handleRetryButtonClick}
           />
         );

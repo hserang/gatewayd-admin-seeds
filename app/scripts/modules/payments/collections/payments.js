@@ -4,9 +4,9 @@ var _ = require('lodash');
 var $ = require('jquery');
 var Backbone = require('backbone');
 var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
-var payments = require('../config.json');
-var Model = require('../models/payment.js');
+var paymentConfigActions = require('../config.json').actions;
 var session = require('../../../modules/session/models/session');
+var Model = require('../models/payment.js');
 
 Backbone.$ = $;
 
@@ -21,16 +21,20 @@ var Payments = Backbone.Collection.extend({
   initialize: function() {
     _.bindAll(this);
 
-    //register method with dispatcher
     adminDispatcher.register(this.dispatcherCallback);
   },
 
   dispatcherCallback: function(payload) {
-    if (_.isUndefined(this[payload.actionType])) {
-      return false;
-    }
+    var handleAction = {};
 
-    this[payload.actionType](payload.data);
+    handleAction[paymentConfigActions.updateUrl] = this.updateUrl;
+    handleAction[paymentConfigActions.flagAsDone] = this.flagAsDone;
+    handleAction[paymentConfigActions.fetchRippleTransactions] = this.fetchRippleTransactions;
+    handleAction[paymentConfigActions.sendPaymentComplete] = this.sendPaymentComplete;
+
+    if (!_.isUndefined(this[payload.actionType])) {
+      this[payload.actionType](payload.data);
+    }
   },
 
   urlObject: {
@@ -65,7 +69,7 @@ var Payments = Backbone.Collection.extend({
   },
 
   updateUrl: function(page) {
-    var page = page.split('/')[2];
+    page = page.split('/')[2];
 
     if (!page || _.isUndefined(this.urlObject[page])) {
       return false;
@@ -95,6 +99,7 @@ var Payments = Backbone.Collection.extend({
   fetchRippleTransactions: function() {
     var _this = this;
 
+    // array of current transaction ids
     var ids = _.map(this.models, function(model) {
       return model.get('id');
     });
@@ -105,6 +110,8 @@ var Payments = Backbone.Collection.extend({
       }
     })
     .then(function() {
+
+      // 'new' attribute is reset for all existing payment models
       if (!ids.length) {
         _this.models.forEach(function(model) {
           model.set('new', false);
@@ -113,16 +120,20 @@ var Payments = Backbone.Collection.extend({
         return true;
       }
 
+      // array of current payment ids after fetch
       var newIds = _.map(_this.models, function(model) {
         return model.get('id');
       });
 
+      // array of payment ids existing only in newIds
       var diffIds = _.reject(newIds, function(id) {
         return ids.indexOf(id) > -1;
       });
 
-
       _this.models.forEach(function(model) {
+
+        // payments whose model Ids are in diffIds get a 'new' attribute
+        // 'new' models will be highlighted
         if (diffIds.indexOf(model.get('id')) > -1) {
           model.set('new', true);
         } else {
@@ -143,7 +154,10 @@ var Payments = Backbone.Collection.extend({
       headers: {
         Authorization: session.get('credentials')
       }
-    }).then(function() {
+    })
+    .then(function() {
+
+      // poll status of sent payment until failed/succeeded to see changes
       _this.get(paymentData.id).pollStatus();
     });
   }
