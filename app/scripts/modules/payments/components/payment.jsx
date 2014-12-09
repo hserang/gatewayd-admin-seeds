@@ -3,10 +3,16 @@
 var moment = require('moment');
 var React = require('react');
 var ModalTrigger = require('react-bootstrap').ModalTrigger;
-var ModalPaymentDetails = require('./payment-detail.jsx');
-var PaymentDetailsContent = require('./payment-detail-content.jsx');
+var PaymentDetailModal = require('./payment-detail-modal.jsx');
+var Address = require('./address.jsx');
+var PaymentDetailContent = require('./payment-detail-content.jsx');
 
 var Payment = React.createClass({
+  propTypes: {
+    model: React.PropTypes.object,
+    retryButtonClickHandler: React.PropTypes.func
+  },
+
   toggleDetails: function() {
     var iconMap = {
       down: 'pull-right glyphicon glyphicon-chevron-down',
@@ -28,21 +34,11 @@ var Payment = React.createClass({
     });
   },
 
-  handleLinkClick: function(e) {
-    e.stopPropagation();
-  },
-
-  handleItemClick: function(id) {
+  handleDetailIconClick: function(id) {
     this.toggleDetails();
   },
 
-  handleProcessButtonClick: function(e) {
-    e.stopPropagation();
-  },
-
   handleRetryButtonClick: function(id, e) {
-    e.stopPropagation();
-
     this.props.retryButtonClickHandler(id);
   },
 
@@ -72,43 +68,46 @@ var Payment = React.createClass({
   },
 
   componentWillUnmount: function() {
-    this.props.model.off('retryStart');
-    this.props.model.off('retryStop');
+    this.props.model.off('retryStart retryStop');
   },
 
   render: function() {
     var _this = this;
-    var doneButton, retryLink, refreshIcon, address;
+    var doneButton, retryLink, refreshIcon, fromAddress, toAddress;
     var paymentItemClasses = 'modal-container';
     var rippleGraphLink = 'http://www.ripplecharts.com/#/graph/' + this.props.model.get('transaction_hash');
 
+    // highlight new transactions
     if (this.props.model.get('new')) {
       paymentItemClasses += ' highlight';
     }
 
+    // display 'From Address' for received payments or 'To Address' for sent payments
     if (this.props.model.get('direction') === 'from-ripple') {
-      address = ['From', this.props.model.get('fromAddress').address];
+      fromAddress = (<Address
+        direction="from"
+        address={this.props.model.get('fromAddress').address} />);
+        toAddress = <p>&nbsp;</p>;
     } else {
-      address = ['To', this.props.model.get('toAddress').address];
+      toAddress = (<Address
+        direction="to"
+        address={this.props.model.get('toAddress').address} />);
+      fromAddress = <p>&nbsp;</p>;
     }
 
-
-    //make a done button component and put this logic there!!
     if (this.props.model.get('state') === 'incoming') {
       doneButton = (
-        <ModalTrigger modal={<ModalPaymentDetails model={this.props.model} />}>
-          <button
-            onClick={this.handleProcessButtonClick}
-            className="btn pull-right"
-          >
+        <ModalTrigger modal={<PaymentDetailModal model={this.props.model} />}>
+          <button className="btn pull-right">
             Process
           </button>
         </ModalTrigger>
       );
     } else {
-      doneButton = null;
+      doneButton = false;
     }
 
+    // show retry link for failed payments
     if (this.props.model.get('state') === 'failed') {
       retryLink=(
         <a onClick={this.handleRetryButtonClick.bind(this,this.props.model.get('id'))}>
@@ -116,57 +115,68 @@ var Payment = React.createClass({
         </a>
       );
     } else {
-      retryLink = null;
+      retryLink = false;
     }
 
     return (
-      <div className={paymentItemClasses} ref="container">
-        <li className="list-group-item">
-          <div className="row">
-            <div className="col-sm-4">
-              To Currency: {this.props.model.get('to_currency')} {this.props.model.get('to_amount')}
-            </div>
-            <div className="col-sm-1">
-            </div>
-            <div className="col-sm-4">
-              From Currency: {this.props.model.get('from_currency')} {this.props.model.get('from_amount')}
-            </div>
-            <div className="col-sm-3">
-              Status: {this.props.model.get('state')} {retryLink} <span className={this.state.refreshIconClasses} />
-            </div>
+      <li className={"payment-item list-group-item " + paymentItemClasses} ref="container">
+        <div className="row">
+          <div className="col-sm-4">
+            <p>
+              <span className="header">To Amount: </span>
+              <span className="data">{this.props.model.get('to_amount')} </span>
+              <span className="currency">{this.props.model.get('to_currency')}</span>
+            </p>
+            {toAddress}
+            <p>
+              <span className="header">Destination Tag:</span>
+            </p>
+            {this.props.model.get('toAddress').tag}
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              Destination Tag: {this.props.model.get('toAddress').tag}
-            </div>
+          <div className="col-sm-4">
+            <p>
+              <span className="header">From Amount: </span>
+              <span className="data">{this.props.model.get('from_amount')} </span>
+              <span className="currency">{this.props.model.get('from_currency')}</span>
+            </p>
+            {fromAddress}
           </div>
-          <div className="row">
-            <div className="col-sm-8">
-              {address[0]} Address: {address[1]}
-            </div>
-            <div className="col-sm-4">
-              {doneButton}
-            </div>
+          <div className="col-sm-4 text-right">
+            <p>
+              <span className="header">Status: </span>
+              <span className="data">{this.props.model.get('state')} </span>
+              <span className="header">{retryLink} </span>
+              <span className={this.state.refreshIconClasses} />
+            </p>
+            {doneButton}
           </div>
-          <div className="row border-bottom">
-            <div className="col-sm-12">
-              <a href={rippleGraphLink} onClick={this.handleLinkClick}>Ripple Graph Link</a>
-            </div>
-          </div>
-          <div className="clearfix">
-            <span className="pull-left">
-              {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
-            </span>
-            <span
-              className={this.state.chevronIcon}
-              onClick={this.handleItemClick.bind(this, this.props.model.get('id'))}
-            />
-          </div>
-        </li>
-        <div>
-          {this.state.showDetails ? <PaymentDetailsContent model={this.props.model} className={"details"}/> : false}
         </div>
-      </div>
+        <div className="row">
+          <div className="col-sm-8">
+          </div>
+          <div className="col-sm-4">
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <a href={rippleGraphLink} target="_blank">Ripple Graph Link</a>
+          </div>
+        </div>
+        <div className="clearfix">
+          <span className="date pull-left">
+            {moment(this.props.model.get('createdAt')).format('MMM D, YYYY HH:mm z')}
+          </span>
+          <span
+            className={this.state.chevronIcon}
+            onClick={this.handleDetailIconClick.bind(this, this.props.model.get('id'))}
+          />
+        </div>
+        <div>
+          {this.state.showDetails ?
+            <PaymentDetailContent model={this.props.model} paymentDetailClassName={"details"}/>
+            : false}
+        </div>
+      </li>
     );
   }
 });

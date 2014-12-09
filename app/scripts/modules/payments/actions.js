@@ -30,7 +30,6 @@ var actions = {
     });
   },
 
-  // to payment-create.js
   sendPaymentAttempt: function(payment) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.sendPaymentAttempt,
@@ -38,7 +37,6 @@ var actions = {
     });
   },
 
-  // to payments.js
   sendPaymentComplete: function(payment) {
     adminDispatcher.handleEvent({
       actionType: paymentActions.sendPaymentComplete,

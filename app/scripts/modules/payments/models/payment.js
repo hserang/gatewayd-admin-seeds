@@ -3,9 +3,12 @@
 var _ = require('lodash');
 var $ = require('jquery');
 var heartbeats = require('heartbeats');
+
 var Backbone = require('backbone');
-var dispatcher = require('../../../dispatchers/admin-dispatcher');
-var payment = require('../config.json');
+var ValidationMixins = require('../../../shared/helpers/validation_mixin');
+
+var adminDispatcher = require('../../../dispatchers/admin-dispatcher');
+var paymentConfigActions = require('../config.json').actions;
 var session = require('../../../modules/session/models/session');
 
 var pollingHeart = new heartbeats.Heart(5000);
@@ -14,11 +17,11 @@ Backbone.$ = $;
 
 var Payment = Backbone.Model.extend({
   defaults: {
-    // id: 0,
-    // createdAt: 0,
-    // updatedAt: 0,
-    // uid: 0,
-    // client_resource_id: 0,
+    id: 0,
+    createdAt: 0,
+    updatedAt: 0,
+    uid: 0,
+    client_resource_id: 0,
     to_address_id: 0,
     from_address_id: 0,
     to_amount: 0.0,
@@ -34,133 +37,59 @@ var Payment = Backbone.Model.extend({
     external_transaction_id: 0
   },
 
-  requiredAttrs: {
+  validationRules: {
     to_address_id: {
-      type: 'number' // int
+      validators: ['isRequired', 'isNumber'] // int
     },
     from_address_id: {
-      type: 'number' // int
+      validators: ['isRequired', 'isNumber'] // int
     },
     to_amount: {
-      type: 'number' // decimal
+      validators: ['isRequired', 'isNumber'] // decimal
     },
     to_currency: {
-      type: 'string',
-      minLength: 1
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
     to_issuer: {
-      type: 'string',
-      minLength: 1 // figure out what this is!!!!!
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
     from_amount: {
-      type: 'number' // decimal
+      validators: ['isRequired', 'isNumber'] // decimal
     },
     from_currency: {
-      type: 'string',
-      minLength: 1
+      validators: ['isRequired', 'isString', 'minLength:1']
     },
     from_issuer: {
-      type: 'string',
-      minLength: 1 // figure out what this is!!!!!
+      validators: ['isRequired', 'isString', 'minLength:1']
     }
   },
 
   initialize: function() {
     _.bindAll(this);
 
-    dispatcher.register(this.dispatchCallback);
+    adminDispatcher.register(this.dispatchCallback);
   },
 
   dispatchCallback: function(payload) {
     var handleAction = {};
 
-    handleAction.retryFailedPayment = this.retryFailedPayment;
+    handleAction[paymentConfigActions.retryFailedPayment] = this.retryFailedPayment;
 
     if (!_.isUndefined(handleAction[payload.actionType])) {
       handleAction[payload.actionType](payload.data);
     }
   },
 
-  validationErrors: [],
-
-  handleObject: function(attr, minLength) {
-    if (attr === null) {
-      return false;
-    }
-
-    if (Array.isArray(attr)) {
-      return attr.length >= minLength;
-    }
-
-    return Object.keys(attr).length >= minLength;
-  },
-
-  handleString: function(attr, minLength) {
-    return !!attr && attr.length >= minLength;
-  },
-
-  testValid: function(attr, requirements) {
-    var attribute = this.get(attr);
-    var testValid = {
-      object: this.handleObject,
-      string: this.handleString,
-    };
-    var isDefined = !_.isUndefined(attribute);
-    var type = requirements.type === 'array' ? 'object' : requirements.type;
-    var isValid = typeof attribute === type;
-
-    if (isValid && !_.isUndefined(testValid[typeof attribute])) {
-      isValid = testValid[typeof attribute](attribute, requirements.minLength);
-    }
-
-    // custom error messaging
-    if (!isDefined) {
-      this.validationErrors.push('"' + attr + '" of payment is undefined');
-    } else if (!isValid) {
-      this.validationErrors.push('"' + attr + '" of payment is invalid');
-    }
-
-    //return isDefined && isValid;
-  },
-
-  validate: function() {
-    var isValid = true,
-        _this = this;
-
-    _.each(this.requiredAttrs, function(requirements, requiredAttr) {
-      if (!_this.testValid(requiredAttr, requirements)) {
-        isValid = false;
-      }
-    });
-
-    if (!isValid) {
-      //return 'There is an error';
-    }
-  },
-
   parse: function(data, options) {
+    // fetching from collection uses model's parse method
     if (options.collection) {
       return data;
     }
+
     return data.ripple_transaction;
   },
 
-  retryFailedPayment: function(id) {
-    if (id !== this.get('id')) {
-      return false;
-    }
-
-    this.save(null, {
-      type: 'post',
-      url: session.get('gatewaydUrl') + '/v1/payments/failed/' + this.get('id') + '/retry',
-      contentType: 'application/json',
-      headers: {
-        Authorization: session.get('credentials')
-      }
-    }).then(this.pollStatus);
-  },
-
-  handleSuccess: function(model) {
+  checkPollCompletion: function(model) {
     if (model.get('state') === 'succeeded' || model.get('state') === 'failed') {
       pollingHeart.clearEvents();
       this.trigger('retryStop');
@@ -175,20 +104,42 @@ var Payment = Backbone.Model.extend({
       headers: {
         Authorization: session.get('credentials')
       },
-      success: this.handleSuccess
+      success: this.checkPollCompletion
     });
   },
 
   pollStatus: function() {
     var _this = this;
 
+    // update displayed payment information every interval to watch status changes
     pollingHeart.onBeat(1, this.pollStatusHelper);
     pollingHeart.onceOnBeat(0, this.trigger('retryStart'));
+
+    // stop polling after 10 intervals
     pollingHeart.onceOnBeat(10, function() {
       pollingHeart.clearEvents();
       _this.trigger('retryStop');
     });
   },
+
+  retryFailedPayment: function(id) {
+    if (id !== this.get('id')) {
+      return false;
+    }
+
+    this.save(null, {
+      type: 'post',
+      url: session.get('gatewaydUrl') + '/v1/payments/failed/' + this.get('id') + '/retry',
+      contentType: 'application/json',
+      headers: {
+        Authorization: session.get('credentials')
+      },
+      success: this.pollStatus
+    });
+  },
 });
+
+//add validation mixin
+_.extend(Payment.prototype, ValidationMixins);
 
 module.exports = Payment;

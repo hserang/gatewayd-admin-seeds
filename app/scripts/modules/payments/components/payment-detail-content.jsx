@@ -2,13 +2,19 @@
 
 var moment = require('moment');
 var sjcl = require('ripple-lib/build/sjcl');
+var Address = require('./address.jsx');
 
 var React = require('react');
 
 var PaymentDetailContent = React.createClass({
+  propTypes: {
+    model: React.PropTypes.object,
+    paymentDetailClassName: React.PropTypes.string
+  },
+
   render: function() {
     return (
-      <div className={this.props.className}>
+      <div className={this.props.paymentDetailClassName}>
         <div className="row border-bottom">
           Updated {moment(this.props.model.get('updatedAt')).format('MMM D, YYYY HH:mm z')}
         </div>
@@ -22,11 +28,11 @@ var PaymentDetailContent = React.createClass({
         <div className="row">
           <div className="col-sm-5 border-bottom">
             <div className="row">
-              <div className="col-sm-3">
-                Source:
-              </div>
-              <div className="col-sm-9">
-                {this.props.model.get('fromAddress').address}
+              <div className="col-sm-12">
+                <Address
+                  direction="from"
+                  address={this.props.model.get('fromAddress').address}
+                />
               </div>
             </div>
             <div className="row">
@@ -50,11 +56,11 @@ var PaymentDetailContent = React.createClass({
           </div>
           <div className="col-sm-6 col-sm-offset-1 border-bottom">
             <div className="row">
-              <div className="col-sm-3">
-                Destination:
-              </div>
-              <div className="col-sm-9">
-                {this.props.model.get('toAddress').address}
+              <div className="col-sm-12">
+                <Address
+                  direction="to"
+                  address={this.props.model.get('toAddress').address}
+                />
               </div>
             </div>
             <div className="row">
