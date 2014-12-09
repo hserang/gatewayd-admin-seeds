@@ -1,51 +1,57 @@
+"use strict";
+
 var _ = require('lodash');
 var React = require('react');
 var Link = require('react-router').Link;
 var session = require('../../../modules/session/models/session');
 
 var Greeting = React.createClass({
+  propTypes: {
+    greetingClassName: React.PropTypes.string
+  },
 
   getDefaultProps: function() {
-    //Sample config. TODO: pass it into props
     var defaults = {
-          className: "greeting-wrapper"
-        };
+      greetingClassName: 'greeting-wrapper'
+    };
 
     return  defaults;
   },
 
-  loggedIn: function() {
+  handleLoggedIn: function() {
     return (
       <div className="greeting">
         <span className="welcome">
           Welcome {session.get('userModel').get('name')}
         </span>
-        <Link to="/logout" className="link">Logout</Link>
+        <Link to="/logout" className="link">
+          Logout
+        </Link>
       </div>
     );
   },
 
-  loggedOut: function() {
-    return <span></span>;
+  handleLoggedOut: function() {
+    return false;
   },
 
-  displayLogState: function(loginState) {
-    var options = {
-      'loggedIn': this.loggedIn,
-      'loggedOut': this.loggedOut
+  displayGreeting: function(loginState) {
+    var loginStateMap = {
+      true: this.handleLoggedIn,
+      false: this.handleLoggedOut
     };
 
-    if (!_.isUndefined(options[loginState])) {
-      return options[loginState]();
+    if (!_.isUndefined(loginStateMap[loginState])) {
+      return loginStateMap[loginState]();
     } else {
-      return <span></span>;
+      return false;
     }
   },
 
   render: function() {
     return (
-      <div className={this.props.className}>
-        {this.displayLogState(session.getLogState())}
+      <div className={this.props.greetingClassName}>
+        {this.displayGreeting(session.isLoggedIn())}
       </div>
     );
   }

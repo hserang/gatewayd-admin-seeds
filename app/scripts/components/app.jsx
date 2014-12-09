@@ -1,19 +1,27 @@
 "use strict";
 
 var React = require('react');
+
+// React Router
 var RouteHandler = require('react-router').RouteHandler;
 var Navigation = require('react-router').Navigation;
 var DocumentTitle = require('react-document-title');
 
+// session model and dispatch actions
 var session = require('../modules/session/models/session');
 var sessionActions = require('../modules/session/actions');
-var TopBar = require('../shared/components/header/top-bar.jsx');
 
+// React components
+var TopBar = require('../shared/components/header/top-bar.jsx');
+var Sidebar = require('../shared/components/sidebar.jsx');
+var Wallets = require('../modules/wallets/components/wallets.jsx');
+
+// required to use React Bootstrap in child modules
 require('react-bootstrap');
 
 var topBarConfig = {
   brandName: 'Gatewayd Basic',
-  wrapperClass: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
+  wrapperClassName: 'navbar-inverse navbar-fixed-top top-bar container-fluid',
   links: []
 };
 
@@ -21,25 +29,48 @@ var App =
   React.createClass({
     mixins: [Navigation],
 
-    redirectToLogin: function() {
-      if (!session.isLoggedIn()) {
-        this.transitionTo('/login');
+    getInitialState: function() {
+      return { showSidebar: false };
+    },
+
+    expandSidebar: function() {
+      if (session.isLoggedIn()) {
+        this.setState({showSidebar: this.state.showSidebar ? false : true});
+      } else {
+        this.setState({showSidebar: false});
       }
     },
 
     render:function(){
-      if (!session.get('lastLogin')) {
+      if (!session.isLoggedIn()) {
+
+        // attempt session restoration
         sessionActions.restore();
-        this.redirectToLogin();
+
+        // redirect to login if session restoration failed
+        if (!session.isLoggedIn()) {
+          this.transitionTo('/login');
+        }
       }
 
       return (
         <div>
-          <TopBar setup={topBarConfig} />
+          <TopBar
+            links={topBarConfig.links}
+            brandName={topBarConfig.brandName}
+            wrapperClassName={topBarConfig.wrapperClassName}
+            expandSidebar={this.expandSidebar}
+          />
+          {this.state.showSidebar ?
+            <Sidebar sidebarClassName="sidebar sidebar-wallets">
+              <Wallets />
+            </Sidebar>
+            : false
+          }
           <div className="container">
             <div className="row">
-              <div className="col-sm-12  col-md-12 main">
-              <DocumentTitle title='Gatewayd Basic Admin'>
+              <div className="col-sm-12 col-md-12 main">
+              <DocumentTitle title="Gatewayd Basic Admin">
                 <RouteHandler />
               </DocumentTitle>
               </div>
