@@ -1,3 +1,6 @@
+# This repo is not maintained and exists for historical purposes!
+There are security issues with one or more dependencies. Use at own risk!
+
 # Gatewayd Basic Admin Webapp
 
 [http://gatewayd.org/tools/basic](http://gatewayd.org/tools/basic)
